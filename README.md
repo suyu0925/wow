@@ -38,6 +38,13 @@
   - 游戏版本 1.13.2
   - 插件版本 13.19
 
+* [AuctionFaster](https://www.curseforge.com/wow/addons/auctionfaster)
+
+  拍卖行助手
+
+  - 游戏版本 1.13.2
+  - 插件版本 1.13.2-classic
+
 * [OmniCC](https://www.curseforge.com/wow/addons/omni-cc)
 
   法术冷却
