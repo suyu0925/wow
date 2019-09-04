@@ -52,6 +52,13 @@
   - 游戏版本 1.13.2
   - 插件版本 1.13.26
 
+* [Real Mob Health](https://www.curseforge.com/wow/addons/real-mob-health)
+
+  怪物血量。
+
+  - 游戏版本 1.13.2
+  - 插件版本 2.3
+
 * [AtlasLootClassic](https://www.curseforge.com/wow/addons/atlaslootclassic)
 
   查看BOSS掉落
