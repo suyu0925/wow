@@ -16,6 +16,20 @@
   - 游戏版本 1.13.2
   - 插件版本 8.2.8
 
+* [Fizzle](https://www.curseforge.com/wow/addons/fizzle)
+
+  装备品质染色和装备耐久度
+
+  - 游戏版本 1.13.2
+  - 插件版本 80200-1
+
+* [CharacterStatsClassic](https://www.curseforge.com/wow/addons/characterstatsclassic)
+
+  人物面板属性统计
+
+  - 游戏版本 1.13.2
+  - 插件版本 1.4.1
+
 * [~~Inventorian~~](https://www.curseforge.com/wow/addons/inventorian)
 
   背包美化
@@ -116,6 +130,13 @@
   - 游戏版本 1.13.2
   - 插件版本 1.13.2.146.140
 
+* [MonkeyQuest](https://www.curseforge.com/wow/addons/monkey-quest)
+
+  任务框增强
+
+  - 游戏版本 1.13.2
+  - 插件版本 2.9.39c
+
 * [questie](https://www.curseforge.com/wow/addons/details)
 
   任务助手
@@ -137,9 +158,16 @@
   - 游戏版本 1.13.2
   - 插件版本 1.0.3-classic
 
+* [Quartz](https://www.curseforge.com/wow/addons/quartz)
+
+  施法条增强
+
+  - 游戏版本 1.13.2
+  - 插件版本 3.5.1-classic
+
 * [CensusPlusClassic](https://www.curseforge.com/wow/addons/censusplusclassic/)
 
-  人中普查
+  人口普查
 
   - 游戏版本 1.13.2
   - 插件版本 0.5.0
