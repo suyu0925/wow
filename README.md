@@ -52,6 +52,20 @@
   - 游戏版本 1.13.2
   - 插件版本 8.2.4
 
+* [sortBags](https://www.curseforge.com/wow/addons/sortbags)
+
+  背包整理
+
+  - 游戏版本 1.13.2
+  - 插件版本 0.0.2
+
+* [tullaRange](https://www.curseforge.com/wow/addons/tullarange)
+
+  醒目的突出超出距离的技能
+
+  - 游戏版本 1.13.2
+  - 插件版本 8.2.2-classic
+
 * [ClassicAuraDurations](https://www.curseforge.com/wow/addons/classicauradurations)
 
   Buff, Debuff监控。
