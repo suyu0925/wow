@@ -59,6 +59,13 @@
   - 游戏版本 1.13.2
   - 插件版本 1.13.26
 
+* [WeaponSwingTimer](https://www.curseforge.com/wow/addons/weaponswingtimer)
+
+  物理攻击计时。
+
+  - 游戏版本 1.13.2
+  - 插件版本 4.1.0
+
 * [Real Mob Health](https://www.curseforge.com/wow/addons/real-mob-health)
 
   怪物血量。
@@ -116,3 +123,9 @@
   - 游戏版本 1.13.2
   - 插件版本 1.0.3-classic
 
+* [CensusPlusClassic](https://www.curseforge.com/wow/addons/censusplusclassic/)
+
+  人中普查
+
+  - 游戏版本 1.13.2
+  - 插件版本 0.5.0
