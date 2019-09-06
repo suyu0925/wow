@@ -130,9 +130,9 @@
   - 游戏版本 1.13.2
   - 插件版本 1.13.2.146.140
 
-* [MonkeyQuest](https://www.curseforge.com/wow/addons/monkey-quest)
+* [~MonkeyQuest~](https://www.curseforge.com/wow/addons/monkey-quest)
 
-  任务框增强
+  任务框增强，对中文支持不好，暂时去除
 
   - 游戏版本 1.13.2
   - 插件版本 2.9.39c

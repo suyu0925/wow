@@ -1,4 +1,4 @@
-## Interface: 13200
+## Interface: 11302
 ## Title: Fizzle
 ## Author: phyber
 ## Notes: Show item durability and quality in the character frame.
