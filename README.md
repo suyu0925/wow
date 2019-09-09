@@ -1,6 +1,13 @@
 # wow
 [怀旧服魔兽世界插件](https://www.wowhead.com/news=294842/best-addons-for-wow-classic-updated-and-expanded)和其它资源
 
+* [UnitFramesPlus](https://www.curseforge.com/wow/addons/unitframesplus)
+
+  头像增强
+
+  - 游戏版本 1.13.2
+  - 插件版本 1.28
+
 * [~~ArkInventory~~](https://www.curseforge.com/wow/addons/ark-inventory)
 
   背包美化
