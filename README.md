@@ -144,19 +144,19 @@
   - 游戏版本 1.13.2
   - 插件版本 2.9.39c
 
-* [questie](https://www.curseforge.com/wow/addons/details)
+* [questie](https://www.curseforge.com/wow/addons/questie)
 
   任务助手
 
   - 游戏版本 1.13.2
-  - 插件版本 1.13.2.146.140
+  - 插件版本 4.0.18
 
 * [Deadly Boss Mods(DBM)](https://www.curseforge.com/wow/addons/deadly-boss-mods)
 
   副本副手
 
   - 游戏版本 1.13.2
-  - 插件版本 1.13.5-classic
+  - 插件版本 1.13.7-classic
 
 * [ClassicCastbars](https://www.curseforge.com/wow/addons/classiccastbars)
 
