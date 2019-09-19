@@ -113,7 +113,7 @@
   查看BOSS掉落
 
   - 游戏版本 1.13.2
-  - 插件版本 v1.1.9-beta
+  - 插件版本 v1.1.12
 
 * [Recount](https://www.curseforge.com/wow/addons/recount)
 
@@ -156,7 +156,7 @@
   副本副手
 
   - 游戏版本 1.13.2
-  - 插件版本 1.13.7-classic
+  - 插件版本 1.13.9-classic
 
 * [ClassicCastbars](https://www.curseforge.com/wow/addons/classiccastbars)
 

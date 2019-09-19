@@ -239,7 +239,7 @@ data["Ragefire"] = {
 data["WailingCaverns"] = {
 	MapID = 718,
 	AtlasMapID = "WailingCaverns",
-	AtlasMapFile = "WailingCaverns",
+	AtlasMapFile = {"WailingCaverns", "WailingCavernsEnt"},
 	ContentType = DUNGEON_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
 	LevelRange = {10, 17, 24},
@@ -355,7 +355,7 @@ data["WailingCaverns"] = {
 data["TheDeadmines"] = {
 	MapID = 1581,
 	AtlasMapID = "TheDeadmines",
-	AtlasMapFile = "TheDeadmines",
+	AtlasMapFile = {"TheDeadmines", "TheDeadminesEnt"},
 	ContentType = DUNGEON_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
 	LevelRange = {10, 17, 26},
@@ -645,7 +645,7 @@ data["ShadowfangKeep"] = {
 data["BlackfathomDeeps"] = {
 	MapID = 719,
 	AtlasMapID = "BlackfathomDeeps",
-	AtlasMapFile = "BlackfathomDeeps",
+	AtlasMapFile = {"BlackfathomDeeps", "BlackfathomDeepsEnt"},
 	ContentType = DUNGEON_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
 	LevelRange = {15, 24, 32},
@@ -785,7 +785,7 @@ data["TheStockade"] = {
 data["Gnomeregan"] = {
 	MapID = 721,
 	AtlasMapID = "Gnomeregan",
-	AtlasMapFile = "Gnomeregan",
+	AtlasMapFile = {"Gnomeregan", "GnomereganEnt"},
 	ContentType = DUNGEON_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
 	LevelRange = {19, 29, 38},
@@ -1014,7 +1014,7 @@ data["ScarletMonasteryGraveyard"] = {
 	MapID = 796,
 	name = C_Map.GetAreaInfo(796) .." - ".. AL["Graveyard"],
 	AtlasMapID = "ScarletMonastery",
-	AtlasMapFile = "SMGraveyard",
+	AtlasMapFile = {"SMGraveyard", "SMEnt"},
 	ContentType = DUNGEON_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
 	LevelRange = {20, 26, 36},
@@ -1104,7 +1104,7 @@ data["ScarletMonasteryLibrary"] = {
 	MapID = 796,
 	name = C_Map.GetAreaInfo(796) .." - ".. AL["Library"],
 	AtlasMapID = "ScarletMonastery",
-	AtlasMapFile = "SMLibrary",
+	AtlasMapFile = {"SMLibrary", "SMEnt"},
 	ContentType = DUNGEON_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
 	LevelRange = {20, 29, 39},
@@ -1178,7 +1178,7 @@ data["ScarletMonasteryArmory"] = {
 	MapID = 796,
 	name = C_Map.GetAreaInfo(796) .." - ".. AL["Armory"],
 	AtlasMapID = "ScarletMonastery",
-	AtlasMapFile = "SMArmory",
+	AtlasMapFile = {"SMArmory", "SMEnt"},
 	ContentType = DUNGEON_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
 	LevelRange = {20, 32, 42},
@@ -1234,7 +1234,7 @@ data["ScarletMonasteryCathedral"] = {
 	MapID = 796,
 	name = C_Map.GetAreaInfo(796) .." - ".. AL["Cathedral"],
 	AtlasMapID = "ScarletMonastery",
-	AtlasMapFile = "SMCathedral",
+	AtlasMapFile = {"SMCathedral", "SMEnt"},
 	ContentType = DUNGEON_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
 	LevelRange = {20, 35, 45},
@@ -1675,25 +1675,14 @@ data["Uldaman"] = {
 	AtlasMapID = "Uldaman",
 	ContentType = DUNGEON_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
-	AtlasMapFile = "Uldaman",
+	AtlasMapFile = {"Uldaman", "UldamanEnt"},
 	LevelRange = {30, 41, 51},
 	items = {
-		{ -- UldRevelosh
-			name = AL["Revelosh"],
-			npcId = 6910,
-			DisplayIDs = {{5945}},
-			[NORMAL_DIFF] = {
-				{ 1,  9389 }, -- Revelosh's Spaulders
-				{ 2,  9388 }, -- Revelosh's Armguards
-				{ 3,  9390 }, -- Revelosh's Gloves
-				{ 4,  9387 }, -- Revelosh's Boots
-				{ 6,  7741 }, -- The Shaft of Tsol
-			},
-		},
 		{ -- UldEric
 			name = AL["Eric \"The Swift\""],
 			npcId = 6907,
 			DisplayIDs = {{5708}},
+			AtlasMapBossID = 1,
 			[NORMAL_DIFF] = {
 				{ 1,  9394 }, -- Horned Viking Helmet
 				{ 3,  9398 }, -- Worn Running Boots
@@ -1704,6 +1693,7 @@ data["Uldaman"] = {
 			name = AL["Baelog"],
 			npcId = 6906,
 			DisplayIDs = {{5710}},
+			AtlasMapBossID = 1,
 			[NORMAL_DIFF] = {
 				{ 1,  9401 }, -- Nordic Longshank
 				{ 3,  9399 }, -- Precision Arrow
@@ -1714,16 +1704,31 @@ data["Uldaman"] = {
 			name = AL["Olaf"],
 			npcId = 6908,
 			DisplayIDs = {{5709}},
+			AtlasMapBossID = 1,
 			[NORMAL_DIFF] = {
 				{ 1,  9404 }, -- Olaf's All Purpose Shield
 				{ 3,  9403 }, -- Battered Viking Shield
 				{ 4,  1177 }, -- Oil of Olaf
 			},
 		},
+		{ -- UldRevelosh
+			name = AL["Revelosh"],
+			npcId = 6910,
+			DisplayIDs = {{5945}},
+			AtlasMapBossID = 3,
+			[NORMAL_DIFF] = {
+				{ 1,  9389 }, -- Revelosh's Spaulders
+				{ 2,  9388 }, -- Revelosh's Armguards
+				{ 3,  9390 }, -- Revelosh's Gloves
+				{ 4,  9387 }, -- Revelosh's Boots
+				{ 6,  7741 }, -- The Shaft of Tsol
+			},
+		},
 		{ -- UldIronaya
 			name = AL["Ironaya"],
 			npcId = 7228,
 			DisplayIDs = {{6089}},
+			AtlasMapBossID = 4,
 			[NORMAL_DIFF] = {
 				{ 1,  9409 }, -- Ironaya's Bracers
 				{ 2,  9407 }, -- Stoneweaver Leggings
@@ -1734,6 +1739,7 @@ data["Uldaman"] = {
 			name = AL["Ancient Stone Keeper"],
 			npcId = 7206,
 			DisplayIDs = {{10798}},
+			AtlasMapBossID = 7,
 			[NORMAL_DIFF] = {
 				{ 1,  9410 }, -- Cragfists
 				{ 3,  9411 }, -- Rockshard Pauldrons
@@ -1743,6 +1749,7 @@ data["Uldaman"] = {
 			name = AL["Galgann Firehammer"],
 			npcId = 7291,
 			DisplayIDs = {{6059}},
+			AtlasMapBossID = 8,
 			[NORMAL_DIFF] = {
 				{ 1,  11310 }, -- Flameseer Mantle
 				{ 2,  9412 }, -- Galgann's Fireblaster
@@ -1754,6 +1761,7 @@ data["Uldaman"] = {
 			name = AL["Grimlok"],
 			npcId = 4854,
 			DisplayIDs = {{11165}},
+			AtlasMapBossID = 9,
 			[NORMAL_DIFF] = {
 				{ 1,  9415 }, -- Grimlok's Tribal Vestments
 				{ 2,  9416 }, -- Grimlok's Charge
@@ -1764,6 +1772,7 @@ data["Uldaman"] = {
 			name = AL["Archaedas"],
 			npcId = 2748,
 			DisplayIDs = {{5988}},
+			AtlasMapBossID = 10,
 			[NORMAL_DIFF] = {
 				{ 1,  11118 }, -- Archaedic Stone
 				{ 2,  9413 }, -- The Rockpounder
@@ -1801,23 +1810,26 @@ data["Uldaman"] = {
 				{ 28, 9391 }, -- The Shoveler
 			},
 		},
-		{ -- UldShadowforgeCache
-			name = AL["Shadowforge Cache"],
-			ExtraList = true,
-			[NORMAL_DIFF] = {
-				{ 1,  7669 }, -- Shattered Necklace Ruby
-			},
-		},
 		{ -- UldBaelogsChest
 			name = AL["Baelog's Chest"],
 			ExtraList = true,
+			AtlasMapBossID = 1,
 			[NORMAL_DIFF] = {
 				{ 1,  7740 }, -- Gni'kiv Medallion
+			},
+		},
+		{ -- UldShadowforgeCache
+			name = AL["Shadowforge Cache"],
+			ExtraList = true,
+			AtlasMapBossID = 8,
+			[NORMAL_DIFF] = {
+				{ 1,  7669 }, -- Shattered Necklace Ruby
 			},
 		},
 		{ -- UldTabletofWill
 			name = AL["Tablet of Will"],
 			ExtraList = true,
+			AtlasMapBossID = 8,
 			[NORMAL_DIFF] = {
 				{ 1,  5824 }, -- Tablet of Will
 			},
@@ -1850,6 +1862,7 @@ data["Zul'Farrak"] = {
 			npcId = 7272,
 			DisplayIDs = {{6696}},
 			AtlasMapBossID = 2,
+			specialType = "quest",
 			[NORMAL_DIFF] = {
 				{ 1,  10660 }, -- First Mosh'aru Tablet
 			},
@@ -1869,6 +1882,7 @@ data["Zul'Farrak"] = {
 			npcId = 7796,
 			DisplayIDs = {{6690}},
 			AtlasMapBossID = 4,
+			specialType = "quest",
 			[NORMAL_DIFF] = {
 				{ 1,  9471 }, -- Nekrum's Medallion
 			},
@@ -1909,6 +1923,7 @@ data["Zul'Farrak"] = {
 			npcId = 7604,
 			DisplayIDs = {{6433}},
 			AtlasMapBossID = 5,
+			specialType = "quest",
 			[NORMAL_DIFF] = {
 				{ 1,  8548 }, -- Divino-matic Rod
 			},
@@ -1918,6 +1933,7 @@ data["Zul'Farrak"] = {
 			npcId = 7795,
 			DisplayIDs = {{6685}},
 			AtlasMapBossID = 6,
+			specialType = "quest",
 			[NORMAL_DIFF] = {
 				{ 1,  9234 }, -- Tiara of the Deep
 				{ 2,  10661 }, -- Second Mosh'aru Tablet
@@ -1979,7 +1995,7 @@ data["Zul'Farrak"] = {
 data["Maraudon"] = {
 	MapID = 2100,
 	AtlasMapID = "Maraudon",
-	AtlasMapFile = "Maraudon",
+	AtlasMapFile = {"Maraudon", "MaraudonEnt"},
 	ContentType = DUNGEON_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
 	LevelRange = {25, 46, 55},
@@ -2165,7 +2181,7 @@ data["Maraudon"] = {
 data["TheTempleOfAtal'Hakkar"] = {
 	MapID = 1477,
 	AtlasMapID = "TheTempleOfAtal'Hakkar",
-	AtlasMapFile = "TheSunkenTemple",
+	AtlasMapFile = { "TheSunkenTemple", "TheSunkenTempleEnt" },
 	ContentType = DUNGEON_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
 	LevelRange = {45, 50, 56},
@@ -2354,7 +2370,7 @@ data["TheTempleOfAtal'Hakkar"] = {
 data["BlackrockDepths"] = {
 	MapID = 1584,
 	AtlasMapID = "BlackrockDepths",
-	AtlasMapFile = "BlackrockDepths",
+	AtlasMapFile = {"BlackrockDepths", "BlackrockMountainEnt"},
 	ContentType = DUNGEON_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
 	LevelRange = {42, 52, 60},
@@ -2381,10 +2397,11 @@ data["BlackrockDepths"] = {
 			AtlasMapBossID = 5,
 			[NORMAL_DIFF] = {
 				{ 1,  11626 }, -- Blackveil Cape
-				{ 2,  11624 }, -- Kentic Amice
-				{ 3,  22240 }, -- Greaves of Withering Despair
-				{ 4,  11625 }, -- Enthralled Sphere
-				{ 6,  11140 }, -- Prison Cell Key
+				{ 2,  11623 }, -- Spritecaster Cape
+				{ 3,  11624 }, -- Kentic Amice
+				{ 4,  22240 }, -- Greaves of Withering Despair
+				{ 5,  11625 }, -- Enthralled Sphere
+				{ 16,  11140 }, -- Prison Cell Key
 			},
 		},
 		{ -- BRDHoundmaster
@@ -2394,9 +2411,10 @@ data["BlackrockDepths"] = {
 			AtlasMapBossID = 6,
 			[NORMAL_DIFF] = {
 				{ 1,  11623 }, -- Spritecaster Cape
-				{ 2,  11627 }, -- Fleetfoot Greaves
-				{ 3,  11628 }, -- Houndmaster's Bow
-				{ 4,  11629 }, -- Houndmaster's Rifle
+				{ 2,  11626 }, -- Blackveil Cape
+				{ 3,  11627 }, -- Fleetfoot Greaves
+				{ 4,  11628 }, -- Houndmaster's Bow
+				{ 5,  11629 }, -- Houndmaster's Rifle
 			},
 		},
 		{ -- BRDGorosh
@@ -2406,9 +2424,13 @@ data["BlackrockDepths"] = {
 			AtlasMapBossID = 6,
 			[NORMAL_DIFF] = {
 				{ 1,  11726 }, -- Savage Gladiator Chain
-				{ 2,  22271 }, -- Leggings of Frenzied Magic
-				{ 3,  22257 }, -- Bloodclot Band
-				{ 4,  22266 }, -- Flarethorn
+				{ 2,  11729 }, -- Savage Gladiator Helm
+				{ 3,  11730 }, -- Savage Gladiator Grips
+				{ 4,  11728 }, -- Savage Gladiator Leggings
+				{ 5,  11731 }, -- Savage Gladiator Greaves
+				{ 7,  22271 }, -- Leggings of Frenzied Magic
+				{ 8,  22257 }, -- Bloodclot Band
+				{ 9,  22266 }, -- Flarethorn
 			},
 		},
 		{ -- BRDGrizzle
@@ -2445,8 +2467,7 @@ data["BlackrockDepths"] = {
 			[NORMAL_DIFF] = {
 				{ 1,  11665 }, -- Ogreseer Fists
 				{ 2,  11662 }, -- Ban'thok Sash
-				{ 3,  11728 }, -- Savage Gladiator Leggings
-				{ 4,  11824 }, -- Cyclopean Band
+				{ 3,  11824 }, -- Cyclopean Band
 			},
 		},
 		{ -- BRDAnubshiah
@@ -2458,7 +2479,6 @@ data["BlackrockDepths"] = {
 				{ 1,  11678 }, -- Carapace of Anub'shiah
 				{ 2,  11677 }, -- Graverot Cape
 				{ 3,  11675 }, -- Shadefiend Boots
-				{ 4,  11731 }, -- Savage Gladiator Greaves
 			},
 		},
 		{ -- BRDHedrum
@@ -2479,6 +2499,7 @@ data["BlackrockDepths"] = {
 			npcId = 9024,
 			DisplayIDs = {{8762}},
 			AtlasMapBossID = 7,
+			specialType = "rare",
 			[NORMAL_DIFF] = {
 				{ 1,  11747 }, -- Flamestrider Robes
 				{ 2,  11749 }, -- Searingscale Leggings
@@ -2500,6 +2521,7 @@ data["BlackrockDepths"] = {
 				{ 7,  22205 }, -- Black Steel Bindings
 				{ 8,  22255 }, -- Magma Forged Band
 				{ 9,  22254 }, -- Wand of Eternal Light
+				{ 10,  11923 }, -- The Hammer of Grace
 				{ 16, "INV_Box_01", nil, AL["Relic Coffer"], nil },
 				{ 17, 11945 }, -- Dark Iron Ring
 				{ 18, 11946 }, -- Fire Opal Necklace
@@ -2591,8 +2613,10 @@ data["BlackrockDepths"] = {
 				{ 1,  11820 }, -- Royal Decorated Armor
 				{ 2,  11821 }, -- Warstrife Leggings
 				{ 3,  11810 }, -- Force of Will
-				{ 4,  11817 }, -- Lord General's Sword
-				{ 5,  11816 }, -- Angerforge's Battle Axe
+				{ 4,  11815 }, -- Hand of Justice
+				{ 5,  11817 }, -- Lord General's Sword
+				{ 6,  11816 }, -- Angerforge's Battle Axe
+				{ 7,  11841 }, -- Senior Designer's Pantaloons
 			},
 		},
 		{ -- BRDGolemLordArgelmach
@@ -2619,11 +2643,12 @@ data["BlackrockDepths"] = {
 				{ 4,  22275 }, -- Firemoss Boots
 				{ 5,  18044 }, -- Hurley's Tankard
 				{ 7, "INV_Box_01", nil, AL["Phalanx"], nil },
-				{ 8,  22212 }, -- Golem Fitted Pauldrons
-				{ 9,  11745 }, -- Fists of Phalanx
-				{ 10, 11744 }, -- Bloodfist
-				{ 12, "INV_Box_01", nil, AL["Lokhtos Darkbargainer"], nil },
-				{ 13, 18592 }, -- Plans: Sulfuron Hammer
+				{ 8,  11746 }, -- Golem Skull Helm
+				{ 9,  22212 }, -- Golem Fitted Pauldrons
+				{ 10,  11745 }, -- Fists of Phalanx
+				{ 11, 11744 }, -- Bloodfist
+				{ 13, "INV_Box_01", nil, AL["Lokhtos Darkbargainer"], nil },
+				{ 14, 18592 }, -- Plans: Sulfuron Hammer
 				{ 16, "INV_Box_01", nil, AL["Ribbly Screwspigot"], nil },
 				{ 17, 11612 }, -- Plans: Dark Iron Plate
 				{ 18, 2662 }, -- Ribbly's Quiver
@@ -2671,15 +2696,14 @@ data["BlackrockDepths"] = {
 			DisplayIDs = {{8690},{8686},{8692},{8689},{8691},{8687},{8688}},
 			AtlasMapBossID = 18,
 			[NORMAL_DIFF] = {
-				{ 1, "INV_Box_01", nil, AL["Chest of The Seven"], nil },
-				{ 2,  11925 }, -- Ghostshroud
-				{ 3,  11926 }, -- Deathdealer Breastplate
-				{ 4,  11929 }, -- Haunting Specter Leggings
-				{ 5,  11927 }, -- Legplates of the Eternal Guardian
-				{ 6,  11920 }, -- Wraith Scythe
-				{ 7,  11923 }, -- The Hammer of Grace
-				{ 8,  11922 }, -- Blood-etched Blade
-				{ 9,  11921 }, -- Impervious Giant
+				{ 1,  11925 }, -- Ghostshroud
+				{ 2,  11926 }, -- Deathdealer Breastplate
+				{ 3,  11929 }, -- Haunting Specter Leggings
+				{ 4,  11927 }, -- Legplates of the Eternal Guardian
+				{ 5,  11920 }, -- Wraith Scythe
+				{ 6,  11923 }, -- The Hammer of Grace
+				{ 7,  11922 }, -- Blood-etched Blade
+				{ 8,  11921 }, -- Impervious Giant
 			},
 		},
 		{ -- BRDMagmus
@@ -2714,17 +2738,18 @@ data["BlackrockDepths"] = {
 			AtlasMapBossID = 21,
 			[NORMAL_DIFF] = {
 				{ 1,  11684 }, -- Ironfoe
-				{ 3,  11933 }, -- Imperial Jewel
-				{ 4,  11930 }, -- The Emperor's New Cape
-				{ 5,  11924 }, -- Robes of the Royal Crown
-				{ 6,  22204 }, -- Wristguards of Renown
-				{ 7,  22207 }, -- Sash of the Grand Hunt
-				{ 8,  11934 }, -- Emperor's Seal
-				{ 9,  11815 }, --  of Justice
-				{ 10, 11928 }, -- Thaurissan's Royal Scepter
-				{ 11, 11931 }, -- Dreadforge Retaliator
-				{ 12, 11932 }, -- Guiding Stave of Wisdom
-				{ 14, 12033 }, -- Thaurissan Family Jewels
+				{ 3,  16724 }, -- Lightforge Gauntlets
+				{ 4,  11933 }, -- Imperial Jewel
+				{ 5,  11930 }, -- The Emperor's New Cape
+				{ 6,  11924 }, -- Robes of the Royal Crown
+				{ 7,  22204 }, -- Wristguards of Renown
+				{ 8,  22207 }, -- Sash of the Grand Hunt
+				{ 9,  11934 }, -- Emperor's Seal
+				{ 10, 11810 }, -- Force of Will
+				{ 11, 11928 }, -- Thaurissan's Royal Scepter
+				{ 12, 11931 }, -- Dreadforge Retaliator
+				{ 13, 11932 }, -- Guiding Stave of Wisdom
+				{ 16, 12033 }, -- Thaurissan Family Jewels
 			},
 		},
 		{ -- BRDTrash
@@ -2746,16 +2771,14 @@ data["BlackrockDepths"] = {
 				{ 13, 12532 }, -- Spire of the Stoneshaper
 				{ 16, 15781 }, -- Pattern: Black Dragonscale Leggings
 				{ 17, 15770 }, -- Pattern: Black Dragonscale Shoulders
-				{ 18, 11611 }, -- Plans: Dark Iron Sunderer
-				{ 19, 11614 }, -- Plans: Dark Iron Mail
-				{ 20, 11615 }, -- Plans: Dark Iron Shoulders
-				{ 21, 16048 }, -- Schematic: Dark Iron Rifle
-				{ 22, 16053 }, -- Schematic: Master Engineer's Goggles
-				{ 23, 16049 }, -- Schematic: Dark Iron Bomb
-				{ 24, 18654 }, -- Schematic: Gnomish Alarm-O-Bot
-				{ 25, 18661 }, -- Schematic: World Enlarger
-				{ 27, 18232 }, -- Field Repair Bot 74A
-				{ 29, 11446 }, -- A Crumpled Up Note
+				{ 19, 11611 }, -- Plans: Dark Iron Sunderer
+				{ 20, 11614 }, -- Plans: Dark Iron Mail
+				{ 21, 11615 }, -- Plans: Dark Iron Shoulders
+				{ 23, 16048 }, -- Schematic: Dark Iron Rifle
+				{ 24, 16053 }, -- Schematic: Master Engineer's Goggles
+				{ 25, 16049 }, -- Schematic: Dark Iron Bomb
+				{ 26, 18654 }, -- Schematic: Gnomish Alarm-O-Bot
+				{ 27, 18661 }, -- Schematic: World Enlarger
 			},
 		},
 		{ -- BRDBSPlans
@@ -2786,7 +2809,7 @@ data["LowerBlackrockSpire"] = {
 	name = AL["Lower "] .. C_Map.GetAreaInfo(1583),
 	MapID = 1583,
 	AtlasMapID = "LowerBlackrockSpire",
-	AtlasMapFile = "BlackrockSpireLower",
+	AtlasMapFile = {"BlackrockSpireLower", "BlackrockMountainEnt"},
 	ContentType = DUNGEON_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
 	LevelRange = {48, 55, 60},
@@ -2806,6 +2829,7 @@ data["LowerBlackrockSpire"] = {
 			npcId = 9219,
 			DisplayIDs = {{11574}},
 			AtlasMapBossID = 4,
+			specialType = "rare",
 			[NORMAL_DIFF] = {
 				{ 1,  12608 }, -- Butcher's Apron
 				{ 2,  13286 }, -- Rivenspike
@@ -2832,6 +2856,7 @@ data["LowerBlackrockSpire"] = {
 			npcId = 9218,
 			DisplayIDs = {{11576}},
 			AtlasMapBossID = 6,
+			specialType = "rare",
 			[NORMAL_DIFF] = {
 				{ 1,  13284 }, -- Swiftdart Battleboots
 				{ 2,  13285 }, -- The Nicker
@@ -2871,11 +2896,12 @@ data["LowerBlackrockSpire"] = {
 			[NORMAL_DIFF] = {
 				{ 1,  16676 }, -- Beaststalker's Gloves
 				{ 3,  13177 }, -- Talisman of Evasion
-				{ 4,  13179 }, -- Brazecore Armguards
-				{ 5,  22231 }, -- Kayser's Boots of Precision
-				{ 6,  13173 }, -- Flightblade Throwing Axe
-				{ 7,  12582 }, -- Keris of Zul'Serak
-				{ 9,  12335 }, -- Gemstone of Smolderthorn
+				{ 4,  13178 }, -- Rosewine Circle
+				{ 5,  13179 }, -- Brazecore Armguards
+				{ 6,  22231 }, -- Kayser's Boots of Precision
+				{ 7,  13173 }, -- Flightblade Throwing Axe
+				{ 8,  12582 }, -- Keris of Zul'Serak
+				{ 10,  12335 }, -- Gemstone of Smolderthorn
 			},
 		},
 		{ -- LBRSGrimaxe
@@ -2909,6 +2935,7 @@ data["LowerBlackrockSpire"] = {
 			npcId = 10376,
 			DisplayIDs = {{9755}},
 			AtlasMapBossID = 14,
+			specialType = "rare",
 			[NORMAL_DIFF] = {
 				{ 1,  13185 }, -- Sunderseer Mantle
 				{ 2,  13184 }, -- Fallbrush Handgrips
@@ -2921,13 +2948,12 @@ data["LowerBlackrockSpire"] = {
 			DisplayIDs = {{11583}},
 			AtlasMapBossID = 15,
 			[NORMAL_DIFF] = {
-				{ 1,  13258 }, -- Slaghide Gauntlets
-				{ 2,  22232 }, -- Marksman's Girdle
-				{ 3,  13259 }, -- Ribsteel Footguards
-				{ 4,  13178 }, -- Rosewine Circle
-				{ 6,  18784 }, -- Top Half of Advanced Armorsmithing: Volume III
-				--{ 7,  12725 }, -- Plans: Enchanted Thorium Helm
-				--{ 8,  12620 }, -- Enchanted Thorium Helm
+				{ 1,  16670 }, -- Boots of Elements
+				{ 3,  13258 }, -- Slaghide Gauntlets
+				{ 4,  22232 }, -- Marksman's Girdle
+				{ 5,  13259 }, -- Ribsteel Footguards
+				{ 6,  13178 }, -- Rosewine Circle
+				{ 8,  18784 }, -- Top Half of Advanced Armorsmithing: Volume III
 			},
 		},
 		{ -- LBRSZigris
@@ -2936,9 +2962,10 @@ data["LowerBlackrockSpire"] = {
 			DisplayIDs = {{9738}},
 			AtlasMapBossID = 16,
 			[NORMAL_DIFF] = {
-				{ 1,  13253 }, -- Hands of Power
-				{ 2,  13252 }, -- Cloudrunner Girdle
-				{ 4,  12835 }, -- Plans: Annihilator
+				{ 1,  13247 }, -- Quartermaster Zigris' Footlocker
+				{ 3,  13253 }, -- Hands of Power
+				{ 4,  13252 }, -- Cloudrunner Girdle
+				{ 6,  12835 }, -- Plans: Annihilator
 				--{ 5,  12798 }, -- Annihilator
 			},
 		},
@@ -2971,6 +2998,7 @@ data["LowerBlackrockSpire"] = {
 			npcId = 9718,
 			DisplayIDs = {{11809}},
 			AtlasMapBossID = 18,
+			specialType = "rare",
 			[NORMAL_DIFF] = {
 				{ 1,  13203 }, -- Armswake Cloak
 				{ 2,  13198 }, -- Hurd Smasher
@@ -3044,7 +3072,7 @@ data["UpperBlackrockSpire"] = {
 	name = AL["Upper "] .. C_Map.GetAreaInfo(1583),
 	MapID = 1583,
 	AtlasMapID = "UpperBlackrockSpire",
-	AtlasMapFile = "BlackrockSpireUpper",
+	AtlasMapFile = {"BlackrockSpireUpper", "BlackrockMountainEnt"},
 	ContentType = DUNGEON_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
 	LevelRange = {48, 55, 60},
@@ -3082,6 +3110,7 @@ data["UpperBlackrockSpire"] = {
 			npcId = 10509,
 			DisplayIDs = {{9686}},
 			AtlasMapBossID = 4,
+			specialType = "rare",
 			[NORMAL_DIFF] = {
 				{ 1,  12604 }, -- Starfire Tiara
 				{ 2,  12930 }, -- Briarwood Reed
@@ -3242,7 +3271,7 @@ data["DireMaulEast"] = {
 	name = C_Map.GetAreaInfo(2557) .." ".. AL["East"],
 	MapID = 2557,
 	AtlasMapID = "DireMaul",
-	AtlasMapFile = "DireMaulEast",
+	AtlasMapFile = {"DireMaulEast", "DireMaulEnt"},
 	ContentType = DUNGEON_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
 	LevelRange = {31, 55, 60},
@@ -3355,7 +3384,7 @@ data["DireMaulWest"] = {
 	name = C_Map.GetAreaInfo(2557) .." ".. AL["West"],
 	MapID = 2557,
 	AtlasMapID = "DireMaul",
-	AtlasMapFile = "DireMaulWest",
+	AtlasMapFile = {"DireMaulWest", "DireMaulEnt"},
 	ContentType = DUNGEON_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
 	LevelRange = {31, 55, 60},
@@ -3493,7 +3522,7 @@ data["DireMaulNorth"] = {
 	name = C_Map.GetAreaInfo(2557) .." ".. AL["North"],
 	MapID = 2557,
 	AtlasMapID = "DireMaulNorth",
-	AtlasMapFile = "DireMaulNorth",
+	AtlasMapFile = {"DireMaulNorth", "DireMaulEnt"},
 	ContentType = DUNGEON_CONTENT,
 	LoadDifficulty = NORMAL_DIFF,
 	LevelRange = {31, 55, 60},
@@ -4178,11 +4207,10 @@ data["Stratholme"] = {
 			DisplayIDs = {{571}},
 			AtlasMapBossID = 6,
 			[NORMAL_DIFF] = {
-				{ 1,  16724 }, -- Lightforge Gauntlets
-				{ 3,  13400 }, -- Vambraces of the Sadist
-				{ 4,  13403 }, -- Grimgore Noose
-				{ 5,  13402 }, -- Timmy's Galoshes
-				{ 6,  13401 }, -- The Cruel Hand of Timmy
+				{ 1,  13400 }, -- Vambraces of the Sadist
+				{ 2,  13403 }, -- Grimgore Noose
+				{ 3,  13402 }, -- Timmy's Galoshes
+				{ 4,  13401 }, -- The Cruel Hand of Timmy
 			},
 		},
 		{ -- STRATMalorsStrongbox
