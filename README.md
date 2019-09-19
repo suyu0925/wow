@@ -120,14 +120,14 @@
   伤害统计
 
   - 游戏版本 1.13.2
-  - 插件版本 1.13.2b
+  - 插件版本 1.13.2c
 
 * [ClassicThreatMeter](https://www.curseforge.com/wow/addons/classicthreatmeter)
 
   仇恨统计
 
   - 游戏版本 1.13.2
-  - 插件版本 1.06
+  - 插件版本 1.07
 
 * [~~Details!Damage Meter~~](https://www.curseforge.com/wow/addons/details)
 
