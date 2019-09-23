@@ -178,3 +178,10 @@
 
   - 游戏版本 1.13.2
   - 插件版本 0.5.0
+
+* [CChatNotifier](https://github.com/coolmodi/CChatNotifier)
+
+  聊天过滤
+
+  - 游戏版本 1.13.2
+  - 插件版本 1.0
