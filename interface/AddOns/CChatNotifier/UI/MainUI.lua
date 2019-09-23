@@ -130,7 +130,7 @@ local function MakeEditBox(parent, maxLen, height, isMultiline)
     if height then
         edit:SetHeight(height);
     end
-    edit:SetFont("Fonts\\FRIZQT__.TTF", 11);
+    edit:SetFontObject("GameFontWhite");
     edit:SetJustifyH("LEFT");
     edit:SetJustifyV("CENTER");
     edit:SetTextInsets(7,7,7,7);
@@ -173,6 +173,28 @@ do
     addFrame.backbutton:SetPoint("TOPRIGHT", addFrame.searchEdit, "BOTTOMRIGHT", 0, -10);
     addFrame.backbutton:SetWidth(75);
     frame.addFrame = addFrame;
+end
+
+-- Subframe with edit form
+do
+    local editFrame = MakeSubFrame(L["UI_EDITFORM_TITLE"]);
+    editFrame.searchLabel = editFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal");
+    editFrame.searchLabel:SetPoint("TOPLEFT", editFrame.title, "BOTTOMLEFT", 0, -16);
+    editFrame.searchLabel:SetPoint("TOPRIGHT", editFrame.title, "BOTTOMRIGHT", 0, -16);
+    editFrame.searchLabel:SetText(L["UI_ADDFORM_NAME"]);
+    editFrame.searchLabel:SetJustifyH("LEFT");
+    editFrame.searchEdit = MakeEditBox(editFrame, 40, 27, false);
+    editFrame.searchEdit:SetPoint("TOPLEFT", editFrame.searchLabel, "BOTTOMLEFT", 0, -4);
+    editFrame.searchEdit:SetPoint("TOPRIGHT", editFrame.searchLabel, "BOTTOMRIGHT", 0, -4);
+    editFrame.okbutton = CreateFrame("Button", nil, editFrame, "OptionsButtonTemplate");
+    editFrame.okbutton:SetText(L["UI_EDITFORM_CONFIRM_BUTTON"]);
+    editFrame.okbutton:SetPoint("TOPLEFT", editFrame.searchEdit, "BOTTOMLEFT", 0, -10);
+    editFrame.okbutton:SetWidth(125);
+    editFrame.backbutton = CreateFrame("Button", nil, editFrame, "OptionsButtonTemplate");
+    editFrame.backbutton:SetText(L["UI_BACK"]);
+    editFrame.backbutton:SetPoint("TOPRIGHT", editFrame.searchEdit, "BOTTOMRIGHT", 0, -10);
+    editFrame.backbutton:SetWidth(75);
+    frame.editFrame = editFrame;
 end
 
 -- Subframe with delete all form
@@ -222,7 +244,7 @@ local function RemoveItem(self)
 end
 
 for i = 1, MAX_ITEMS, 1 do	
-    local item = CreateFrame("Frame", nil, frame.scrollFrame);
+    local item = CreateFrame("Button", nil, frame.scrollFrame);
     
 	item:SetHeight(LIST_ITEM_HEIGHT);
     item:SetPoint("TOPLEFT", 0, -LIST_ITEM_HEIGHT * (i-1));
@@ -247,11 +269,24 @@ for i = 1, MAX_ITEMS, 1 do
     item.disb = CreateFrame("Button", nil, item);
 	item.disb:SetWidth(12);
 	item.disb:SetHeight(12);
-	item.disb:SetPoint("RIGHT", item.delb, "LEFT", -17, 0);
+	item.disb:SetPoint("RIGHT", item.delb, "LEFT", -10, 0);
 	item.disb:SetNormalTexture([[Interface\AddOns\CChatNotifier\img\on]]);
 	item.disb:SetHighlightTexture([[Interface\AddOns\CChatNotifier\img\on]]);
     item.disb:SetScript("OnClick", ToggleItem);
-	
+
+---- { Add search item edit button
+    item.edit = CreateFrame("Button", nil, item)
+    item.edit:SetWidth(15);
+    item.edit:SetHeight(15);
+    item.edit:SetPoint("RIGHT", item.disb, "LEFT", -10, 0)
+    item.edit:SetNormalTexture([[Interface\AddOns\CChatNotifier\img\pencil.tga]])
+    item.edit:SetHighlightTexture([[Interface\AddOns\CChatNotifier\img\pencil.tga]])
+    item.edit:SetScript("OnClick", function(self)
+        frame.editFrame.searchEdit:SetText(item.searchString:GetText())
+        frame:ShowContent("EDIT")
+    end)
+---- hk }
+    
 	frame.scrollFrame.items[i] = item;
 end
 
@@ -267,6 +302,7 @@ function frame:ShowContent(name)
         self.deleteAllFrame:Hide();
         self.scrollFrame:Hide();
         self.addFrame:Show();
+        self.editFrame:Hide();
         return;
     end
 
@@ -274,12 +310,23 @@ function frame:ShowContent(name)
         self.addFrame:Hide();
         self.scrollFrame:Hide();
         self.deleteAllFrame:Show();
+        self.editFrame:Hide();
         return;
     end
+    
+    if name == "EDIT" then
+        self.addFrame:Hide();
+        self.scrollFrame:Hide();
+        self.deleteAllFrame:Hide();
+        self.editFrame:Show();
+        return;
+    end
+
 
     self.deleteAllFrame:Hide();
     self.addFrame:Hide();
     self.scrollFrame:Show();
+    self.editFrame:Hide();
 end
 
 --- Update to current addon state

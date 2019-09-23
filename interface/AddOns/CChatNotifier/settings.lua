@@ -9,7 +9,9 @@ local DEFAULTSETTINGS = {
     ["showMinimapButton"] = true,
     ["snapToMinimap"] = true,
     ["outputFormat"] = "", -- fill from localization
-	["version"] = GetAddOnMetadata(_addonName, "Version")
+    ["version"] = GetAddOnMetadata(_addonName, "Version"),
+    ["antiSpamWindow"] = 45,
+    ["classColor"] = true,
 };
 
 local SOUNDS = {
@@ -28,6 +30,19 @@ local function AfterSettingsChange()
     if CChatNotifier_settings.snapToMinimap then
         _addon:MinimapButtonSnap();
     end
+end
+
+--- Extract color code
+local function extractColors(format, text)
+    local i = string.find(format, text)
+    if i and i > 7 and string.sub(format, i-1, i-1) == ">" then
+        if string.sub(format, i-2, i-2) =="<" then
+            return "|r"
+        else
+            return "|cff" .. string.sub(format, i-7, i-2)
+        end
+    end
+    return "|r"
 end
 
 --- Setup SV tables, check settings and setup settings menu
@@ -75,6 +90,7 @@ function _addon:SetupSettings()
     local row = settings:MakeSettingsRow();
     settings:MakeCheckboxOption("showMinimapButton", L["SETTINGS_MINIMAP"], L["SETTINGS_MINIMAP_TT"], row);
     settings:MakeCheckboxOption("snapToMinimap", L["SETTINGS_SNAP_MINIMAP"], L["SETTINGS_SNAP_MINIMAP_TT"], row);
+    settings:MakeCheckboxOption("classColor", L["Sender Class Color"], L["Set if color the sender's name by class"], row)
 
     settings:MakeHeading(L["SETTINGS_HEAD_FORMAT"]);
     settings:MakeStringRow(L["SETTINGS_FORMAT_DESC"], "LEFT");
@@ -87,9 +103,15 @@ function _addon:SetupSettings()
         local preview = _addon:FormNotifyMsg("mankrik", "1. General", GetUnitName("player"), "LFM mankriks wife exploration team!", 5, 11);
         prevString:SetText(preview);
         CChatNotifier_settings.outputFormat = oldFormat;
+---- { for multi-keys coloring purpose
+        CChatNotifier_settings.mscolor = extractColors(CChatNotifier_settings.outputFormat, "{MS}")
+        CChatNotifier_settings.mfcolor = extractColors(CChatNotifier_settings.outputFormat, "{MF}")
+        CChatNotifier_settings.mecolor = extractColors(CChatNotifier_settings.outputFormat, "{ME}")
+        CChatNotifier_settings.sendercolor = extractColors(CChatNotifier_settings.outputFormat, "%[{P}%]")
+---- hk }
     end);
 
-    row = settings:MakeSettingsRow();
+    local antispam = settings:MakeSliderOption("antiSpamWindow",L["Antispam Window"],L["Set the time window for blocking spam message.(seconds)"], 0, 60, 1)
 
     settings:MakeButton(L["SETTINGS_TEST_CHAT"], function() 
         local oldSound = CChatNotifier_settings.soundId;

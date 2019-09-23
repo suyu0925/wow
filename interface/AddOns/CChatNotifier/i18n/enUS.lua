@@ -57,3 +57,5 @@ L["UI_RMALL_REMOVE"] = "Delete";
 L["UI_CANCEL"] = "Cancel";
 
 L["UI_MMB_OPEN"] = "Open " .. _addonName;
+L["UI_EDITFORM_TITLE"] = " Edit Search Text";
+L["UI_EDITFORM_CONFIRM_BUTTON"] = "Edit Confirm"

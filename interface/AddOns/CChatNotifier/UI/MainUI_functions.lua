@@ -64,6 +64,26 @@ CCNUI_MainUI.addFrame.backbutton:SetScript("OnClick", function (self)
 	CCNUI_MainUI:ShowContent("LIST");
 end);
 
+-- Edit frame functions
+CCNUI_MainUI.editFrame:SetScript("OnShow", function(self)
+    self.oldsearch = self.searchEdit:GetText()
+end)
+
+CCNUI_MainUI.editFrame.backbutton:SetScript("OnClick", function(self)
+    CCNUI_MainUI:ShowContent("LIST")
+end)
+
+CCNUI_MainUI.editFrame.okbutton:SetScript("OnClick", function(self)
+    local nstring = strtrim(CCNUI_MainUI.editFrame.searchEdit:GetText())
+    if string.len(nstring) == 0 then
+        _addon:PrintError(L["UI_ADDFORM_ERR_NO_INPUT"]);
+		return;
+    end
+     _addon:RemoveFromList(CCNUI_MainUI.editFrame.oldsearch)
+     _addon:AddToList(nstring); 
+    CCNUI_MainUI:ShowContent("LIST")
+end)
+
 
 ----------------------------------------------------------------------------------------------------------------
 -- Control functions

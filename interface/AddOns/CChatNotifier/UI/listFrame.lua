@@ -101,7 +101,7 @@ local function MakeEditBox(parent, maxLen, height, isMultiline)
     if height then
         edit:SetHeight(height);
     end
-    edit:SetFont("Fonts\\FRIZQT__.TTF", 11);
+    edit:SetFontObject("GameFontWhite")
     edit:SetJustifyH("LEFT");
     edit:SetJustifyV("CENTER");
     edit:SetTextInsets(7,7,7,7);
@@ -185,6 +185,7 @@ local function ShowSubFrame(frame)
         addFrame:Show();
         scrollFrame:Hide();
         deleteAllFrame:Hide();
+        editFrame:Hide();
         return;
     end
 
@@ -192,7 +193,15 @@ local function ShowSubFrame(frame)
         addFrame:Hide();
         scrollFrame:Hide();
         deleteAllFrame:Show();
+        editFrame:Hide();
         return;
+    end
+
+    if frame == "EDIT" then
+        addFrame:Hide();
+        scrollFrame:Hide();
+        deleteAllFrame:Hide();
+        editFrame:Show();
     end
 
     scrollFrame:Show();
@@ -280,8 +289,9 @@ local function CreateListElement(pos)
 	else
 		item:SetPoint("TOPLEFT", listElements[pos-1], "BOTTOMLEFT", 0, 0);
 		item:SetPoint("TOPRIGHT", listElements[pos-1], "BOTTOMRIGHT", 0, 0);
-	end
-	
+    end
+
+
     item:SetBackdrop({bgFile = [[Interface\AddOns\CChatNotifier\img\bar]]});
     item:SetBackdropColor(0.2,0.2,0.2,0.8);
 	
@@ -296,7 +306,7 @@ local function CreateListElement(pos)
 	item.delb:SetHeight(12);
 	item.delb:SetPoint("RIGHT", item, "RIGHT", -10, 0);
 	item.delb:SetNormalTexture([[Interface\AddOns\CChatNotifier\img\iclose]]);
-	item.delb:SetHighlightTexture([[Interface\AddOns\CChatNotifier\img\iclose]]);
+	item.delb:SetHighlightTexture([[Interface\AddOns\CChatNotifier\img\]]);
 
     item.delb:SetScript("OnClick", function(self)
 		_addon:RemoveFromList(self:GetParent().searchString:GetText());

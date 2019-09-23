@@ -5,6 +5,52 @@ local frame = CreateFrame("Frame");
 local handlers = {};
 local playerName = UnitName("player");
 
+---- { For searching efficiency 
+local searchcache = {}
+searchcache.blocker = {}
+
+local function addToCache(search)
+    local t = {}
+    t["block"] = {}
+    t["match"] = {}
+    t.blocker = false
+    for k in string.gmatch(search, "-([^&%-]+)") do
+        table.insert(t.block, k)
+    end
+    for k in string.gmatch(search, "&([^&%-]+)") do
+        table.insert(t.match, k)
+    end
+
+    if string.sub(search, 1, 1) ~= "-" then     
+        local head = string.match(search, "^(.-)[&%-]")
+        if head then 
+            table.insert(t.match, head) 
+        end
+    end
+    if next(t.match)==nil then t.isBlocker = true end
+    searchcache[search] = t
+end
+
+---- hk }
+
+---- { keep spam from entering the notifier channel
+local anti_spam = CreateFrame("Frame")
+local lasttenseconds = {}
+local function lasttenseconds_updater()
+    if not lasttenseconds then return end
+    if not anti_spam.lastcheck then anti_spam.lastcheck = GetTime() end
+    if GetTime() - anti_spam.lastcheck < CChatNotifier_settings.antiSpamWindow*2 then return end
+    for s, t in pairs(lasttenseconds) do
+        if GetTime()-t > CChatNotifier_settings.antiSpamWindow then
+            lasttenseconds[s] = nil
+        end
+    end
+    anti_spam.lastcheck = GetTime()
+end
+anti_spam:SetScript("OnUpdate", lasttenseconds_updater)
+---- hk }
+
+
 --- Add new entry to the list
 -- @param search The string to search for
 function _addon:AddToList(search)
@@ -53,7 +99,7 @@ end
 -- @param searchstart Start position of found keyword in message
 -- @param searchend End position of found keyword in message
 -- @return The finished message string
-function _addon:FormNotifyMsg(search, source, from, msg, searchstart, searchend)
+function _addon:FormNotifyMsg(search, source, from, msg, searchstart, searchend, guid)
     local formed = CChatNotifier_settings.outputFormat;
     
     -- Default color
@@ -81,20 +127,41 @@ function _addon:FormNotifyMsg(search, source, from, msg, searchstart, searchend)
     -- Placeholders
     formed = string.gsub(formed, "{K}", search);
     formed = string.gsub(formed, "{S}", source);
-    formed = string.gsub(formed, "{P}", string.format("|Hplayer:%s|h%s|h", from, from));
-
-    if searchstart > 1 then
-        formed = string.gsub(formed, "{MS}", string.sub(msg, 1, searchstart-1));
-    else
-        formed = string.gsub(formed, "{MS}", "");
+    local playerStr = string.format("|Hplayer:%s|h%s|h", from, from)
+    if CChatNotifier_settings.classColor and guid then
+        local pclass = select(2,GetPlayerInfoByGUID(guid));
+        if pclass == "SHAMAN" then
+            playerStr = "|cff0270dd"..playerStr..CChatNotifier_settings.sendercolor;
+        else
+            local ccolor = RAID_CLASS_COLORS[pclass].colorStr;
+            playerStr = "|c"..ccolor..playerStr..CChatNotifier_settings.sendercolor;
+        end
     end
+    formed = string.gsub(formed, "{P}", playerStr);
 
-    formed = string.gsub(formed, "{MF}", string.sub(msg, searchstart, searchend));
+    ---- { highlight multiple keywords
+    if string.find(search, "&") then
+        local messagestart = string.find(formed, "{MS}") or string.len(formed)
+        for _, v in pairs(searchcache[search].match) do
+            msg = string.gsub(string.upper(msg), string.upper(v), CChatNotifier_settings.mfcolor .. string.upper(v) .. CChatNotifier_settings.mecolor)
+        end
+        formed = string.sub(formed, 1, messagestart-1) .. msg
+    ---- hk }
 
-    if searchend < msg:len() then
-        formed = string.gsub(formed, "{ME}", string.sub(msg, searchend+1, msg:len()));
     else
-        formed = string.gsub(formed, "{ME}", "");
+        if searchstart > 1 then
+            formed = string.gsub(formed, "{MS}", string.sub(msg, 1, searchstart-1));
+        else
+            formed = string.gsub(formed, "{MS}", "");
+        end
+
+        formed = string.gsub(formed, "{MF}", string.sub(msg, searchstart, searchend));
+
+        if searchend < msg:len() then
+            formed = string.gsub(formed, "{ME}", string.sub(msg, searchend+1, msg:len()));
+        else
+            formed = string.gsub(formed, "{ME}", "");
+        end
     end
 
     local hours, minutes = GetGameTime();
@@ -132,25 +199,75 @@ local function RemoveServerDash(name)
 	return name;
 end
 
+---- { Support for multiple-inclusive search and simple blocker(by hkhuang)
+
+
+
+local function _hfind(msglow, search)
+    local fstart, fend
+    if string.find(search,"[&%-]") then
+        if not searchcache[search] then addToCache(search) end
+        local t = searchcache[search]
+        if t.isBlocker then return nil, nil end
+        for _, k in pairs(t.block) do
+            fstart = string.find(msglow, k)
+            if fstart then return nil, nil end
+        end
+        for _, k in pairs(t.match) do
+            fstart, fend = string.find(msglow, k)
+            if not fstart then return nil, nil end
+        end
+        return fstart, fend
+    end
+    return string.find(msglow, search)    
+end
+
+local function ShouldBlock(msg)
+    for _, data in pairs(CChatNotifier_data) do
+        if data.active then
+            for word, search in pairs(data.words) do
+                if string.sub(search, 1, 1) == "-" and not string.find(search,"&") then
+                    for k in string.gmatch(search, "-([^%-]+)") do
+                        if string.find(msg, k) then 
+                            return true 
+                        end
+                    end                    
+                end
+            end
+        end
+    end
+    return false;
+end
+---- hk }
+
 --- Search message for searched terms
 -- If one is found then trigger notification.
 -- @param msg The message to search in
 -- @param from The player it is from
 -- @param source The source of the message (SAY, CHANNEL)
 -- @param channelName If source is CHANNEL this is the channel name
-local function SearchMessage(msg, from, source)
+local function SearchMessage(msg, from, source, guid)
     local msglow = string.lower(msg);
+    if ShouldBlock(msglow) then return end
     local fstart, fend;
     for _, data in pairs(CChatNotifier_data) do
         if data.active then
-            for _, search in ipairs(data.words) do
-                fstart, fend = string.find(msglow, search);
+            for word, search in pairs(data.words) do
+                fstart, fend = _hfind(msglow, search);
                 if fstart ~= nil then
                     local nameNoDash = RemoveServerDash(from);
                     if nameNoDash == playerName then
                         return;
                     end
-                    _addon:PostNotification(_addon:FormNotifyMsg(search, source, from, msg, fstart, fend), CChatNotifier_settings.chatFrame);
+---- { anti spam
+                    t = GetTime()
+                    if lasttenseconds and lasttenseconds[nameNoDash] and t-lasttenseconds[nameNoDash]<CChatNotifier_settings.antiSpamWindow then 
+                        return;
+                    end
+                    lasttenseconds[nameNoDash] = t
+---- hk }
+                                        
+                    _addon:PostNotification(_addon:FormNotifyMsg(search, source, from, msg, fstart, fend, guid), CChatNotifier_settings.chatFrame);
                     return;
                 end
             end
@@ -200,15 +317,15 @@ function handlers.ADDON_LOADED(addonName)
     end
 end
 
-function handlers.CHAT_MSG_CHANNEL(text, playerName, _, channelName)
-	SearchMessage(text, playerName, channelName);
+function handlers.CHAT_MSG_CHANNEL(text, playerName, _, channelName, _, _, _, _, _, _, _, guid)
+	SearchMessage(text, playerName, channelName, guid);
 end
 
-function handlers.CHAT_MSG_SAY(text, playerName)
+function handlers.CHAT_MSG_SAY(text, playerName,  _, _, _, _, _, _, _, _, _, guid)
 	SearchMessage(text, playerName, L["VICINITY"]);
 end
 
-function handlers.CHAT_MSG_YELL(text, playerName)
+function handlers.CHAT_MSG_YELL(text, playerName,  _, _, _, _, _, _, _, _, _, guid)
 	SearchMessage(text, playerName, L["VICINITY"]);
 end
 
@@ -238,3 +355,5 @@ end;
 function _addon:PrintError(msg)
     print("|cFFFF3333" .. _addonName .. ": " .. msg:gsub("|r", "|cFFFF3333"));
 end
+
+
