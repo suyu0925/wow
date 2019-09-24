@@ -50,7 +50,7 @@
   售价助手
 
   - 游戏版本 1.13.2
-  - 插件版本 1.1.4-classic
+  - 插件版本 1.2.6-classic
 
 * [Scrap (Junk Seller)](https://www.curseforge.com/wow/addons/scrap)
 
@@ -92,7 +92,7 @@
   Buff, Debuff监控。
 
   - 游戏版本 1.13.2
-  - 插件版本 1.13.26
+  - 插件版本 1.13.31
 
 * [WeaponSwingTimer](https://www.curseforge.com/wow/addons/weaponswingtimer)
 
@@ -106,7 +106,7 @@
   怪物血量。
 
   - 游戏版本 1.13.2
-  - 插件版本 2.3
+  - 插件版本 2.12
 
 * [AtlasLootClassic](https://www.curseforge.com/wow/addons/atlaslootclassic)
 
@@ -127,7 +127,7 @@
   仇恨统计
 
   - 游戏版本 1.13.2
-  - 插件版本 1.07
+  - 插件版本 1.08
 
 * [~~Details!Damage Meter~~](https://www.curseforge.com/wow/addons/details)
 
