@@ -78,7 +78,7 @@
   背包整理
 
   - 游戏版本 1.13.2
-  - 插件版本 0.0.2
+  - 插件版本 0.1.2
 
 * [tullaRange](https://www.curseforge.com/wow/addons/tullarange)
 

@@ -7,11 +7,21 @@ local CONTAINERS
 
 function _G.SortBags()
 	CONTAINERS = {0, 1, 2, 3, 4}
+	for i = #CONTAINERS, 1, -1 do
+		if GetBagSlotFlag(i - 1, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) then
+			tremove(CONTAINERS, i)
+		end
+	end
 	Start()
 end
 
 function _G.SortBankBags()
 	CONTAINERS = {-1, 5, 6, 7, 8, 9, 10}
+	for i = #CONTAINERS, 1, -1 do
+		if GetBankBagSlotFlag(i - 1, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) then
+			tremove(CONTAINERS, i)
+		end
+	end
 	Start()
 end
 
@@ -134,12 +144,15 @@ do
 
 	local delay = 0
 	f:SetScript('OnUpdate', function(_, arg1)
+		if InCombatLockdown() or GetTime() > timeout then
+			f:Hide()
+			return
+		end 
 		delay = delay - arg1
 		if delay <= 0 then
 			delay = .2
-
 			local complete = Sort()
-			if complete or GetTime() > timeout then
+			if complete then
 				f:Hide()
 				return
 			end
