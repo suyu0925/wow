@@ -21,7 +21,7 @@
   背包美化
 
   - 游戏版本 1.13.2
-  - 插件版本 8.2.8
+  - 插件版本 8.2.13
 
 * [Fizzle](https://www.curseforge.com/wow/addons/fizzle)
 
@@ -156,7 +156,7 @@
   副本副手
 
   - 游戏版本 1.13.2
-  - 插件版本 1.13.9-classic
+  - 插件版本 1.13.12-classic
 
 * [ClassicCastbars](https://www.curseforge.com/wow/addons/classiccastbars)
 
