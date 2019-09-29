@@ -30,6 +30,14 @@
   - 游戏版本 1.13.2
   - 插件版本 80200-1
 
+
+* [ItemRack Classic](https://www.curseforge.com/wow/addons/itemrack-classic)
+
+  一件换装
+
+  - 游戏版本 1.13.2
+  - 插件版本 3.11
+
 * [CharacterStatsClassic](https://www.curseforge.com/wow/addons/characterstatsclassic)
 
   人物面板属性统计
