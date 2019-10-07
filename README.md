@@ -43,7 +43,7 @@
   人物面板属性统计
 
   - 游戏版本 1.13.2
-  - 插件版本 1.4.1
+  - 插件版本 2.1
 
 * [~~Inventorian~~](https://www.curseforge.com/wow/addons/inventorian)
 
