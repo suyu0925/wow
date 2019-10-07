@@ -28,7 +28,7 @@
   装备品质染色和装备耐久度
 
   - 游戏版本 1.13.2
-  - 插件版本 80200-1
+  - 插件版本 80205-1-classic
 
 
 * [ItemRack Classic](https://www.curseforge.com/wow/addons/itemrack-classic)
