@@ -21,7 +21,7 @@
   背包美化
 
   - 游戏版本 1.13.2
-  - 插件版本 8.2.13
+  - 插件版本 8.2.16
 
 * [Fizzle](https://www.curseforge.com/wow/addons/fizzle)
 

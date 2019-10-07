@@ -20,47 +20,45 @@ Sort.Proprieties = {
 --[[ Process ]]--
 
 function Sort:Start(owner, bags, event)
-  if InCombatLockdown() or UnitIsDead('player') or GetCursorInfo() then
+  if not self:CanRun() then
     return
   end
 
   self.owner, self.bags, self.event = owner, bags, event
   self:RegisterEvent('PLAYER_REGEN_DISABLED', 'Stop')
   self:SendSignal('SORTING_STATUS', owner, bags)
-  self:Stacking()
+  self:Run()
 end
 
-function Sort:Stop()
-  self:SendSignal('SORTING_STATUS')
-  self:UnregisterAllEvents()
+function Sort:Run()
+  if self:CanRun() then
+    self:Iterate()
+  else
+    self:Stop()
+  end
 end
 
-function Sort:Stacking()
+function Sort:Iterate()
+  local todo = false
   local spaces = self:GetSpaces()
+  local families = self:GetFamilies(spaces)
+  local stackable = function(item)
+    return (item.count or 1) < (item.stack or 1)
+  end
 
   for k, target in pairs(spaces) do
     local item = target.item
-    if item.id and (item.count or 1) < item.stack then
+    if item.id and stackable(item) then
       for j = k+1, #spaces do
         local from = spaces[j]
         local other = from.item
 
-        if item.id == other.id and (other.count or 1) < other.stack then
-          self:Move(from, target)
-          self:RegisterEvent(self.event, function() self:After(0.01, 'Stacking') end)
-
-          return
+        if item.id == other.id and stackable(other) then
+          todo = not self:Move(from, target) or todo
         end
       end
     end
   end
-
-  self:Ordering()
-end
-
-function Sort:Ordering()
-  local spaces = self:GetSpaces()
-  local families = self:GetFamilies(spaces)
 
   for _, family in pairs(families) do
     local spaces, order = self:GetOrder(spaces, family)
@@ -68,17 +66,23 @@ function Sort:Ordering()
     for index = 1, min(#spaces, #order) do
       local goal, item = spaces[index], order[index]
       if item.space ~= goal then
-        self:Move(item.space, goal)
-        self:RegisterEvent(self.event, function() self:After(0.01, 'Ordering') end)
-
-        return
+        todo = not self:Move(item.space, goal) or todo
       else
         item.placed = true
       end
     end
   end
 
-  self:Stop()
+  if todo then
+    self:RegisterEvent(self.event, function() self:After(0.01, 'Run') end)
+  else
+    self:Stop()
+  end
+end
+
+function Sort:Stop()
+  self:SendSignal('SORTING_STATUS')
+  self:UnregisterAllEvents()
 end
 
 
@@ -145,6 +149,10 @@ end
 
 --[[ API ]]--
 
+function Sort:CanRun()
+  return not InCombatLockdown() and not UnitIsDead('player') and not GetCursorInfo()
+end
+
 function Sort:FitsIn(id, family)
   return
     family == 0 or
@@ -159,10 +167,21 @@ function Sort.Rule(a, b)
     end
   end
 
+  if a.space.family ~= b.space.family then
+    return a.space.family > b.space.family
+  end
   return a.space.index < b.space.index
 end
 
 function Sort:Move(from, to)
+  if from.locked or to.locked then
+    return
+  end
+
   Cache:PickupItem(self.owner, from.bag, from.slot)
   Cache:PickupItem(self.owner, to.bag, to.slot)
+
+  from.locked = true
+  to.locked = true
+  return true
 end
