@@ -36,7 +36,7 @@
   一件换装
 
   - 游戏版本 1.13.2
-  - 插件版本 3.11
+  - 插件版本 3.16
 
 * [CharacterStatsClassic](https://www.curseforge.com/wow/addons/characterstatsclassic)
 
