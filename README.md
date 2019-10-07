@@ -116,6 +116,20 @@
   - 游戏版本 1.13.2
   - 插件版本 2.12
 
+* [Atlas](https://www.curseforge.com/wow/addons/atlas)
+
+  副本地图
+
+  - 游戏版本 1.13.2
+  - 插件版本 v1.45.01.11302
+
+* [Atlas Classic Wow](https://www.curseforge.com/wow/addons/atlas-classicwow)
+
+  副本地图怀旧服
+
+  - 游戏版本 1.13.2
+  - 插件版本 v1.45.00
+
 * [AtlasLootClassic](https://www.curseforge.com/wow/addons/atlaslootclassic)
 
   查看BOSS掉落
