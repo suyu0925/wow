@@ -114,7 +114,7 @@
   怪物血量。
 
   - 游戏版本 1.13.2
-  - 插件版本 2.12
+  - 插件版本 2.13
 
 * [Atlas](https://www.curseforge.com/wow/addons/atlas)
 
