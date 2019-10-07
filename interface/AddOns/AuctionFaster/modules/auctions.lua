@@ -2,6 +2,9 @@
 local AuctionFaster = unpack(select(2, ...));
 
 local StdUi = LibStub('StdUi');
+local L = LibStub('AceLocale-3.0'):GetLocale('AuctionFaster');
+
+local format = string.format;
 
 --- @type Inventory
 local Inventory = AuctionFaster:GetModule('Inventory');
@@ -51,6 +54,10 @@ end
 Auctions.currentQuery = nil;
 Auctions.currentCallback = nil;
 Auctions.retries = 0;
+-- this is used to prevent checking if everything has been sold
+Auctions.lastSoldTimestamp = 0;
+-- this is used for checking if everything has been sold
+Auctions.soldFlag = false;
 
 function Auctions:QueryAuctions(query, callback)
 	query = query or Auctions.currentQuery;
@@ -67,12 +74,12 @@ function Auctions:QueryAuctions(query, callback)
 		self.currentlyQuerying = false;
 		if Auctions.retries < 5 then
 			Auctions.retries = Auctions.retries + 1;
-			AuctionFaster:Echo(2, 'Query failed, retrying: ' .. Auctions.retries);
+			AuctionFaster:Echo(2, format(L['Query failed, retrying: %d'], Auctions.retries));
 
 			self:ScheduleTimer('QueryAuctions', 1);
 			return;
 		else
-			AuctionFaster:Echo(3, '不能查询啊。请稍等或重新加载用户界面');
+			AuctionFaster:Echo(3, L['Cannot query AH. Please wait a bit longer or reload UI']);
 		end
 	end
 
@@ -170,7 +177,7 @@ function Auctions:PutItemInSellBox(itemId, itemName, itemQuality, itemLevel)
 
 	PickupContainerItem(bag, slot);
 	if not CursorHasItem() then
-		AuctionFaster:Echo(3, '无法从库存中提取项目');
+		AuctionFaster:Echo(3, L['Could not pick up item from inventory']);
 		return false;
 	end
 
@@ -288,6 +295,8 @@ function Auctions:SellItem(bid, buy, duration, stackSize, numStacks)
 	self.lastUIError = nil;
 	self.lastSoldItem = GetAuctionSellItemInfo();
 	PostAuction(bid, buy, duration, stackSize, numStacks);
+	self.lastSoldTimestamp = GetTime();
+	self.soldFlag = true;
 
 	local isMultisell = numStacks > 1;
 
@@ -298,10 +307,14 @@ function Auctions:SellItem(bid, buy, duration, stackSize, numStacks)
 
 	AuctionFaster:Echo(
 		1,
-		'Posting: ' .. self.lastSoldItem .. ' for:\n'..
-		'per auction: ' ..  StdUi.Util.formatMoney(buy) .. '\n' ..
-		'per item: ' ..  StdUi.Util.formatMoney(buy / stackSize) .. '\n' ..
-		'# stacks: ' .. numStacks .. ' stack size: ' .. stackSize
+		format(
+			L['Posting: %s for:\nper auction: %s\nper item: %s\n# stacks: %d stack size: %d'],
+			self.lastSoldItem,
+			StdUi.Util.formatMoney(buy),
+			StdUi.Util.formatMoney(buy / stackSize),
+			numStacks,
+			stackSize
+		)
 	);
 	return true, isMultisell;
 end

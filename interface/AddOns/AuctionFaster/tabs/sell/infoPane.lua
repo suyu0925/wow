@@ -2,12 +2,15 @@
 local AuctionFaster = unpack(select(2, ...));
 --- @type StdUi
 local StdUi = LibStub('StdUi');
+local L = LibStub('AceLocale-3.0'):GetLocale('AuctionFaster');
 --- @type Auctions
 local Auctions = AuctionFaster:GetModule('Auctions');
 --- @type Sell
 local Sell = AuctionFaster:GetModule('Sell');
 
 local Graph = LibStub('LibGraph-2.0');
+
+local format = string.format;
 
 function Sell:DrawInfoPane()
 	if self.sellTab.infoPane then
@@ -16,7 +19,7 @@ function Sell:DrawInfoPane()
 
 	local sellTab = self.sellTab;
 
-	local infoPane = StdUi:Window(sellTab, '拍卖信息', 200, 100);
+	local infoPane = StdUi:Window(sellTab, L['Auction Info'], 200, 100);
 	sellTab.infoPane = infoPane;
 
 	if AuctionFaster.db.infoPaneOpened then
@@ -28,11 +31,11 @@ function Sell:DrawInfoPane()
 	infoPane:SetScript('OnShow', function() AuctionFaster.db.infoPaneOpened = true; end);
 	infoPane:SetScript('OnHide', function() AuctionFaster.db.infoPaneOpened = false; end);
 
-	local totalLabel = StdUi:Label(infoPane, '总计: ' .. StdUi.Util.formatMoney(0));
-	local deposit = StdUi:Label(infoPane, '押金: ' .. StdUi.Util.formatMoney(0));
-	local auctionNo = StdUi:Label(infoPane, '# Auctions: 0');
-	local duration = StdUi:Label(infoPane, '持续时间: 24h');
-	local historicalBtn = StdUi:Button(infoPane, 180, 20, '历史数据')
+	local totalLabel = StdUi:Label(infoPane, format(L['Total: %s'], StdUi.Util.formatMoney(0)));
+	local deposit = StdUi:Label(infoPane, format(L['Deposit: %s'], StdUi.Util.formatMoney(0)));
+	local auctionNo = StdUi:Label(infoPane, format(L['# Auctions: %d'], 0));
+	local duration = StdUi:Label(infoPane, format(L['Duration: %s'], '24h'));
+	local historicalBtn = StdUi:Button(infoPane, 180, 20, L['Historical Data'])
 
 	StdUi:GlueAfter(infoPane, sellTab, 0, 0, 0, sellTab:GetHeight() - 150);
 	StdUi:GlueTop(totalLabel, infoPane, 5, -40, 'LEFT');
@@ -79,10 +82,10 @@ function Sell:UpdateInfoPaneText()
 		sellSettings
 	);
 
-	infoPane.totalLabel:SetText('通过拍卖 ' .. StdUi.Util.formatMoney(total));
-	infoPane.auctionNo:SetText('# Auctions: ' .. sellSettings.maxStacks);
-	infoPane.deposit:SetText('押金: ' .. StdUi.Util.formatMoney(deposit));
-	infoPane.duration:SetText('持续时间: ' .. AuctionFaster:FormatAuctionDuration(sellSettings.duration));
+	infoPane.totalLabel:SetText(format(L['Per auction: %s'], StdUi.Util.formatMoney(total)));
+	infoPane.auctionNo:SetText(format(L['# Auctions: %d'], sellSettings.maxStacks));
+	infoPane.deposit:SetText(format(L['Deposit: %s'], StdUi.Util.formatMoney(deposit)));
+	infoPane.duration:SetText(format(L['Duration: %s'], AuctionFaster:FormatAuctionDuration(sellSettings.duration)));
 end
 
 function Sell:ToggleInfoPane()
@@ -95,7 +98,7 @@ end
 
 function Sell:PrepareHistoricalData(itemRecord)
 	if #itemRecord.prices < 2 then
-		AuctionFaster:Echo(3, '没有可用的历史数据: ' .. itemRecord.itemName);
+		AuctionFaster:Echo(3, format(L['No historical data available for: %s'], itemRecord.itemName));
 		return false;
 	end
 
@@ -136,13 +139,13 @@ function Sell:PrepareHistoricalData(itemRecord)
 	trendAverage = AuctionFaster:TrendLine(X, YAvg);
 
 	result.data = {
-		{ text = '最低价买入',        color = { 0.0, 1.0, 0.0, 0.8 }, series = lowestBuy },
-		{ text = '倾向最低买入',  color = { 0.0, 1.0, 0.0, 0.5 }, series = trendLowest },
+		{ text = L['Lowest Buy'],        color = { 0.0, 1.0, 0.0, 0.8 }, series = lowestBuy },
+		{ text = L['Trend Lowest Buy'],  color = { 0.0, 1.0, 0.0, 0.5 }, series = trendLowest },
 
-		{ text = '平均价买入',       color = { 1.0, 1.0, 0.0, 0.8 }, series = averageBuy },
-		{ text = '倾向平均价买入', color = { 1.0, 1.0, 0.0, 0.5 }, series = trendAverage },
+		{ text = L['Average Buy'],       color = { 1.0, 1.0, 0.0, 0.8 }, series = averageBuy },
+		{ text = L['Trend Average Buy'], color = { 1.0, 1.0, 0.0, 0.5 }, series = trendAverage },
 
-		{ text = '最高价买入',       color = { 1.0, 0.0, 0.0, 0.8 }, series = highestBuy },
+		{ text = L['Highest Buy'],       color = { 1.0, 0.0, 0.0, 0.8 }, series = highestBuy },
 	}
 
 	return result;
@@ -241,7 +244,7 @@ end
 function Sell:ShowHistoricalWindow(historicalData)
 	local historicalWindow, g;
 	if not self.historicalWindow then
-		historicalWindow = StdUi:Window(UIParent, 'Test Line', 600, 500);
+		historicalWindow = StdUi:Window(UIParent, L['Test Line'], 600, 500);
 		historicalWindow:SetPoint('CENTER');
 		historicalWindow:Show();
 
@@ -289,7 +292,7 @@ function Sell:ShowHistoricalWindow(historicalData)
 	historicalWindow = self.historicalWindow;
 	g = self.historicalWindow.g;
 
-	historicalWindow.titlePanel.label:SetText('历史数据: ' .. historicalData.stats.itemRecord.itemName);
+	historicalWindow.titlePanel.label:SetText(L['Historical Data: '] .. historicalData.stats.itemRecord.itemName);
 
 	g:ResetData();
 

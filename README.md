@@ -72,7 +72,7 @@
   拍卖行助手
 
   - 游戏版本 1.13.2
-  - 插件版本 1.13.2-classic
+  - 插件版本 1.13.4-classic
 
 * [OmniCC](https://www.curseforge.com/wow/addons/omni-cc)
 

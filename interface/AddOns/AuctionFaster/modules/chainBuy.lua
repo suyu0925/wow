@@ -2,10 +2,14 @@
 local AuctionFaster = unpack(select(2, ...));
 --- @type StdUi
 local StdUi = LibStub('StdUi');
+local L = LibStub('AceLocale-3.0'):GetLocale('AuctionFaster');
+
 --- @type Auctions
 local Auctions = AuctionFaster:GetModule('Auctions');
 --- @class ChainBuy
 local ChainBuy = AuctionFaster:NewModule('ChainBuy', 'AceEvent-3.0', 'AceTimer-3.0');
+
+local format = string.format;
 
 ChainBuy.requests = {};
 ChainBuy.currentIndex = 0;
@@ -13,9 +17,9 @@ ChainBuy.currentRequest = nil;
 ChainBuy.isPaused = true;
 ChainBuy.fastMode = false;
 
-local fastModeExplanation = 'Fast Mode - Auction Faster will NOT wait until you actually buy an item.\n\n'..
+local fastModeExplanation = L['Fast Mode - AuctionFaster will NOT wait until you actually buy an item.\n\n'..
 'This may result in inaccurate amount of bought items and some missed auctions.\n' ..
-'|cFFFF0000Use this only if you don\'t care about how much you will buy and want to buy fast.|r';
+'|cFFFF0000Use this only if you don\'t care about how much you will buy and want to buy fast.|r'];
 
 function ChainBuy:Enable()
 	self:RegisterEvent('AUCTION_HOUSE_CLOSED')
@@ -120,7 +124,7 @@ function ChainBuy:ShowWindow()
 		return;
 	end
 
-	local window = StdUi:Window(UIParent, 'Chain Buy', 400, 300);
+	local window = StdUi:Window(UIParent, L['Chain Buy'], 400, 300);
 	if AuctionFaster.db.chainBuy.moved then
 		local settings = AuctionFaster.db.chainBuy;
 		window:SetPoint(settings.point, nil, settings.relativePoint, settings.xOfs, settings.yOfs);
@@ -144,9 +148,9 @@ function ChainBuy:ShowWindow()
 	window.priceTotal = StdUi:Label(window, '', 14);
 	window.boughtSoFar = StdUi:Label(window, '', 20);
 
-	window.buyButton = StdUi:Button(window, 70, 24, 'Buy');
-	window.skipButton = StdUi:Button(window, 70, 24, 'Skip');
-	window.closeButton = StdUi:Button(window, 150, 24, 'Close');
+	window.buyButton = StdUi:Button(window, 70, 24, L['Buy']);
+	window.skipButton = StdUi:Button(window, 70, 24, L['Skip']);
+	window.closeButton = StdUi:Button(window, 150, 24, L['Close']);
 	window.fastMode = StdUi:Checkbox(window, 'Fast Mode', 100, 24);
 
 	window.buyButton:SetScript('OnClick', function()
@@ -218,18 +222,18 @@ function ChainBuy:UpdateWindow()
 
 	window.itemIcon:SetTexture(req.texture);
 	window.itemName:SetText(req.itemLink);
-	window.qty:SetText('Qty: ' .. req.count);
-	window.pricePerItem:SetText('Per Item: ' .. StdUi.Util.formatMoney(req.buy));
-	window.priceTotal:SetText('Total: ' .. StdUi.Util.formatMoney(req.buy * req.count));
-	window.boughtSoFar:SetText('Bought so far: ' .. self.boughtSoFar);
+	window.qty:SetText(format(L['Qty: %d'], req.count));
+	window.pricePerItem:SetText(format(L['Per Item: %s'], StdUi.Util.formatMoney(req.buy)));
+	window.priceTotal:SetText(format(L['Total: %s'], StdUi.Util.formatMoney(req.buy * req.count)));
+	window.boughtSoFar:SetText(format(L['Bought so far: %d'], self.boughtSoFar));
 
 	window.progressBar:SetMinMaxValues(0, #self.requests);
 	window.progressBar:SetValue(self.currentIndex);
 
 	if self.initialQueue then
-		window:SetWindowTitle('连续购买');
+		window:SetWindowTitle(L['Chain Buy']);
 	else
-		window:SetWindowTitle('队列');
+		window:SetWindowTitle(L['Queue']);
 	end
 
 

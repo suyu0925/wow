@@ -1,6 +1,6 @@
 # AuctionFaster
 
-## [v1.13.2-classic](https://github.com/kaminaris/AuctionFaster/tree/v1.13.2-classic) (2019-08-27)
-[Full Changelog](https://github.com/kaminaris/AuctionFaster/compare/v8.1.0...v1.13.2-classic)
+## [v1.13.4](https://github.com/kaminaris/AuctionFaster/tree/v1.13.4) (2019-09-09)
+[Full Changelog](https://github.com/kaminaris/AuctionFaster/compare/v1.13.3...v1.13.4)
 
-- v1.13.2 - Classic version  
+- v1.13.4 - Addon localization, fixes and filters  

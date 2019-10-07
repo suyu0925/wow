@@ -2,6 +2,7 @@
 local AuctionFaster = unpack(select(2, ...));
 --- @var StdUi StdUi
 local StdUi = LibStub('StdUi');
+local L = LibStub('AceLocale-3.0'):GetLocale('AuctionFaster');
 
 --- @type Auctions
 local Auctions = AuctionFaster:GetModule('Auctions');
@@ -13,6 +14,9 @@ local Buy = AuctionFaster:GetModule('Buy');
 local ChainBuy = AuctionFaster:GetModule('ChainBuy');
 --- @type AuctionCache
 local AuctionCache = AuctionFaster:GetModule('AuctionCache');
+
+local format = string.format;
+local TableInsert = tinsert;
 
 function Buy:Enable()
 	self:AddBuyAuctionHouseTab();
@@ -62,7 +66,7 @@ end
 
 function Buy:RefreshSearchAuctions()
 	if not self.currentQuery then
-		AuctionFaster:Echo(3, '以前没有关键字搜索');
+		AuctionFaster:Echo(3, L['No query was searched before']);
 		return;
 	end
 
@@ -99,10 +103,10 @@ end
 
 function Buy:UpdateStateText(inProgress)
 	if inProgress then
-		self.buyTab.stateLabel:SetText('正在搜索...');
+		self.buyTab.stateLabel:SetText(L['Search in progress...']);
 		self.buyTab.stateLabel:Show();
 	elseif #self.buyTab.auctions == 0 then
-		self.buyTab.stateLabel:SetText('按此查询没有找到任何数据.');
+		self.buyTab.stateLabel:SetText(L['Nothing was found for this query.']);
 		self.buyTab.stateLabel:Show();
 	else
 		self.buyTab.stateLabel:Hide();
@@ -117,14 +121,14 @@ function Buy:UpdatePager()
 	local pager = self.buyTab.pager;
 	self.updatingPagerLock = true;
 
-	pager.pageText:SetText('页数: ' .. lp);
+	pager.pageText:SetText(format(L['Pages: %d'], lp));
 
 	pager.leftButton:Enable();
 	pager.rightButton:Enable();
 
 	local opts = {};
 	for i = 0, self.currentQuery.lastPage do
-		tinsert(opts, {text = tostring(i + 1), value = i});
+		TableInsert(opts, {text = tostring(i + 1), value = i});
 	end
 
 	pager.pageJump:SetOptions(opts);
@@ -142,7 +146,7 @@ end
 
 function Buy:UpdateQueue()
 	local buyTab = Buy.buyTab;
-	buyTab.queueLabel:SetText('队列数量: ' .. ChainBuy:CalcRemainingQty());
+	buyTab.queueLabel:SetText(format(L['Queue Qty: %d'], ChainBuy:CalcRemainingQty()));
 
 	buyTab.queueProgress:SetMinMaxValues(0, #ChainBuy.requests);
 	buyTab.queueProgress:SetValue(ChainBuy.currentIndex);
@@ -165,7 +169,7 @@ function Buy:AddToFavorites()
 		end
 	end
 
-	tinsert(favorites, { text = text });
+	TableInsert(favorites, { text = text });
 	self:DrawFavorites();
 end
 
@@ -259,7 +263,7 @@ function Buy:ChainBuyStart(index)
 
 	for i = filteredIndex, #self.buyTab.auctions do
 		local rowIndex = filtered[i];
-		tinsert(queue, self.buyTab.auctions[rowIndex]);
+		TableInsert(queue, self.buyTab.auctions[rowIndex]);
 	end
 
 	ChainBuy:Start(queue, self.UpdateQueue, self.CloseCallback);
@@ -270,7 +274,7 @@ function Buy:AddToQueue(rowData, rowIndex)
 		rowIndex = self.buyTab.searchResults:GetSelection();
 		rowData = self.buyTab.searchResults:GetSelectedItem();
 		if not rowData then
-			AuctionFaster:Echo(3, '请先选择物品');
+			AuctionFaster:Echo(3, L['Please select item first']);
 			return;
 		end
 	end
@@ -287,12 +291,12 @@ function Buy:AddToQueueWithXStacks(amount)
 	for i = 1, #self.buyTab.auctions do
 		local auction = self.buyTab.auctions[i];
 		if auction.count >= amount then
-			tinsert(queue, auction);
+			TableInsert(queue, auction);
 		end
 	end
 
 	if #queue == 0 then
-		AuctionFaster:Echo(3, '没有找到请求队列数量的拍卖: ' .. amount);
+		AuctionFaster:Echo(3, format(L['No auctions found with requested stack count: %d'], amount));
 	end
 
 	ChainBuy:Start(queue, self.UpdateQueue, self.CloseCallback);
@@ -329,7 +333,7 @@ end
 
 function Buy:FindFirstWithXStacks(minStacks, page)
 	if not self.currentQuery or not self.currentQuery.name or not self.currentQuery.lastPage then
-		AuctionFaster:Echo(3, '先输入查询并点击搜索按钮');
+		AuctionFaster:Echo(3, L['Enter query and hit search button first']);
 		return;
 	end
 
@@ -340,7 +344,7 @@ function Buy:FindFirstWithXStacks(minStacks, page)
 	end;
 
 	if page > self.currentQuery.lastPage then
-		AuctionFaster:Echo(3, '未找到最小堆叠的拍卖 ' .. minStacks);
+		AuctionFaster:Echo(3, format(L['No auction found for minimum stacks: %d'], minStacks));
 		return;
 	end
 
@@ -362,25 +366,25 @@ function Buy:GetSearchCategories()
 	end
 
 	local categories = {
-		{value = 0, text = 'All'}
+		{value = 0, text = ALL}
 	};
 
 	local subCategories = {
 		[0] = {
-			{value = 0, text = 'All'}
+			{value = 0, text = ALL}
 		}
 	};
 
 	for i = 1, #AuctionCategories do
 		local children = AuctionCategories[i].subCategories;
 
-		tinsert(categories, { value = i, text = AuctionCategories[i].name});
+		TableInsert(categories, { value = i, text = AuctionCategories[i].name});
 
 		subCategories[i] = {};
 		if children then
-			tinsert(subCategories[i], {value = 0, text = 'All'});
+			TableInsert(subCategories[i], {value = 0, text = 'All'});
 			for x = 1, #children do
-				tinsert(subCategories[i], {value = x, text = children[x].name});
+				TableInsert(subCategories[i], {value = x, text = children[x].name});
 			end
 		end
 	end
@@ -393,6 +397,7 @@ function Buy:ApplyFilters(query)
 	local filters = self.filtersPane;
 
 	query.exact = filters.exactMatch:GetChecked();
+	query.isUsable = filters.usableItems:GetChecked();
 	local minLevel = filters.minLevel:GetValue();
 	local maxLevel = filters.maxLevel:GetValue();
 
@@ -404,6 +409,7 @@ function Buy:ApplyFilters(query)
 		query.maxLevel = maxLevel;
 	end
 
+	query.qualityIndex = filters.rarity:GetValue();
 	local categoryIndex = filters.category:GetValue();
 	local subCategoryIndex = filters.subCategory:GetValue();
 

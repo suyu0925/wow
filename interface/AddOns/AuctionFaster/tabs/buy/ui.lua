@@ -2,15 +2,18 @@
 local AuctionFaster = unpack(select(2, ...));
 --- @type StdUi
 local StdUi = LibStub('StdUi');
+local L = LibStub('AceLocale-3.0'):GetLocale('AuctionFaster');
 --- @class Buy
 local Buy = AuctionFaster:NewModule('Buy', 'AceHook-3.0', 'AceEvent-3.0', 'AceTimer-3.0');
+
+local format = string.format;
 
 function Buy:AddBuyAuctionHouseTab()
 	if self.buyTabAdded then
 		return ;
 	end
 
-	self.buyTab = AuctionFaster:AddAuctionHouseTab('买入物品', 'AuctionFaster-匕首岭-叫叔汉化', self);
+	self.buyTab = AuctionFaster:AddAuctionHouseTab(L['Buy Items'], L['AuctionFaster - Buy'], self);
 
 	self.buyTab:SetScript('OnShow', function()
 		Buy:OnShow();
@@ -38,18 +41,18 @@ end
 function Buy:DrawSearchPane()
 	local buyTab = self.buyTab;
 
-	local searchBox = StdUi:SearchEditBox(buyTab, 400, 30, '搜索');
+	local searchBox = StdUi:SearchEditBox(buyTab, 400, 30, L['Search']);
 	searchBox:SetFontSize(16);
 
-	local searchButton = StdUi:Button(buyTab, 80, 30, '搜索');
+	local searchButton = StdUi:Button(buyTab, 80, 30, L['Search']);
 
 	local addFavoritesButton = StdUi:SquareButton(buyTab, 30, 30);
 	addFavoritesButton:SetIcon([[Interface\Common\ReputationStar]], 16, 16, true);
 	addFavoritesButton.icon:SetTexCoord(0, 0.5, 0, 0.5);
 	addFavoritesButton.iconDisabled:SetTexCoord(0, 0.5, 0, 0.5);
 
-	local filtersButton = StdUi:Button(buyTab, 80, 30, '过滤器');
-	local sniperButton = StdUi:Button(buyTab, 80, 30, '狙击手');
+	local filtersButton = StdUi:Button(buyTab, 80, 30, L['Filters']);
+	local sniperButton = StdUi:Button(buyTab, 80, 30, L['Sniper']);
 
 	StdUi:GlueTop(searchBox, buyTab, 10, -30, 'LEFT');
 	StdUi:GlueRight(searchButton, searchBox, 5, 0);
@@ -71,12 +74,12 @@ end
 function Buy:DrawSearchButtons()
 	local buyTab = self.buyTab;
 
-	local chainBuyButton = StdUi:Button(buyTab, 120, 20, '连续购买');
-	local addToQueueButton = StdUi:Button(buyTab, 120, 20, '添加队列');
-	local addWithXButton = StdUi:Button(buyTab, 120, 20, '添加最少数量');
-	local findXButton = StdUi:Button(buyTab, 120, 20, '查找数量');
+	local chainBuyButton = StdUi:Button(buyTab, 120, 20, L['Chain Buy']);
+	local addToQueueButton = StdUi:Button(buyTab, 120, 20, L['Add to Queue']);
+	local addWithXButton = StdUi:Button(buyTab, 120, 20, L['Add With Min Stacks']);
+	local findXButton = StdUi:Button(buyTab, 120, 20, L['Find X Stacks']);
 
-	local minStacksLabel = StdUi:Label(buyTab, '最小数量: ', nil, nil, 100);
+	local minStacksLabel = StdUi:Label(buyTab, L['Min Stacks'], nil, nil, 100);
 	local minStacks = StdUi:NumericBox(buyTab, 100, 20, 1);
 	minStacks:SetMinMaxValue(1, 200);
 
@@ -91,7 +94,7 @@ function Buy:DrawSearchButtons()
 	chainBuyButton:SetScript('OnClick', function()
 		local index = self.buyTab.searchResults:GetSelection();
 		if not index then
-			AuctionFaster:Echo(3, '请先选择拍卖');
+			AuctionFaster:Echo(3, L['Please select auction first']);
 		end
 		Buy:ChainBuyStart(index);
 	end);
@@ -102,7 +105,7 @@ function Buy:DrawSearchButtons()
 
 	findXButton:SetScript('OnClick', function()
 		if not minStacks.isValid then
-			AuctionFaster:Echo(3, '输入正确的叠加量1-200');
+			AuctionFaster:Echo(3, L['Enter a correct stack amount 1-200']);
 			return;
 		end
 
@@ -111,7 +114,7 @@ function Buy:DrawSearchButtons()
 
 	addWithXButton:SetScript('OnClick', function()
 		if not minStacks.isValid then
-			AuctionFaster:Echo(3, '输入正确的叠加量1-200');
+			AuctionFaster:Echo(3, L['Enter a correct stack amount 1-200']);
 			return;
 		end
 
@@ -128,12 +131,12 @@ end
 function Buy:DrawQueue()
 	local buyTab = self.buyTab;
 
-	local queueLabel = StdUi:Label(buyTab, '队列数量: 0', nil, nil, 100);
+	local queueLabel = StdUi:Label(buyTab, format(L['Queue Qty: %d'], 0), nil, nil, 100);
 	StdUi:GlueRight(queueLabel, buyTab.addToQueueButton, 10, 0);
 
 	local queueProgress = StdUi:ProgressBar(buyTab, 100, 20);
 	queueProgress.TextUpdate = function(self, min, max, value)
-		return '拍卖: ' .. value .. ' / ' .. max;
+		return format(L['Auctions: %d / %d'], value, max);
 	end;
 	queueProgress:SetMinMaxValues(0, 0);
 	queueProgress:SetValue(0);
@@ -147,10 +150,10 @@ end
 function Buy:DrawPager()
 	local buyTab = self.buyTab;
 
-	local leftButton = StdUi:SquareButton(buyTab, 20, 20, '左');
-	local rightButton = StdUi:SquareButton(buyTab, 20, 20, '右');
+	local leftButton = StdUi:SquareButton(buyTab, 20, 20, 'LEFT');
+	local rightButton = StdUi:SquareButton(buyTab, 20, 20, 'RIGHT');
 	local pageJump = StdUi:Dropdown(buyTab, 80, 20, {});
-	local pageText = StdUi:Label(buyTab, '页 1 到 0');
+	local pageText = StdUi:Label(buyTab, format(L['Pages: %d'], 0));
 
 	StdUi:GlueBottom(leftButton, buyTab, 10, 50, 'LEFT');
 	StdUi:GlueRight(pageJump, leftButton, 10, 0);
@@ -185,7 +188,7 @@ function Buy:DrawFavoritesPane()
 
 	local favorites = StdUi:FauxScrollFrame(buyTab, 200, 270, 13, lineHeight);
 	StdUi:GlueTop(favorites, buyTab, -10, -100, 'RIGHT');
-	StdUi:AddLabel(buyTab, favorites, '快捷搜索', 'TOP');
+	StdUi:AddLabel(buyTab, favorites, L['Favorite Searches'], 'TOP');
 
 	buyTab.favorites = favorites;
 
@@ -281,35 +284,35 @@ function Buy:DrawSearchResultsTable()
 			},
 		},
 		{
-			name         = '物品名称',
+			name         = L['Name'],
 			width        = 150,
 			align        = 'LEFT',
 			index        = 'itemLink',
 			format       = 'string',
 		},
 		{
-			name         = '卖家',
+			name         = L['Seller'],
 			width        = 100,
 			align        = 'LEFT',
 			index        = 'owner',
 			format       = 'string',
 		},
 		{
-			name         = '数量',
+			name         = L['Qty'],
 			width        = 40,
 			align        = 'LEFT',
 			index        = 'count',
 			format       = 'number',
 		},
 		{
-			name         = '竞标/单价',
+			name         = L['Bid / Item'],
 			width        = 120,
 			align        = 'RIGHT',
 			index        = 'bid',
 			format       = 'money',
 		},
 		{
-			name         = '一口价 /单价',
+			name         = L['Buy / Item'],
 			width        = 120,
 			align        = 'RIGHT',
 			index        = 'buy',
@@ -341,6 +344,6 @@ function Buy:DrawSearchResultsTable()
 	});
 	StdUi:GlueAcross(buyTab.searchResults, buyTab, 10, -100, -220, 80);
 
-	buyTab.stateLabel = StdUi:Label(buyTab.searchResults, '选择搜索条件并按“搜索”');
+	buyTab.stateLabel = StdUi:Label(buyTab.searchResults, L['Chose your search criteria nad press "Search"']);
 	StdUi:GlueTop(buyTab.stateLabel, buyTab.searchResults, 0, -40, 'CENTER');
 end

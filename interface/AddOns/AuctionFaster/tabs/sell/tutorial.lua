@@ -2,12 +2,14 @@
 local AuctionFaster = unpack(select(2, ...));
 --- @type StdUi
 local StdUi = LibStub('StdUi');
+local L = LibStub('AceLocale-3.0'):GetLocale('AuctionFaster');
 --- @type Tutorial
 local Tutorial = AuctionFaster:GetModule('Tutorial');
 --- @type Sell
 local Sell = AuctionFaster:GetModule('Sell');
 
 local C = WrapTextInColorCode;
+local format = string.format;
 local red = 'FFFF0000';
 local green = 'FF00FF00';
 local orange = 'FFFFFF00';
@@ -31,8 +33,8 @@ function Sell:DrawHelpButton()
 		AuctionFaster:OpenSettingsWindow();
 	end);
 
-	StdUi:FrameTooltip(helpBtn, 'Addon Tutorial', 'afAddonTutorialOne', 'TOPLEFT', true);
-	StdUi:FrameTooltip(settingsBtn, 'Addon settings', 'afAddonSettingsOne', 'TOPLEFT', true);
+	StdUi:FrameTooltip(helpBtn, L['Addon Tutorial'], 'afAddonTutorialOne', 'TOPLEFT', true);
+	StdUi:FrameTooltip(settingsBtn, L['Addon settings'], 'afAddonSettingsOne', 'TOPLEFT', true);
 
 	self.helpBtn = helpBtn;
 end
@@ -46,54 +48,52 @@ function Sell:InitTutorial(force)
 		local sellTab = self.sellTab;
 		self.tutorials = {
 			{
-				text   =  '欢迎更快地进行拍卖。\n\n我建议您至少在“”之前查看一次“卖出”教程。' ..
-					' 防止你不小心把贵重物品卖了.\n\n:)',
+				text   = L['Welcome to AuctionFaster.\n\nI recommend checking out sell tutorial at least once before you accidentally sell your precious goods.\n\n:)'],
 				anchor = 'CENTER',
 				parent = sellTab,
 				noglow = true
 			},
 			{
-				text   = '这是可以出售的所有库存项目的列表，无需移动任何内容。\n\n' ..
-					C('选择项目后，AuctionFaster将自动扫描第一页和竞价'..
-					' 根据选择的价格模型设置出价/购买。', red),
+				text   = L['Here is the list of all inventory items you can sell, no need to drag anything.\n\n'] ..
+					C(L['After you select item, AuctionFaster will automatically make a scan of first page and undercut set bid/buy according to price model selected.'], red),
 				anchor = 'LEFT',
 				parent = sellTab.itemsList,
 			},
 			{
-				text   = '在这里您将看到所选项目。最大堆叠是指你能卖出多少栈'
-					.. ' 剩余将仍然留在袋子后。',
+				text   = L['Here you will see selected item. Max stacks means how much of stacks can you sell according to your setting. Remaining means how much quantity will still stay in bag after selling item.'],
 				anchor = 'RIGHT',
 				parent = sellTab.iconBackdrop,
 			},
 			{
-				text   = '将拍卖缓存保留大约10分钟，您可以看到上一次真正扫描的时间' ..
-					' 已执行.\n\n' .. C('您可以单击刷新拍卖再次扫描', green),
+				text   = L['AuctionFaster keeps auctions cache for about 10 minutes, you can see when last real scan was performed.\n\n'] ..
+					C(L['You can click Refresh Auctions to scan again'], green),
 				anchor = 'RIGHT',
 				parent = sellTab,
 				customAnchor = sellTab.lastScan,
 			},
 			{
-				text   = '您的竞价 ' .. C('每项.', red) .. '\n\n' ..
-					C('明白多种货币形式', green) ..
-					', 举例:\n\n' .. '5金 6银 19铜\n999银 50铜\n3000银\n9000000铜',
+				text   = L['Your bid price '] .. C(L['per one item.'], red) .. '\n\n' ..
+					C(L['AuctionFaster understands a lot of money formats'], green) ..
+					L[', for example:\n\n' .. '5g 6s 19c\n5g6s86c\n999s 50c\n3000s\n9000000c'],
 				anchor = 'LEFT',
 				parent = sellTab.bidPerItem,
 			},
 			{
-				text   = '你的买价 ' .. C('每项.', red) .. ' 按物品拍卖的货币格式.',
+				text   = L['Your buyout price '] .. C(L['per one item.'], red) ..
+					L[' Same money formats as bid per item.'],
 				anchor = 'LEFT',
 				parent = sellTab.buyPerItem,
 			},
 			{
-				text   = '要出售的最大堆叠数\n\n' ..
-					C('将此值设置为0则出售所有内容', orange),
+				text   = L['Maximum number of stacks you wish to sell.\n\n'] ..
+					C(L['Set this to 0 to sell everything'], orange),
 				anchor = 'LEFT',
 				parent = sellTab.maxStacks,
 			},
 			{
-				text   = '这将打开项目设置。\n再次单击可关闭。\n\n' ..
-					C('将鼠标悬停在复选框上以查看选项是什么。\n\n', green) ..
-					C('这些设置是针对特定项目的', orange),
+				text   = L['This opens up item settings.\nClick again to close.\n\n'] ..
+					C(L['Hover over checkboxes to see what the options are.\n\n'], green) ..
+					C(L['Those settings are per specific item'], orange),
 				anchor = 'RIGHT',
 				action = function()
 					sellTab.itemSettingsPane:Show();
@@ -101,12 +101,12 @@ function Sell:InitTutorial(force)
 				parent = sellTab.buttons.itemSettings,
 			},
 			{
-				text   = '这将打开拍卖信息：\n\n' ..
-					'- 总拍卖买入价。\n' ..
-					'- 押金成本。\n'..
-					'- 拍卖数量\n' ..
-					'- 拍卖持续时间\n\n' ..
-					C('这将在更改堆叠大小或最大堆叠时动态更改.', green),
+				text   = L['This opens auction informations:\n\n' ..
+					'- Total auction buy price.\n' ..
+					'- Deposit cost.\n' ..
+					'- Number of auctions\n' ..
+					'- Auction duration\n\n'] ..
+					C(L['This will change dynamically when you change stack size or max stacks.'], green),
 				anchor = 'RIGHT',
 				action = function()
 					sellTab.infoPane:Show();
@@ -114,30 +114,36 @@ function Sell:InitTutorial(force)
 				parent = sellTab.buttons.infoPane,
 			},
 			{
-				text   = '这是当前所选项目的拍卖列表.\n'..
-					'你可以肯定你的商品是最便宜的.\n' ..
-					C('这些总是按每件商品的最低价格分类。.', red),
+				text   = L['Here is a list of auctions of currently selected item.\n'] ..
+					L['You can be sure your item will be cheapest.\n'] ..
+					C(L['These are always sorted by lowest price per item.'], red),
 				anchor = 'LEFT',
 				parent = sellTab.currentAuctions,
 			},
 			{
-				text   = '此按钮允许您购买所选商品。用于重新进货.',
+				text   = L['This button allows you to buy selected item. Useful for restocking.'],
 				anchor = 'LEFT',
 				parent = sellTab.buttons.buyItemButton,
 			},
 			{
-				text   = '卖出 ' .. C('one auction', red) .. ' 不考虑您的\n“堆叠”设置的选定项的值，',
+				text   = format(
+					L['Posts %s of selected item regardless of your\n"# Stacks" settings'],
+					C(L['one auction'], red)
+				),
 				anchor = 'RIGHT',
 				parent = sellTab.buttons.postOneButton,
 			},
 			{
-				text   = '卖出' .. C('all auctions', red) .. ' 根据您的\n“堆叠”设置选择的项目',
+				text   = format(
+					L['Posts %s of selected item according to your\n"# Stacks" settings'],
+					C(L['all auctions'], red)
+				),
 				anchor = 'RIGHT',
 				parent = sellTab.buttons.postButton,
 			},
 			{
-				text   = '再次打开此教程。\n希望您喜欢它\n \n:）\n \n' ..
-					C('一旦关闭此教程，除非单击它，否则它将不再显示。', orange),
+				text   = L['Opens this tutorial again.\nHope you liked it\n\n:)\n\n'] ..
+					C(L['Once you close this tutorial it won\'t show again unless you click it'], orange),
 				anchor = 'LEFT',
 				parent = self.helpBtn,
 			}

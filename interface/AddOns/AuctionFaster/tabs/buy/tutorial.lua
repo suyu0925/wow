@@ -2,6 +2,7 @@
 local AuctionFaster = unpack(select(2, ...));
 --- @type StdUi
 local StdUi = LibStub('StdUi');
+local L = LibStub('AceLocale-3.0'):GetLocale('AuctionFaster');
 --- @type Tutorial
 local Tutorial = AuctionFaster:GetModule('Tutorial');
 --- @type Buy
@@ -31,8 +32,8 @@ function Buy:DrawHelpButton()
 		AuctionFaster:OpenSettingsWindow();
 	end);
 
-	StdUi:FrameTooltip(helpBtn, 'Addon Tutorial', 'afAddonTutorialTwo', 'TOPLEFT', true);
-	StdUi:FrameTooltip(settingsBtn, 'Addon settings', 'afAddonSettingsTwo', 'TOPLEFT', true);
+	StdUi:FrameTooltip(helpBtn, L['Addon Tutorial'], 'afAddonTutorialTwo', 'TOPLEFT', true);
+	StdUi:FrameTooltip(settingsBtn, L['Addon settings'], 'afAddonSettingsTwo', 'TOPLEFT', true);
 
 	self.helpBtn = helpBtn;
 end
@@ -46,18 +47,19 @@ function Buy:InitTutorial(force)
 		local buyTab = self.buyTab;
 		self.tutorials = {
 			{
-				text   = '欢迎使用快速拍卖！)',
+				text   = L['Welcome to AuctionFaster.\n\nI recommend checking out\ntutorial at least once\nbefore you ' ..
+					'accidentially\nbuy half of the auction house.\n\n:)'],
 				anchor = 'CENTER',
 				parent = buyTab,
 				noglow = true
 			},
 			{
-				text   = '输入搜索查询后，此按钮会将其添加到\n收藏夹中。',
+				text   = L['Once you enter search query\nthis button will add it to\nthe favorites.'],
 				anchor = 'LEFT',
 				parent = buyTab.addFavoritesButton,
 			},
 			{
-				text   = '此按钮打开筛选器。\n再次单击可关闭.',
+				text   = L['This button opens up filters.\nClick again to close.'],
 				anchor = 'LEFT',
 				action = function()
 					self.filtersPane:Show();
@@ -65,52 +67,53 @@ function Buy:InitTutorial(force)
 				parent = buyTab.filtersButton,
 			},
 			{
-				text   = '搜索结果。\n\n有三种快捷方式：\n\n' ..
-					C('Shift + 左键 - 立即购买\n', red) ..
-					C('Alt + 左键 - 添加到队列\n', green) ..
-					C('Ctrl + 左键 - 连续购买\n', orange),
+				text   = L['Search results.\n\nThere are 3 major shortcuts:\n\n'] ..
+					C(L['Shift + Click - Instant buy\n'], red) ..
+					C(L['Alt + Click - Add to queue\n'], green) ..
+					C(L['Ctrl + Click - Chain buy\n'], orange),
 				anchor = 'LEFT',
 				parent = buyTab.searchResults,
 			},
 			{
-				text   = '您的收藏夹\n单击该名称将\n持续搜索此查询.\n\n' ..
-					C('点击删除按钮删除该名称.', green),
+				text   = L['Your favorites\nClicking on the name will\ninstanty search for this query.\n\n'] ..
+					C(L['Click delete button to remove.'], green),
 				anchor = 'LEFT',
 				parent = buyTab.favorites,
 			},
 			{
-				text   = '连续购买将从您选择的第一个开始\n将所有拍卖添加到底部 '..
-					'购买队表.\n\n' .. C('你需要确认一下.', red),
+				text   = L['Chain buy will add all auctions\nfrom the first one you select\nto the bottom '] ..
+					L['of the list\nto the Buy Queue.\n\n'] .. C(L['You will still need to confirm them.'], red),
 				anchor = 'LEFT',
 				parent = buyTab.chainBuyButton,
 			},
 			{
-				text   = '当前购买队列\n\n显示实际数量\n'..
-					'进度条将显示\n拍卖数量.',
+				text   = L['Status of the current buy queue\n\nQty will show you actual quantity\n'] ..
+					L['and progress bar will show\nthe amount of auctions.'],
 				anchor = 'LEFT',
 				parent = buyTab.queueProgress,
 			},
 			{
-				text   = '最小数量\n是你选择的.\n\n' ..
-					C('选择左边2个按钮.', orange),
+				text   = L['Minimal amount of quantity\nyou are interested in.\n\n'] ..
+					C(L['This is used by two buttons on the left.'], orange),
 				anchor = 'LEFT',
 				parent = buyTab.minStacks,
 			},
 			{
-				text   = '将所有拍卖添加到输入数量的队列中'..
-					' 在右边的输入框中',
+				text   = L['Adds all auctions to the queue that has at least the amount of quantity entered']..
+					L[' in the box on the right'],
 				anchor = 'LEFT',
 				parent = buyTab.addWithXButton,
 			},
 			{
-				text   = '找到首次拍卖 ' .. C('在所有页面上', red) .. ' 最小'..
-					' 数量\n\n' .. C('您需要先输入搜索查询', orange),
+				text   = L['Finds the first auction '] .. C(L['across all the pages'], red) ..
+					L[' that meets the minimum quantity\n\n'] ..
+					C(L['You need to enter a search query first'], orange),
 				anchor = 'LEFT',
 				parent = buyTab.findXButton,
 			},
 			{
-				text   = '再次打开此教程.\n希望你喜欢\n\n:)\n\n' ..
-					C('一旦关闭本教程 如果你不点击它，它就不会再出现了', orange),
+				text   = L['Opens this tutorial again.\nHope you liked it\n\n:)\n\n'] ..
+					C(L['Once you close this tutorial it won\'t show again unless you click it'], orange),
 				anchor = 'LEFT',
 				parent = self.helpBtn,
 			}

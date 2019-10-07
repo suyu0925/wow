@@ -2,6 +2,7 @@
 local AuctionFaster = unpack(select(2, ...));
 --- @type ItemCache
 local StdUi = LibStub('StdUi');
+local L = LibStub('AceLocale-3.0'):GetLocale('AuctionFaster');
 --- @type ItemCache
 local ItemCache = AuctionFaster:GetModule('ItemCache');
 --- @type AuctionCache
@@ -18,6 +19,7 @@ local Pricing = AuctionFaster:GetModule('Pricing');
 --- @type Sell
 local Sell = AuctionFaster:GetModule('Sell');
 
+local format = string.format;
 
 function Sell:Enable()
 	self:AddSellAuctionHouseTab();
@@ -49,6 +51,11 @@ function Sell:AFTER_INVENTORY_SCAN()
 
 	-- if it was in the selling process check if everything has been sold
 	if not self:CheckIfSelectedItemExists() or not Auctions.lastSoldItem then
+		return;
+	end
+
+	-- ignore if last sold item was over 2 seconds ago, prevents from opening when closing and opening AH again
+	if GetTime() - Auctions.lastSoldTimestamp > 2 or not Auctions.soldFlag then
 		return;
 	end
 
@@ -214,7 +221,7 @@ function Sell:SelectItem(index)
 	sellTab.itemIcon:SetTexture(self.selectedItem.icon);
 	sellTab.itemName:SetText(self.selectedItem.link);
 
-	sellTab.stackSize.label:SetText('数量 (最大: ' .. self.selectedItem.maxStackSize .. ')');
+	sellTab.stackSize.label:SetText(format(L['Stack Size (Max: %d)'], self.selectedItem.maxStackSize));
 
 	local cacheItem = ItemCache:FindOrCreateCacheItem(self.selectedItem.itemId, self.selectedItem.itemName);
 
@@ -270,9 +277,12 @@ function Sell:UpdateItemQtyText()
 	local sellTab = self.sellTab;
 	local maxStacks, remainingQty = self:CalcMaxStacks();
 	sellTab.itemQty:SetText(
-		'数量: ' .. self.selectedItem.count ..
-		', 最大堆叠: ' .. maxStacks ..
-		', 还需处理: ' .. remainingQty
+		format(
+			L['Qty: %d, Max Stacks: %d, Remaining: %d'],
+			self.selectedItem.count,
+			maxStacks,
+			remainingQty
+		)
 	);
 end
 
@@ -373,7 +383,7 @@ function Sell:UpdateSellTabAuctions(itemRecord, auctionRecord)
 	self.sellTab.currentAuctions:SetData(auctionRecord.auctions, true);
 	if auctionRecord.lastScanTime then
 		self.sellTab.lastScan:SetText(
-			'最后搜索: ' .. AuctionFaster:FormatDuration(GetServerTime() - auctionRecord.lastScanTime)
+			format(L['Last scan: %s'], AuctionFaster:FormatDuration(GetServerTime() - auctionRecord.lastScanTime))
 		);
 	end
 
@@ -397,7 +407,7 @@ end
 
 function Sell:InstantBuy(rowData, rowIndex)
 	if not Auctions:HasAuctionsList() then
-		AuctionFaster:Echo(3, '请先刷新拍卖');
+		AuctionFaster:Echo(3, L['Please refresh auctions first']);
 		return;
 	end
 
@@ -413,7 +423,7 @@ end
 
 function Sell:ChainBuyStart(index)
 	if not Auctions:HasAuctionsList() then
-		AuctionFaster:Echo(3, '请先刷新拍卖');
+		AuctionFaster:Echo(3, L['Please refresh auctions first']);
 		return;
 	end
 
@@ -440,7 +450,7 @@ end
 
 function Sell:AddToQueue(rowData, rowIndex)
 	if not Auctions:HasAuctionsList() then
-		AuctionFaster:Echo(3, '请先刷新拍卖');
+		AuctionFaster:Echo(3, L['Please refresh auctions first']);
 		return;
 	end
 
@@ -465,7 +475,7 @@ end
 --	end
 --
 --	if #queue == 0 then
---		AuctionFaster:Echo(3, 'No auctions found with requested stack count: ' .. amount);
+--		AuctionFaster:Echo(3, format(L['No auctions found with requested stack count: %d'], amount));
 --	end
 --
 --	ChainBuy:Start(queue);
@@ -539,7 +549,7 @@ function Sell:CheckEverythingSold()
 
 	local buttons = {
 		yes = {
-			text    = '是',
+			text    = L['Yes'],
 			onClick = function(self)
 				self:GetParent():Hide();
 
@@ -553,13 +563,19 @@ function Sell:CheckEverythingSold()
 			end,
 		},
 		no  = {
-			text    = '否',
+			text    = L['No'],
 			onClick = function(self)
 				self:GetParent():Hide();
 			end,
 		}
 	}
 
-	StdUi:Confirm('不够一组了', '你还有 ' .. qtyLeft .. ' of ' .. itemLink ..
-		' 你想卖剩下的吗?', buttons, '剩余售出');
+	StdUi:Confirm(
+		L['Incomplete sell'],
+		format(L['You still have %d of %s Do you wish to sell rest?'], qtyLeft, itemLink),
+		buttons,
+		'incomplete_sell'
+	);
+
+	Auctions.soldFlag = false;
 end
