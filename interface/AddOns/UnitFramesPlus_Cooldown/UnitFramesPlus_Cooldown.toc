@@ -1,0 +1,16 @@
+## Interface: 11302
+## Title: UnitFramesPlus Cooldown
+## Title-zhCN: 系统头像增强 冷却计时
+## Title-zhTW: 系統頭像增強 冷卻計時
+## X-Repple: 界面
+## Version: 1.30
+## Author: Isler
+## Author-LibClassicDurations: d87
+## OptionalDeps: UnitFramesPlus
+
+#Library
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+Libs\LibClassicDurations\LibClassicDurations.xml
+
+UnitFramesPlus_Cooldown.lua

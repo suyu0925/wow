@@ -365,6 +365,7 @@ for id = 1, 4, 1 do
         RegisterUnitWatch(debuff);
 
         debuff.Icon = debuff:CreateTexture("UFP_PartyTarget"..id.."Debuff"..j.."Icon", "ARTWORK");
+        debuff.Icon:ClearAllPoints();
         debuff.Icon:SetAllPoints(debuff);
 
         debuff.Cooldown = CreateFrame("Cooldown", "UFP_PartyTarget"..id.."Debuff"..j.."Cooldown", debuff, "CooldownFrameTemplate");
@@ -451,7 +452,7 @@ function UnitFramesPlus_OptionsFrame_PartyTargetDebuffDisplayUpdate()
                     end
                     if UnitFramesPlusDB["partytarget"]["cooldown"] == 1 then
                         cdalpha = 1;
-                        if UnitFramesPlusDB["global"]["builtincd"] == 1 then
+                        if UnitFramesPlusDB["global"]["builtincd"] == 1 and UFPClassicDurations then
                             local durationNew, expirationTimeNew = UFPClassicDurations:GetAuraDurationByUnit("party"..id.."target", spellId, caster)
                             if duration == 0 and durationNew then
                                 duration = durationNew

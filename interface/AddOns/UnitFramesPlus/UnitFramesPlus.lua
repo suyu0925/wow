@@ -43,6 +43,8 @@ UnitFramesPlusDefaultDB = {
         movable = 0,    --Shift拖动头像
         indicator = 1,    --头像内战斗信息
         target = 0,        --宠物目标
+        targettmp = 0,        --宠物目标临时显示
+        targetmovable = 0,    --Shift拖动宠物目标头像
         scale = 0.8,    --宠物目标缩放比例
         hppct = 1,        --宠物目标生命值百分比
         mouseshow = 0,    --鼠标滑过时才显示数值
@@ -118,6 +120,7 @@ UnitFramesPlusDefaultDB = {
         mouseshow = 0,    --鼠标滑过时才显示数值
         hpmpunit = 1,        --生命值和法力值进位
         unittype = 2,    --1为千进制(k/m)，2为万进位(万/亿)
+        hidetools = 1,      --隐藏团队工具
     },
 
     partytarget = {
@@ -161,11 +164,17 @@ UnitFramesPlusDefaultVar = {
         moved = 0,        --玩家宠物已被拖动
         x = 0,        --玩家宠物位置
         y = 0,        --玩家宠物位置
+        targetmoving = 0,        --玩家宠物目标拖动状态
+        targetmoved = 0,        --玩家宠物目标已被拖动
+        targetx = 0,        --玩家宠物目标位置
+        targety = 0,        --玩家宠物目标位置
     },
 
     target = {
         moving = 0,        --目标拖动状态
         moved = 0,        --目标已被拖动
+        x = 0,        --目标位置
+        y = 0,        --目标位置
     },
 
     targettarget = {
@@ -202,7 +211,7 @@ local function UnitFramesPlus_Options_Init()
         UnitFramesPlusVar = UnitFramesPlusDefaultVar;
         UnitFramesPlusVar["reset"] = 0;
     end
-    
+
     local Version = tonumber(GetAddOnMetadata("UnitFramesPlus", "Version"));
     if (not UnitFramesPlusVar["version"]) or (UnitFramesPlusVar["version"] ~= Version) then
         local k, v, x, y;
@@ -277,6 +286,9 @@ local function UnitFramesPlus_Layout()
     if UnitFramesPlus_PlayerLayout then
         UnitFramesPlus_PlayerLayout();
     end
+    if UnitFramesPlus_PetLayout then
+        UnitFramesPlus_PetLayout();
+    end
     if UnitFramesPlus_PetTargetLayout then
         UnitFramesPlus_PetTargetLayout();
     end
@@ -336,7 +348,7 @@ ufpcb:SetScript("OnEvent", function(self, event)
 end)
 
 --系统面板修复
-local function UnitFramesPlus_OpenInterfacePanel(panel)
+function UnitFramesPlus_OpenInterfacePanel(panel)
         local panelName = panel.name;
         if not panelName then return end
         local t = {};
@@ -480,9 +492,6 @@ function UnitFramesPlus_GetValueFix(valueCurr, valueMax, valueunit, unittype)
     end
     return valueCurrfix, valueMaxfix, valueLossfix;
 end
-
-UFPClassicDurations = LibStub("LibClassicDurations")
-UFPClassicDurations:Register("UnitFramesPlus")
 
 --插件初始化
 local ufp = CreateFrame("Frame");

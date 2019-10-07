@@ -17,6 +17,7 @@ local function UnitFramesPlus_PlayerShiftDrag()
         end
     end)
 
+    PlayerFrame:SetMovable(1);
     PlayerFrame:SetClampedToScreen(1);
 
     hooksecurefunc("PlayerFrame_ResetUserPlacedPosition", function()
@@ -78,7 +79,7 @@ function UnitFramesPlus_PlayerDragon()
     end
 end
 
-local fixforvehicle = CreateFrame("Frame");
+-- local fixforvehicle = CreateFrame("Frame");
 function UnitFramesPlus_PlayerExtrabar()
     PlayerExtraBar:SetTexture(UFP_PlayerTexture);
     PlayerExtraBar:SetWidth(138);
@@ -108,6 +109,8 @@ function UnitFramesPlus_PlayerExtrabar()
         PlayerHPMPPct.Pct:SetPoint("CENTER", PlayerFrameHealthBar, "RIGHT", 55, 14);
         PlayerHPMPPct.Pct:SetJustifyH("CENTER");
         PlayerHPMPPct.Pct:Show();
+
+        PetFrame:SetFrameLevel(5);
 
         -- --上载具后隐藏扩展框及扩展信息
         -- fixforvehicle:RegisterUnitEvent("UNIT_ENTERED_VEHICLE", "player");
@@ -363,42 +366,45 @@ function UnitFramesPlus_PlayerMPValueDisplayUpdate()
     end
 end
 
---玩家生命条染色
-local chb = CreateFrame("Frame");
-function UnitFramesPlus_PlayerColorHPBar()
-    if UnitFramesPlusDB["player"]["colorhp"] == 1 then
-        if UnitFramesPlusDB["player"]["colortype"] == 1 then
-            PlayerFrameHealthBar:SetScript("OnValueChanged", nil);
-            chb:RegisterEvent("PLAYER_ENTERING_WORLD");
-            -- chb:RegisterUnitEvent("UNIT_ENTERED_VEHICLE", "player");
-            -- chb:RegisterUnitEvent("UNIT_EXITED_VEHICLE", "player");
-            chb:SetScript("OnEvent", function(self, event, ...)
-                UnitFramesPlus_PlayerColorHPBarDisplayUpdate();
-            end)
-        elseif UnitFramesPlusDB["player"]["colortype"] == 2 then
-            if chb:IsEventRegistered("PLAYER_ENTERING_WORLD") then
-                chb:UnregisterEvent("PLAYER_ENTERING_WORLD");
-                -- chb:UnregisterEvent("UNIT_ENTERED_VEHICLE");
-                -- chb:UnregisterEvent("UNIT_EXITED_VEHICLE");
-                chb:SetScript("OnEvent", nil);
-            end
-            PlayerFrameHealthBar:SetScript("OnValueChanged", function(self, value)
-                UnitFramesPlus_PlayerColorHPBarDisplayUpdate();
-            end)
-        end
-        --PlayerFrameHealthBar.lockColor = true;
-    else
-        PlayerFrameHealthBar:SetScript("OnValueChanged", nil);
-        if chb:IsEventRegistered("PLAYER_ENTERING_WORLD") then
-            chb:UnregisterEvent("PLAYER_ENTERING_WORLD");
-            -- chb:UnregisterEvent("UNIT_ENTERED_VEHICLE");
-            -- chb:UnregisterEvent("UNIT_EXITED_VEHICLE");
-            chb:SetScript("OnEvent", nil);
-        end
-        PlayerFrameHealthBar:SetStatusBarColor(0, 1, 0);
-        --PlayerFrameHealthBar.lockColor = nil;
-    end
-end
+-- --玩家生命条染色
+-- local chb = CreateFrame("Frame");
+-- function UnitFramesPlus_PlayerColorHPBar()
+--     if UnitFramesPlusDB["player"]["colorhp"] == 1 then
+--         if UnitFramesPlusDB["player"]["colortype"] == 1 then
+--             PlayerFrameHealthBar:SetScript("OnValueChanged", nil);
+--             chb:RegisterEvent("PLAYER_ENTERING_WORLD");
+--             chb:RegisterEvent("PLAYER_REGEN_ENABLED");
+--             -- chb:RegisterUnitEvent("UNIT_ENTERED_VEHICLE", "player");
+--             -- chb:RegisterUnitEvent("UNIT_EXITED_VEHICLE", "player");
+--             chb:SetScript("OnEvent", function(self, event, ...)
+--                 UnitFramesPlus_PlayerColorHPBarDisplayUpdate();
+--             end)
+--         elseif UnitFramesPlusDB["player"]["colortype"] == 2 then
+--             if chb:IsEventRegistered("PLAYER_ENTERING_WORLD") then
+--                 chb:UnregisterEvent("PLAYER_ENTERING_WORLD");
+--                 chb:UnregisterEvent("PLAYER_REGEN_ENABLED");
+--                 -- chb:UnregisterEvent("UNIT_ENTERED_VEHICLE");
+--                 -- chb:UnregisterEvent("UNIT_EXITED_VEHICLE");
+--                 chb:SetScript("OnEvent", nil);
+--             end
+--             PlayerFrameHealthBar:SetScript("OnValueChanged", function(self, value)
+--                 UnitFramesPlus_PlayerColorHPBarDisplayUpdate();
+--             end)
+--         end
+--         --PlayerFrameHealthBar.lockColor = true;
+--     else
+--         PlayerFrameHealthBar:SetScript("OnValueChanged", nil);
+--         if chb:IsEventRegistered("PLAYER_ENTERING_WORLD") then
+--             chb:UnregisterEvent("PLAYER_ENTERING_WORLD");
+--             chb:UnregisterEvent("PLAYER_REGEN_ENABLED");
+--             -- chb:UnregisterEvent("UNIT_ENTERED_VEHICLE");
+--             -- chb:UnregisterEvent("UNIT_EXITED_VEHICLE");
+--             chb:SetScript("OnEvent", nil);
+--         end
+--         PlayerFrameHealthBar:SetStatusBarColor(0, 1, 0);
+--         --PlayerFrameHealthBar.lockColor = nil;
+--     end
+-- end
 
 --刷新玩家生命条染色显示
 function UnitFramesPlus_PlayerColorHPBarDisplayUpdate()
@@ -415,6 +421,18 @@ function UnitFramesPlus_PlayerColorHPBarDisplayUpdate()
         end
     end
 end
+
+--嗯？
+hooksecurefunc("UnitFrameHealthBar_Update", function(statusbar, unit)
+    if unit == "player" and statusbar.unit == "player" then 
+        UnitFramesPlus_PlayerColorHPBarDisplayUpdate();
+    end
+end);
+hooksecurefunc("HealthBar_OnValueChanged", function(self, value, smooth)
+    if self.unit == "player" then 
+        UnitFramesPlus_PlayerColorHPBarDisplayUpdate();
+    end
+end);
 
 --玩家头像内战斗信息
 function UnitFramesPlus_PlayerPortraitIndicator()
@@ -714,85 +732,20 @@ function UnitFramesPlus_PlayerBarTextMouseShow()
     end
 end
 
---非战斗状态中允许shift+左键拖动宠物头像
-function UnitFramesPlus_PlayerPetPositionSet()
-    if UnitFramesPlusVar["pet"]["moved"] == 1 then
-        PetFrame:ClearAllPoints();
-        PetFrame:SetPoint("BOTTOMLEFT", PlayerFrame, "BOTTOMLEFT", UnitFramesPlusVar["pet"]["x"], UnitFramesPlusVar["pet"]["y"]);
-    else
-        PetFrame:ClearAllPoints();
-        PetFrame:SetPoint("TOPLEFT", PlayerFrame, "TOPLEFT", 80, -60);
-    end
-end
-
-function UnitFramesPlus_PlayerPetPosition()
-    if not InCombatLockdown() then
-        UnitFramesPlus_PlayerPetPositionSet();
-    else
-        local func = {};
-        func.name = "UnitFramesPlus_PlayerPetPositionSet";
-        func.callback = function()
-            UnitFramesPlus_PlayerPetPositionSet();
-        end;
-        UnitFramesPlus_WaitforCall(func);
-    end
-end
-
-local function UnitFramesPlus_PlayerPetShiftDrag()
-    PetFrame:SetMovable(1);
-
-    PetFrame:SetScript("OnMouseDown", function(self, elapsed)
-        if UnitFramesPlusDB["pet"]["movable"] == 1 then
-            if IsShiftKeyDown() and (not InCombatLockdown()) then
-                PetFrame:StartMoving();
-                UnitFramesPlusVar["pet"]["moving"] = 1;
-            end
-        end
-    end)
-
-    PetFrame:SetScript("OnMouseUp", function(self, elapsed)
-        if UnitFramesPlusVar["pet"]["moving"] == 1 then
-            PetFrame:StopMovingOrSizing();
-            UnitFramesPlusVar["pet"]["moving"] = 0;
-            UnitFramesPlusVar["pet"]["moved"] = 1;
-            local bottom = PetFrame:GetBottom();
-            local left = PetFrame:GetLeft();
-            local scale = PetFrame:GetScale()*PlayerFrame:GetScale();
-            local bottomX = PlayerFrame:GetBottom();
-            local leftX = PlayerFrame:GetLeft();
-            local scaleX = PlayerFrame:GetScale();
-            UnitFramesPlusVar["pet"]["x"] = (left*scale-leftX*scaleX)/scale;
-            UnitFramesPlusVar["pet"]["y"] = (bottom*scale-bottomX*scaleX)/scale;
-            PetFrame:ClearAllPoints();
-            PetFrame:SetPoint("BOTTOMLEFT", PlayerFrame, "BOTTOMLEFT", UnitFramesPlusVar["pet"]["x"], UnitFramesPlusVar["pet"]["y"]);
-        end
-    end)
-
-    PetFrame:SetClampedToScreen(1);
-
-    --重置目标位置时同时重置宠物位置
-    hooksecurefunc("PlayerFrame_ResetUserPlacedPosition", function()
-        UnitFramesPlusVar["pet"]["moved"] = 0;
-        UnitFramesPlus_PlayerPetPosition();
-    end)
-end
-
 --模块初始化
 function UnitFramesPlus_PlayerInit()
     UnitFramesPlus_PlayerShiftDrag();
     UnitFramesPlus_PlayerDragon();
     UnitFramesPlus_PlayerExtrabar();
-    UnitFramesPlus_PlayerColorHPBar();
+    -- UnitFramesPlus_PlayerColorHPBar();
     UnitFramesPlus_PlayerPortraitIndicator();
     UnitFramesPlus_PlayerPortrait();
     UnitFramesPlus_PlayerCoordinate();
     UnitFramesPlus_PlayerFrameScale();
     UnitFramesPlus_PlayerFrameAutohide();
     UnitFramesPlus_PlayerBarTextMouseShow();
-    UnitFramesPlus_PlayerPetShiftDrag();
 end
 
 function UnitFramesPlus_PlayerLayout()
     UnitFramesPlus_PlayerPosition();
-    UnitFramesPlus_PlayerPetPosition();
 end

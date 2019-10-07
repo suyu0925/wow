@@ -286,6 +286,7 @@ for id = 1, UFP_MAX_TOT_DEBUFFS, 1 do
     --Frame:SetFrameLevel(level)
 
     debuff.Icon = debuff:CreateTexture("UFP_ToTFrameDebuff"..id.."Icon", "ARTWORK");
+    debuff.Icon:ClearAllPoints();
     debuff.Icon:SetAllPoints(debuff);
 
     debuff.Cooldown = CreateFrame("Cooldown", "UFP_ToTFrameDebuff"..id.."Cooldown", debuff, "CooldownFrameTemplate");
@@ -369,7 +370,7 @@ function UnitFramesPlus_OptionsFrame_TargetTargetDebuffDisplayUpdate()
                 end
                 if UnitFramesPlusDB["targettarget"]["cooldown"] == 1 then
                     cdalpha = 1;
-                    if UnitFramesPlusDB["global"]["builtincd"] == 1 then
+                    if UnitFramesPlusDB["global"]["builtincd"] == 1 and UFPClassicDurations then
                         local durationNew, expirationTimeNew = UFPClassicDurations:GetAuraDurationByUnit("targettarget", spellId, caster)
                         if duration == 0 and durationNew then
                             duration = durationNew

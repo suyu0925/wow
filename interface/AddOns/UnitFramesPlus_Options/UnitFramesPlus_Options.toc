@@ -5,7 +5,7 @@
 ## X-Repple: 界面
 ## RequiredDeps: UnitFramesPlus
 ## LoadOnDemand: 1
-## Version: 1.28
+## Version: 1.30
 ## Author: Isler
 
 ## 设置

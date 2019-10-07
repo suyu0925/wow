@@ -6,18 +6,10 @@
 ## Title-zhTW: 系統頭像增強
 ## Notes-zhTW: 擴展系統頭像功能
 ## X-Repple: 界面
-## Version: 1.28
+## Version: 1.30
 ## Author: Isler
-## Author-LibClassicDurations: d87
-## Author-LibClassicMobHealth: Pneumatus
-## SavedVariables: UnitFramesPlusDB, LibClassicMobHealth10DB, LibClassicMobHealth10Opt
+## SavedVariables: UnitFramesPlusDB
 ## SavedVariablesPerCharacter: UnitFramesPlusVar
-
-#Library
-Library\LibStub\LibStub.lua
-Library\CallbackHandler-1.0\CallbackHandler-1.0.lua
-Library\LibClassicDurations\LibClassicDurations.xml
-Library\LibClassicMobHealth-1.0\lib.xml
 
 ## 初始化
 Localization.lua
