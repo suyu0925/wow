@@ -430,7 +430,6 @@ local castSpellIDs = {
     3595, -- Frost Oil
     17460, -- Frost Ram
     25178, -- Frost Weakness
-    10180, -- Frostbolt
     8398, -- Frostbolt Volley
     16992, -- Frostguard
     6957, -- Frostmane Strength
@@ -1238,13 +1237,14 @@ local castSpellIDs = {
     24422, -- Zandalar Signet of Might
     24421, -- Zandalar Signet of Mojo
     24420, -- Zandalar Signet of Serenity
+    10181, -- Frostbolt (needs to be last for chinese clients, see issue #16)
 }
 
 local counter, cursor = 0, 1
 local castedSpells = {}
 namespace.castedSpells = castedSpells
 
--- temporary, ill clean up this later
+-- TODO: cleanup
 local function BuildSpellNameToSpellIDTable()
     counter = 0
 
@@ -1446,7 +1446,7 @@ namespace.crowdControls = {
 
 -- Addon Savedvariables
 namespace.defaultConfig = {
-    version = "10", -- settings version
+    version = "14", -- settings version
     pushbackDetect = true,
     movementDetect = true,
     locale = GetLocale(),
@@ -1458,6 +1458,7 @@ namespace.defaultConfig = {
         iconSize = 13,
         showCastInfoOnly = false,
         showTimer = false,
+        showIcon = true,
         autoPosition = true,
         castFont = _G.STANDARD_TEXT_FONT,
         castFontSize = 8,
@@ -1473,6 +1474,8 @@ namespace.defaultConfig = {
         textColor = { 1, 1, 1, 1 },
         textPositionX = 0,
         textPositionY = 0,
+        frameLevel = 10,
+        statusBackgroundColor = { 0, 0, 0, 0.535 },
     },
 
     target = {
@@ -1482,6 +1485,7 @@ namespace.defaultConfig = {
         iconSize = 16,
         showCastInfoOnly = false,
         showTimer = false,
+        showIcon = true,
         autoPosition = true,
         castFont = _G.STANDARD_TEXT_FONT,
         castFontSize = 10,
@@ -1497,5 +1501,61 @@ namespace.defaultConfig = {
         textColor = { 1, 1, 1, 1 },
         textPositionX = 0,
         textPositionY = 0,
+        frameLevel = 10,
+        statusBackgroundColor = { 0, 0, 0, 0.535 },
+    },
+
+    party = {
+        enabled = false,
+        width = 120,
+        height = 12,
+        iconSize = 16,
+        showCastInfoOnly = false,
+        showTimer = false,
+        showIcon = true,
+        autoPosition = false,
+        castFont = _G.STANDARD_TEXT_FONT,
+        castFontSize = 9,
+        castStatusBar = "Interface\\TargetingFrame\\UI-StatusBar",
+        castBorder = "Interface\\CastingBar\\UI-CastingBar-Border",
+        hideIconBorder = false,
+        position = { "CENTER", 141, 6 },
+        iconPositionX = -5,
+        iconPositionY = 0,
+        borderColor = { 1, 1, 1, 1 },
+        statusColor = { 1, 0.7, 0, 1 },
+        statusColorChannel = { 0, 1, 0, 1 },
+        textColor = { 1, 1, 1, 1 },
+        textPositionX = 0,
+        textPositionY = 0,
+        frameLevel = 10,
+        statusBackgroundColor = { 0, 0, 0, 0.535 },
+    },
+
+    player = {
+        enabled = false,
+        width = 195,
+        height = 20,
+        iconSize = 22,
+        showCastInfoOnly = false,
+        showTimer = false,
+        showIcon = true,
+        autoPosition = true,
+        castFont = _G.STANDARD_TEXT_FONT,
+        castFontSize = 12,
+        castStatusBar = "Interface\\RaidFrame\\Raid-Bar-Hp-Fill",
+        castBorder = "Interface\\CastingBar\\UI-CastingBar-Border",
+        hideIconBorder = false,
+        position = { "CENTER", -18, -87 },
+        iconPositionX = -10,
+        iconPositionY = 0,
+        borderColor = { 1, 1, 1, 1 },
+        statusColor = { 1, 0.7, 0, 1 },
+        statusColorChannel = { 0, 1, 0, 1 },
+        textColor = { 1, 1, 1, 1 },
+        textPositionX = 0,
+        textPositionY = 0,
+        frameLevel = 10,
+        statusBackgroundColor = { 0, 0, 0, 0.535 },
     },
 }

@@ -4,7 +4,6 @@ local PoolManager = namespace.PoolManager
 local addon = CreateFrame("Frame")
 addon:RegisterEvent("PLAYER_LOGIN")
 addon:SetScript("OnEvent", function(self, event, ...)
-    -- this will basically trigger addon:EVENT_NAME(arguments) on any event happening
     return self[event](self, ...)
 end)
 
@@ -46,7 +45,7 @@ function addon:CheckCastModifier(unitID, unitGUID)
 
         local slowPercentage = castTimeIncreases[name]
         if slowPercentage then
-            return self:SetCastDelay(unitGUID, 60, nil, true)
+            return self:SetCastDelay(unitGUID, slowPercentage, nil, true)
         end
     end
 end
@@ -83,14 +82,15 @@ function addon:StartAllCasts(unitGUID)
     end
 end
 
-function addon:StopAllCasts(unitGUID)
+function addon:StopAllCasts(unitGUID, noFadeOut)
     for unitID, guid in pairs(activeGUIDs) do
         if guid == unitGUID then
-            self:StopCast(unitID)
+            self:StopCast(unitID, noFadeOut)
         end
     end
 end
 
+-- Store new cast data for unit, and start castbar(s)
 function addon:StoreCast(unitGUID, spellName, iconTexturePath, castTime, isPlayer, isChanneled)
     local currTime = GetTime()
 
@@ -112,17 +112,20 @@ function addon:StoreCast(unitGUID, spellName, iconTexturePath, castTime, isPlaye
     cast.pushbackValue = nil
     cast.showCastInfoOnly = nil
     cast.isInterrupted = nil
+    cast.isCastComplete = nil
 
     self:StartAllCasts(unitGUID)
 end
 
 -- Delete cast data for unit, and stop any active castbars
-function addon:DeleteCast(unitGUID, isInterrupted, skipDeleteCache)
+function addon:DeleteCast(unitGUID, isInterrupted, skipDeleteCache, isCastComplete, noFadeOut)
     if not unitGUID then return end
 
-    if activeTimers[unitGUID] then
-        activeTimers[unitGUID].isInterrupted = isInterrupted -- just so we can avoid passing it as an arg for every function call
-        self:StopAllCasts(unitGUID)
+    local cast = activeTimers[unitGUID]
+    if cast then
+        cast.isInterrupted = isInterrupted -- just so we can avoid passing it as an arg for every function call
+        cast.isCastComplete = isCastComplete
+        self:StopAllCasts(unitGUID, noFadeOut)
         activeTimers[unitGUID] = nil
     end
 
@@ -138,7 +141,7 @@ end
 function addon:SetCastDelay(unitGUID, percentageAmount, auraFaded, skipStore)
     if not self.db.pushbackDetect then return end
     local cast = activeTimers[unitGUID]
-    if not cast then return end
+    if not cast or cast.isChanneled then return end
 
     --if cast.prevCurrTimeModValue then print("stored total:", #cast.prevCurrTimeModValue) end
 
@@ -243,6 +246,16 @@ function addon:ToggleUnitEvents(shouldReset)
         self:UnregisterEvent("NAME_PLATE_UNIT_REMOVED")
     end
 
+    if self.db.party.enabled then
+        self:RegisterEvent("GROUP_ROSTER_UPDATE")
+        self:RegisterEvent("GROUP_JOINED")
+        self:RegisterEvent("GROUP_LEFT")
+    else
+        self:UnregisterEvent("GROUP_ROSTER_UPDATE")
+        self:UnregisterEvent("GROUP_JOINED")
+        self:UnregisterEvent("GROUP_LEFT") -- TODO: check if needed
+    end
+
     if shouldReset then
         self:PLAYER_ENTERING_WORLD() -- reset all data
     end
@@ -256,6 +269,10 @@ function addon:PLAYER_ENTERING_WORLD(isInitialLogin)
     wipe(activeTimers)
     wipe(activeFrames)
     PoolManager:GetFramePool():ReleaseAll() -- also wipes castbar._data
+
+    if self.db.party.enabled and IsInGroup() then
+        self:GROUP_ROSTER_UPDATE()
+    end
 end
 
 function addon:ZONE_CHANGED_NEW_AREA()
@@ -282,6 +299,12 @@ end
 function addon:PLAYER_LOGIN()
     ClassicCastbarsDB = ClassicCastbarsDB or {}
 
+    if ClassicCastbarsDB.version == "11" then
+        ClassicCastbarsDB.party.position = nil
+    elseif ClassicCastbarsDB.version == "12" then
+        ClassicCastbarsDB.player = nil
+    end
+
     -- Copy any settings from defaults if they don't exist in current profile
     self.db = CopyDefaults(namespace.defaultConfig, ClassicCastbarsDB)
     self.db.version = namespace.defaultConfig.version
@@ -297,6 +320,10 @@ function addon:PLAYER_LOGIN()
     if not IsAddOnLoaded("ClassicCastbars_Options") then
         self.defaultConfig = nil
         namespace.defaultConfig = nil
+    end
+
+    if self.db.player.enabled then
+        self:SkinPlayerCastbar()
     end
 
     self.PLAYER_GUID = UnitGUID("player")
@@ -362,6 +389,25 @@ function addon:NAME_PLATE_UNIT_REMOVED(namePlateUnitToken)
     end
 end
 
+function addon:GROUP_ROSTER_UPDATE()
+    for i = 1, 5 do
+        local unitID = "party"..i
+        activeGUIDs[unitID] = UnitGUID(unitID) or nil
+
+        if activeGUIDs[unitID] then
+            self:StopCast(unitID, true)
+        else
+            local castbar = activeFrames[unitID]
+            if castbar then
+                PoolManager:ReleaseFrame(castbar)
+                activeFrames[unitID] = nil
+            end
+        end
+    end
+end
+addon.GROUP_LEFT = addon.GROUP_ROSTER_UPDATE
+addon.GROUP_JOINED = addon.GROUP_ROSTER_UPDATE
+
 local channeledSpells = namespace.channeledSpells
 local castTimeTalentDecreases = namespace.castTimeTalentDecreases
 local crowdControls = namespace.crowdControls
@@ -374,13 +420,14 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED()
     if eventType == "SPELL_CAST_START" then
         local spellID = castedSpells[spellName]
         if not spellID then return end
+
         local _, _, icon, castTime = GetSpellInfo(spellID)
-        if not castTime or castTime == 0 then return end
+        if not castTime or castTime < 300 then return end
 
         local isPlayer = bit_band(srcFlags, COMBATLOG_OBJECT_TYPE_PLAYER_OR_PET) > 0
 
         if isPlayer then
-            -- Use talent reduced cast time for certain player spells if available
+            -- Use talent reduced cast time for certain player spells
             local reducedTime = castTimeTalentDecreases[spellName]
             if reducedTime then
                 castTime = reducedTime
@@ -421,7 +468,6 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED()
 
                     local castTimeDiff = abs(castTime - origCastTime)
                     if castTimeDiff <= 4000 and castTimeDiff > 250 then -- heavy lag might affect this so only store time if the diff isn't too big
-                        --print("Caching: ", srcName, spellName, castTime, origCastTime)
                         npcCastTimeCache[srcName .. spellName] = castTime
                     end
                 end
@@ -432,7 +478,6 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED()
         -- Also there's no castTime returned from GetSpellInfo for channeled spells so we need to get it from our own list
         if channelData then
             -- Arcane Missiles triggers this event for every tick so ignore after first tick has been detected
-            -- TODO: might be similar channels that do the same
             if spellName == ARCANE_MISSILES and activeTimers[srcGUID] and activeTimers[srcGUID].spellName == ARCANE_MISSILES then return end
 
             return self:StoreCast(srcGUID, spellName, GetSpellTexture(channelData[2]), channelData[1] * 1000, isPlayer, true)
@@ -440,10 +485,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED()
 
         -- non-channeled spell, finish it.
         -- We also check the expiration timer in OnUpdate script just incase this event doesn't trigger when i.e unit is no longer in range.
-        -- Note: It's still possible to get a memory leak here since OnUpdate is only ran for active/shown frames, but adding extra
-        -- timer checks just to save a few kb extra memory in extremly rare situations is not really worth the performance hit.
-        -- All data is cleared on loading screens anyways.
-        return self:DeleteCast(srcGUID)
+        return self:DeleteCast(srcGUID, nil, nil, true)
     elseif eventType == "SPELL_AURA_APPLIED" then
         if castTimeIncreases[spellName] then
             -- Aura that slows casting speed was applied
@@ -456,7 +498,7 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED()
         -- Channeled spells has no SPELL_CAST_* event for channel stop,
         -- so check if aura is gone instead since most (all?) channels has an aura effect.
         if channeledSpells[spellName] and srcGUID == dstGUID then
-            return self:DeleteCast(srcGUID)
+            return self:DeleteCast(srcGUID, nil, nil, true)
         elseif castTimeIncreases[spellName] then
             -- Aura that slows casting speed was removed.
             return self:SetCastDelay(dstGUID, castTimeIncreases[spellName], true)
@@ -479,6 +521,12 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED()
     end
 end
 
+local castStopBlacklist = {
+    [GetSpellInfo(4068)] = 1,       -- Iron Grenade
+    [GetSpellInfo(19769)] = 1,      -- Thorium Grenade
+    [GetSpellInfo(13808)] = 1,      -- M73 Frag Grenade
+}
+
 local refresh = 0
 addon:SetScript("OnUpdate", function(self, elapsed)
     if not next(activeTimers) then return end
@@ -488,7 +536,7 @@ addon:SetScript("OnUpdate", function(self, elapsed)
     if self.db.movementDetect then
         refresh = refresh - elapsed
 
-        -- Check if unit is moving to stop castbar, thanks to LibClassicCasterino for this idea
+        -- Check if unit is moving to stop castbar, thanks to Cordankos for this idea
         if refresh < 0 then
             if next(activeGUIDs) then
                 for unitID, unitGUID in pairs(activeGUIDs) do
@@ -496,7 +544,7 @@ addon:SetScript("OnUpdate", function(self, elapsed)
                     -- Only stop cast for players since some mobs runs while casting, also because
                     -- of lag we have to only stop it if the cast has been active for atleast 0.25 sec
                     if cast and cast.isPlayer and currTime - cast.timeStart > 0.25 then
-                        if GetUnitSpeed(unitID) ~= 0 then
+                        if not castStopBlacklist[cast.spellName] and GetUnitSpeed(unitID) ~= 0 then
                             self:DeleteCast(unitGUID)
                         end
                     end
@@ -533,7 +581,7 @@ addon:SetScript("OnUpdate", function(self, elapsed)
                 end
             else
                 -- Delete cast incase stop event wasn't detected in CLEU
-                self:DeleteCast(cast.unitGUID, false, true)
+                self:DeleteCast(cast.unitGUID, false, true, false, true)
             end
         end
     end
