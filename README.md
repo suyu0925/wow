@@ -199,7 +199,7 @@
   人口普查
 
   - 游戏版本 1.13.2
-  - 插件版本 0.5.0
+  - 插件版本 0.7.0
 
 * [CChatNotifier](https://github.com/coolmodi/CChatNotifier)
 
