@@ -2,7 +2,8 @@ import sys
 import time
 from Quartz.CoreGraphics import *
 
-N = 10
+# 测试完成后可改成100或其它次数
+N = 1
 
 
 def mouseEvent(type, posx, posy):
