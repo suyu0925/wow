@@ -100,7 +100,7 @@
   Buff, Debuff监控。
 
   - 游戏版本 1.13.2
-  - 插件版本 1.13.31
+  - 插件版本 1.13.36
 
 * [WeaponSwingTimer](https://www.curseforge.com/wow/addons/weaponswingtimer)
 
@@ -135,7 +135,7 @@
   查看BOSS掉落
 
   - 游戏版本 1.13.2
-  - 插件版本 v1.1.12
+  - 插件版本 v1.3.1
 
 * [Recount](https://www.curseforge.com/wow/addons/recount)
 
