@@ -6,7 +6,7 @@
   头像增强
 
   - 游戏版本 1.13.2
-  - 插件版本 1.30
+  - 插件版本 1.31.2
 
 * [~~ArkInventory~~](https://www.curseforge.com/wow/addons/ark-inventory)
 
@@ -79,7 +79,7 @@
   法术冷却
 
   - 游戏版本 1.13.2
-  - 插件版本 8.2.4
+  - 插件版本 8.2.5
 
 * [sortBags](https://www.curseforge.com/wow/addons/sortbags)
 
