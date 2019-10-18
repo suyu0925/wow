@@ -222,3 +222,9 @@
   - 游戏版本 1.13.2
   - 插件版本 2.7.6.4-classic
 
+* [WeakAuras 2](https://www.curseforge.com/wow/addons/weakauras-2)
+
+  Buff, Debuff监控
+
+  - 游戏版本 1.13.2
+  - 插件版本 2.15.4-classic
