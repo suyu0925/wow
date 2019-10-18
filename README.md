@@ -207,3 +207,10 @@
 
   - 游戏版本 1.13.2
   - 插件版本 1.0
+
+* [Druid Bar Classic](https://www.curseforge.com/wow/addons/druid-bar-classic)
+
+  德鲁伊变形状态下蓝条显示
+
+  - 游戏版本 1.13.2
+  - 插件版本 0.7.2

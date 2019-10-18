@@ -1,0 +1,22 @@
+lightweight tag 40ba819f66b35ff297e2ba98f4d450f6f28f0817 0.7.2
+Author:	GitHub <noreply@github.com>
+Date:	Mon Sep 30 22:43:07 2019 -0700
+
+commit f9f9e4bc9f23f3bef236d29158f82ec8cbac440e
+Author: Tek Hudson <tek.hudson@gmail.com>
+Date:   Mon Sep 30 22:14:46 2019 -0700
+
+    Update version info
+
+commit f9f9e4bc9f23f3bef236d29158f82ec8cbac440e
+Author: Tek Hudson <tek.hudson@gmail.com>
+Date:   Mon Sep 30 22:14:46 2019 -0700
+
+    Update version info
+
+commit 56b231d83375b0d792b20f4cc7d845f0b4b25b98
+Author: Tek Hudson <tek.hudson@gmail.com>
+Date:   Mon Sep 30 22:13:10 2019 -0700
+
+    Prevent addon loading if player isn't a druid
+
