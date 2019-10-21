@@ -177,14 +177,14 @@
   副本副手
 
   - 游戏版本 1.13.2
-  - 插件版本 1.13.16-classic
+  - 插件版本 1.13.17-classic
 
 * [ClassicCastbars](https://www.curseforge.com/wow/addons/classiccastbars)
 
   敌方施法条
 
   - 游戏版本 1.13.2
-  - 插件版本 1.1.0-classic
+  - 插件版本 1.1.1-classic
 
 * [Quartz](https://www.curseforge.com/wow/addons/quartz)
 
