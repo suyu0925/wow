@@ -235,3 +235,10 @@
 
   - 游戏版本 1.13.2
   - 插件版本 11302.0-classic
+
+* [ShowActionCount](https://bbs.nga.cn/read.php?tid=17568491)
+
+  施法材料数量
+
+  - 游戏版本 1.13.2
+  - 插件版本 1.00
