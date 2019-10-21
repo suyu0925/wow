@@ -30,7 +30,6 @@
   - 游戏版本 1.13.2
   - 插件版本 80205-1-classic
 
-
 * [ItemRack Classic](https://www.curseforge.com/wow/addons/itemrack-classic)
 
   一件换装
@@ -171,7 +170,7 @@
   任务助手
 
   - 游戏版本 1.13.2
-  - 插件版本 4.2.1
+  - 插件版本 4.3.0
 
 * [Deadly Boss Mods(DBM)](https://www.curseforge.com/wow/addons/deadly-boss-mods)
 
