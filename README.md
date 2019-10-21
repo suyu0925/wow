@@ -57,7 +57,7 @@
   售价助手
 
   - 游戏版本 1.13.2
-  - 插件版本 1.2.6-classic
+  - 插件版本 1.2.9-classic
 
 * [Scrap (Junk Seller)](https://www.curseforge.com/wow/addons/scrap)
 
@@ -85,7 +85,7 @@
   背包整理
 
   - 游戏版本 1.13.2
-  - 插件版本 0.1.2
+  - 插件版本 0.1.3
 
 * [tullaRange](https://www.curseforge.com/wow/addons/tullarange)
 
