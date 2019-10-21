@@ -242,3 +242,10 @@
 
   - 游戏版本 1.13.2
   - 插件版本 1.00
+
+* [RangeDisplay](https://www.curseforge.com/wow/addons/range-display)
+
+  距离显示
+
+  - 游戏版本 1.13.2
+  - 插件版本 4.9.2
