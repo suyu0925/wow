@@ -193,9 +193,9 @@
   - 游戏版本 1.13.2
   - 插件版本 3.5.1-classic
 
-* [CensusPlusClassic](https://www.curseforge.com/wow/addons/censusplusclassic/)
+* [~CensusPlusClassic~](https://www.curseforge.com/wow/addons/censusplusclassic/)
 
-  人口普查
+  人口普查。暴雪限制了API，所以暂时去除。
 
   - 游戏版本 1.13.2
   - 插件版本 0.8.1
