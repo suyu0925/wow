@@ -184,7 +184,7 @@
   敌方施法条
 
   - 游戏版本 1.13.2
-  - 插件版本 1.1.1-classic
+  - 插件版本 1.1.4-classic
 
 * [Quartz](https://www.curseforge.com/wow/addons/quartz)
 

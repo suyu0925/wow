@@ -16,6 +16,7 @@ local npcCastTimeCache = {}
 addon.AnchorManager = namespace.AnchorManager
 addon.defaultConfig = namespace.defaultConfig
 addon.activeFrames = activeFrames
+addon.activeTimers = activeTimers
 namespace.addon = addon
 ClassicCastbars = addon -- global ref for ClassicCastbars_Options
 
@@ -36,29 +37,37 @@ local bit_band = _G.bit.band
 local COMBATLOG_OBJECT_TYPE_PLAYER_OR_PET = _G.COMBATLOG_OBJECT_TYPE_PLAYER + _G.COMBATLOG_OBJECT_TYPE_PET
 local castTimeIncreases = namespace.castTimeIncreases
 
-function addon:CheckCastModifier(unitID, unitGUID)
+function addon:CheckCastModifier(unitID, cast)
     if not self.db.pushbackDetect then return end
+    if not cast or cast.isChanneled or cast.hasCastModified or cast.skipCastModifier then return end
 
+    local highestSlow = 0
     for i = 1, 16 do
-        local name = UnitAura(unitID, i, "HARMFUL")
-        if not name then return end -- no more debuffs
+        local _, _, _, _, _, _, _, _, _, spellID = UnitAura(unitID, i, "HARMFUL")
+        if not spellID then break end -- no more debuffs
 
-        local slowPercentage = castTimeIncreases[name]
-        if slowPercentage then
-            return self:SetCastDelay(unitGUID, slowPercentage, nil, true)
+        local slow = castTimeIncreases[spellID]
+        if slow and slow > highestSlow then -- might be several slow debuffs
+            highestSlow = slow
         end
+    end
+
+    if highestSlow > 0 then
+        cast.endTime = cast.timeStart + (cast.endTime - cast.timeStart) * ((highestSlow / 100) + 1)
+        cast.hasCastModified = true
     end
 end
 
 function addon:StartCast(unitGUID, unitID)
-    if not activeTimers[unitGUID] then return end
+    local cast = activeTimers[unitGUID]
+    if not cast then return end
 
     local castbar = self:GetCastbarFrame(unitID)
     if not castbar then return end
 
-    castbar._data = activeTimers[unitGUID] -- set ref to current cast data
+    castbar._data = cast -- set ref to current cast data
     self:DisplayCastbar(castbar, unitID)
-    self:CheckCastModifier(unitID, unitGUID)
+    self:CheckCastModifier(unitID, cast)
 end
 
 function addon:StopCast(unitID, noFadeOut)
@@ -107,8 +116,8 @@ function addon:StoreCast(unitGUID, spellName, iconTexturePath, castTime, isPlaye
     cast.unitGUID = unitGUID
     cast.timeStart = currTime
     cast.isPlayer = isPlayer
-    cast.prevCurrTimeModValue = nil
-    cast.currTimeModValue = nil
+    cast.hasCastModified = nil
+    cast.skipCastModifier = nil
     cast.pushbackValue = nil
     cast.showCastInfoOnly = nil
     cast.isInterrupted = nil
@@ -132,76 +141,6 @@ function addon:DeleteCast(unitGUID, isInterrupted, skipDeleteCache, isCastComple
     -- Weak tables doesn't work with literal values so we need to manually handle memory for this cache :/
     if not skipDeleteCache and npcCastTimeCacheStart[unitGUID] then
         npcCastTimeCacheStart[unitGUID] = nil
-    end
-end
-
--- Spaghetti code inc, you're warned.
--- A lot of this complexity is so we can also track modifiers in the combat log without
--- having to rely on UnitAura that requires a valid unitID.
-function addon:SetCastDelay(unitGUID, percentageAmount, auraFaded, skipStore)
-    if not self.db.pushbackDetect then return end
-    local cast = activeTimers[unitGUID]
-    if not cast or cast.isChanneled then return end
-
-    --if cast.prevCurrTimeModValue then print("stored total:", #cast.prevCurrTimeModValue) end
-
-    -- Set cast time modifier (i.e Curse of Tongues)
-    if not auraFaded and percentageAmount and percentageAmount > 0 then
-        if not cast.currTimeModValue or cast.currTimeModValue < percentageAmount then -- run only once unless % changed to higher val
-            if cast.currTimeModValue then -- already was reduced
-                -- if existing modifer is e.g 50% and new is 60%, we only want to adjust cast by 10%
-                percentageAmount = percentageAmount - cast.currTimeModValue
-
-                -- Store previous lesser modifier that was active incase new one expires first or gets dispelled
-                cast.prevCurrTimeModValue = cast.prevCurrTimeModValue or {}
-                cast.prevCurrTimeModValue[#cast.prevCurrTimeModValue + 1] = cast.currTimeModValue
-                --print("stored lesser modifier")
-            end
-
-            --print("refreshing timer", percentageAmount)
-            cast.currTimeModValue = (cast.currTimeModValue or 0) + percentageAmount -- highest active modifier
-            cast.maxValue = cast.maxValue + (cast.maxValue * percentageAmount) / 100
-            cast.endTime = cast.endTime + (cast.maxValue * percentageAmount) / 100
-        elseif cast.currTimeModValue == percentageAmount and not skipStore then
-            -- new modifier has same percentage as current active one, just store it for later
-            --print("same percentage, storing")
-            cast.prevCurrTimeModValue = cast.prevCurrTimeModValue or {}
-            cast.prevCurrTimeModValue[#cast.prevCurrTimeModValue + 1] = percentageAmount
-        end
-    elseif auraFaded and percentageAmount then
-        -- Reset cast time modifier
-        if cast.currTimeModValue == percentageAmount then
-            cast.maxValue = cast.maxValue - (cast.maxValue * percentageAmount) / 100
-            cast.endTime = cast.endTime - (cast.maxValue * percentageAmount) / 100
-            cast.currTimeModValue = nil
-
-            -- Reset to lesser modifier if available
-            if cast.prevCurrTimeModValue then
-                local highest, index = 0
-                for i = 1, #cast.prevCurrTimeModValue do
-                    if cast.prevCurrTimeModValue[i] and cast.prevCurrTimeModValue[i] > highest then
-                        highest, index = cast.prevCurrTimeModValue[i], i
-                    end
-                end
-
-                if index then
-                    cast.prevCurrTimeModValue[index] = nil
-                    --print("resetting to lesser modifier", highest)
-                    return self:SetCastDelay(unitGUID, highest)
-                end
-            end
-        end
-
-        if cast.prevCurrTimeModValue then
-            -- Delete 1 old modifier (doesn't matter which one aslong as its the same %)
-            for i = 1, #cast.prevCurrTimeModValue do
-                if cast.prevCurrTimeModValue[i] == percentageAmount then
-                    --print("deleted lesser modifier, new total:", #cast.prevCurrTimeModValue - 1)
-                    cast.prevCurrTimeModValue[i] = nil
-                    return
-                end
-            end
-        end
     end
 end
 
@@ -249,11 +188,9 @@ function addon:ToggleUnitEvents(shouldReset)
     if self.db.party.enabled then
         self:RegisterEvent("GROUP_ROSTER_UPDATE")
         self:RegisterEvent("GROUP_JOINED")
-        self:RegisterEvent("GROUP_LEFT")
     else
         self:UnregisterEvent("GROUP_ROSTER_UPDATE")
         self:UnregisterEvent("GROUP_JOINED")
-        self:UnregisterEvent("GROUP_LEFT") -- TODO: check if needed
     end
 
     if shouldReset then
@@ -426,21 +363,28 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED()
 
         local isPlayer = bit_band(srcFlags, COMBATLOG_OBJECT_TYPE_PLAYER_OR_PET) > 0
 
-        if isPlayer then
-            -- Use talent reduced cast time for certain player spells
-            local reducedTime = castTimeTalentDecreases[spellName]
-            if reducedTime then
-                castTime = reducedTime
+        if srcGUID ~= self.PLAYER_GUID then
+            if isPlayer then
+                -- Use talent reduced cast time for certain player spells
+                local reducedTime = castTimeTalentDecreases[spellName]
+                if reducedTime then
+                    castTime = reducedTime
+                end
+            else
+                local cachedTime = npcCastTimeCache[srcName .. spellName]
+                if cachedTime then
+                    -- Use cached time stored from earlier sightings for NPCs.
+                    -- This is because mobs have various cast times, e.g a lvl 20 mob casting Frostbolt might have
+                    -- 3.5 cast time but another lvl 40 mob might have 2.5 cast time instead for Frostbolt.
+                    castTime = cachedTime
+                else
+                    npcCastTimeCacheStart[srcGUID] = GetTime()
+                end
             end
         else
-            local cachedTime = npcCastTimeCache[srcName .. spellName]
-            if cachedTime then
-                -- Use cached time stored from earlier sightings for NPCs.
-                -- This is because mobs have various cast times, e.g a lvl 20 mob casting Frostbolt might have
-                -- 3.5 cast time but another lvl 40 mob might have 2.5 cast time instead for Frostbolt.
-                castTime = cachedTime
-            else
-                npcCastTimeCacheStart[srcGUID] = GetTime()
+            local _, _, _, startTime, endTime = CastingInfo()
+            if endTime and startTime then
+                castTime = endTime - startTime
             end
         end
 
@@ -490,21 +434,17 @@ function addon:COMBAT_LOG_EVENT_UNFILTERED()
         -- We also check the expiration timer in OnUpdate script just incase this event doesn't trigger when i.e unit is no longer in range.
         return self:DeleteCast(srcGUID, nil, nil, true)
     elseif eventType == "SPELL_AURA_APPLIED" then
-        if castTimeIncreases[spellName] then
-            -- Aura that slows casting speed was applied
-            return self:SetCastDelay(dstGUID, namespace.castTimeIncreases[spellName])
-        elseif crowdControls[spellName] then
+        if crowdControls[spellName] then
             -- Aura that interrupts cast was applied
             return self:DeleteCast(dstGUID)
+        elseif castTimeIncreases[spellName] and activeTimers[dstGUID] then
+            activeTimers[dstGUID].skipCastModifier = true
         end
     elseif eventType == "SPELL_AURA_REMOVED" then
         -- Channeled spells has no SPELL_CAST_* event for channel stop,
         -- so check if aura is gone instead since most (all?) channels has an aura effect.
         if channeledSpells[spellName] and srcGUID == dstGUID then
             return self:DeleteCast(srcGUID, nil, nil, true)
-        elseif castTimeIncreases[spellName] then
-            -- Aura that slows casting speed was removed.
-            return self:SetCastDelay(dstGUID, castTimeIncreases[spellName], true)
         end
     elseif eventType == "SPELL_CAST_FAILED" then
         if srcGUID == self.PLAYER_GUID then
@@ -560,7 +500,6 @@ addon:SetScript("OnUpdate", function(self, elapsed)
     -- Update all shown castbars in a single OnUpdate call
     for unit, castbar in pairs(activeFrames) do
         local cast = castbar._data
-
         if cast then
             local castTime = cast.endTime - currTime
 
@@ -583,8 +522,10 @@ addon:SetScript("OnUpdate", function(self, elapsed)
                     castbar.Spark:SetPoint("CENTER", castbar, "LEFT", sparkPosition, 0)
                 end
             else
-                -- Delete cast incase stop event wasn't detected in CLEU
-                self:DeleteCast(cast.unitGUID, false, true, false, true)
+                if castTime <= -0.25 then -- wait atleast 0.25s before deleting incase CLEU stop event is happening at same time
+                    -- Delete cast incase stop event wasn't detected in CLEU
+                    self:DeleteCast(cast.unitGUID, false, true, false, true)
+                end
             end
         end
     end
