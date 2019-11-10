@@ -1,7 +1,7 @@
 local lib = LibStub and LibStub("LibClassicDurations", true)
 if not lib then return end
 
-local Type, Version = "SpellTable", 37
+local Type, Version = "SpellTable", 43
 if lib:GetDataVersion(Type) >= Version then return end  -- older versions didn't have that function
 
 local Spell = lib.AddAura
@@ -44,6 +44,33 @@ if class == "MAGE" then
         condition = function(isMine) return isMine end,
         -- it'll refresg only from mages personal casts which is fine
         -- because if mage doesn't have imp scorch then he won't even see a Fire Vulnerability timer
+    }
+
+    lib.indirectRefreshSpells[GetSpellInfo(25304)] = { -- Frostbolt
+        events = {
+            ["SPELL_DAMAGE"] = true
+        },
+        targetSpellID = 12579, -- Winter's Chill
+        targetResistCheck = true,
+        condition = function(isMine) return isMine end,
+    }
+
+    lib.indirectRefreshSpells[GetSpellInfo(10161)] = { -- Cone of Cold
+        events = {
+            ["SPELL_DAMAGE"] = true
+        },
+        targetSpellID = 12579, -- Winter's Chill
+        targetResistCheck = true,
+        condition = function(isMine) return isMine end,
+    }
+
+    lib.indirectRefreshSpells[GetSpellInfo(10230)] = { -- Frost Nova
+        events = {
+            ["SPELL_DAMAGE"] = true
+        },
+        targetSpellID = 12579, -- Winter's Chill
+        targetResistCheck = true,
+        condition = function(isMine) return isMine end,
     }
 
     lib.indirectRefreshSpells[GetSpellInfo(10)] = { -- Blizzard
@@ -135,6 +162,8 @@ Spell( 9175, { duration = 15, type = "BUFF" }) -- Swift Boots
 Spell( 13141, { duration = 20, type = "BUFF" }) -- Gnomish Rocket Boots
 Spell( 8892, { duration = 20, type = "BUFF" }) -- Goblin Rocket Boots
 Spell( 9774, { duration = 5, type = "BUFF" }) -- Spider Belt & Ornate Mithril Boots
+Spell({ 746, 1159, 3267, 3268, 7926, 7927, 10838, 10839, 18608, 18610, 23567, 23568, 23569, 23696, 24412, 24413, 24414}, { duration = 8, type = "BUFF" }) -- First Aid
+
 
 -------------
 -- RACIALS
@@ -565,6 +594,8 @@ Spell({ 5677, 10491, 10493, 10494 }, { duration = INFINITY, type = "BUFF" }) -- 
 Spell({ 8076, 8162, 8163, 10441, 25362 }, { duration = INFINITY, type = "BUFF" }) -- Strength of Earth Totem
 Spell({ 8836, 10626, 25360 }, { duration = INFINITY, type = "BUFF" }) -- Grace of Air Totem
 Spell({ 8072, 8156, 8157, 10403, 10404, 10405 }, { duration = INFINITY, type = "BUFF" }) -- Stoneskin Totem
+Spell({ 16191, 17355, 17360 }, { duration = 12, type = "BUFF" }) -- Mana Tide Totem
+
 
 Spell( 8178 ,{ duration = 45, type = "BUFF" }) -- Grounding Totem Effect, no duration, but lasts 45s. Keeping for enemy buffs
 
@@ -598,23 +629,23 @@ Spell({ 7294, 10298, 10299, 10300, 10301 }, { duration = INFINITY, type = "BUFF"
 
 Spell( 25780, { duration = 1800, type = "BUFF" }) -- Righteous Fury
 
-Spell({ 19740, 19834, 19835, 19836, 19837, 19838, 25291 }, { duration = 300, type = "BUFF" }) -- Blessing of Might
-Spell({ 25782, 25916 }, { duration = 900, type = "BUFF" }) -- Greater Blessing of Might
+Spell({ 19740, 19834, 19835, 19836, 19837, 19838, 25291 }, { duration = 300, type = "BUFF", castFilter = true }) -- Blessing of Might
+Spell({ 25782, 25916 }, { duration = 900, type = "BUFF", castFilter = true }) -- Greater Blessing of Might
 
-Spell({ 19742, 19850, 19852, 19853, 19854, 25290 }, { duration = 300, type = "BUFF" }) -- Blessing of Wisdom
-Spell({ 25894, 25918 }, { duration = 900, type = "BUFF" }) -- Greater Blessing of Might
+Spell({ 19742, 19850, 19852, 19853, 19854, 25290 }, { duration = 300, type = "BUFF", castFilter = true }) -- Blessing of Wisdom
+Spell({ 25894, 25918 }, { duration = 900, type = "BUFF", castFilter = true }) -- Greater Blessing of Might
 
-Spell(20217, { duration = 300, type = "BUFF" }) -- Blessing of Kings
-Spell(25898, { duration = 900, type = "BUFF" }) -- Greater Blessing of Kings
+Spell(20217, { duration = 300, type = "BUFF", castFilter = true }) -- Blessing of Kings
+Spell(25898, { duration = 900, type = "BUFF", castFilter = true }) -- Greater Blessing of Kings
 
-Spell({ 20911, 20912, 20913 }, { duration = 300, type = "BUFF" }) -- Blessing of Sanctuary
-Spell(25899, { duration = 900, type = "BUFF" }) -- Greater Blessing of Sanctuary
+Spell({ 20911, 20912, 20913 }, { duration = 300, type = "BUFF", castFilter = true }) -- Blessing of Sanctuary
+Spell(25899, { duration = 900, type = "BUFF", castFilter = true }) -- Greater Blessing of Sanctuary
 
-Spell(1038, { duration = 300, type = "BUFF" }) -- Blessing of Salvation
-Spell(25895, { duration = 900, type = "BUFF" }) -- Greater Blessing of Salvation
+Spell(1038, { duration = 300, type = "BUFF", castFilter = true }) -- Blessing of Salvation
+Spell(25895, { duration = 900, type = "BUFF", castFilter = true }) -- Greater Blessing of Salvation
 
-Spell({ 19977, 19978, 19979 }, { duration = 300, type = "BUFF" }) -- Blessing of Light
-Spell(25890, { duration = 900, type = "BUFF" }) -- Greater Blessing of Light
+Spell({ 19977, 19978, 19979 }, { duration = 300, type = "BUFF", castFilter = true }) -- Blessing of Light
+Spell(25890, { duration = 900, type = "BUFF", castFilter = true }) -- Greater Blessing of Light
 
 Spell( 20066, { duration = 6 }) -- Repentance
 Spell({ 2878, 5627, 5627 }, {
@@ -703,7 +734,7 @@ Spell({ 13165, 14318, 14319, 14320, 14321, 14322, 25296 }, { duration = INFINITY
 Spell( 5384, { duration = INFINITY, type = "BUFF" }) -- Feign Death (Will it work?)
 
 Spell({ 19506, 20905, 20906 }, { duration = 1800, type = "BUFF", castFilter = true }) -- Trueshot Aura
---SKIPPING: Frenzy
+Spell(19615, { duration = 8, type = "BUFF" }) -- Frenzy
 Spell({ 1130, 14323, 14324, 14325 }, { duration = 120 }) -- Hunter's Mark
 Spell(19263, { duration = 10, type = "BUFF" }) -- Deterrence
 Spell(3045, { duration = 15, type = "BUFF" }) -- Rapid Fire
@@ -748,6 +779,7 @@ Spell(19185, { duration = 5 }) -- Entrapment
 Spell(25999, { duration = 1 }) -- Boar Charge
 Spell(1002, { duration = 60 }) -- Eye of the Beast
 Spell(1539, { duration = 20 }) -- Feed Pet Effect
+Spell({ 136, 3111, 3661, 3662, 13542, 13543, 13544 }, { duration = 5, type = "BUFF" }) -- Mend Pet
 
 -------------
 -- MAGE
@@ -760,7 +792,7 @@ Spell( 23028, { duration = 3600, type = "BUFF", castFilter = true }) -- Arcane B
 Spell({ 6117, 22782, 22783 }, { duration = 1800, type = "BUFF", castFilter = true }) -- Mage Armor
 Spell({ 168, 7300, 7301, 7302, 7320, 10219, 10220 }, { duration = 1800, type = "BUFF", castFilter = true }) -- Frost/Ice Armor
 
-Spell( 2855, { duration = 1800, type = "BUFF" }) -- Detect Magic
+Spell( 2855, { duration = 120, type = "BUFF" }) -- Detect Magic
 Spell( 130, { duration = 1800, type = "BUFF" }) -- Slow Fall
 
 Spell({ 133, 143, 145, 3140, 8400, 8401, 8402, 10148, 10149, 10150, 10151, 25306 }, {
@@ -805,6 +837,17 @@ Spell(22959, {
             return nil
         end
     end }) -- Fire Vulnerability
+end
+
+if class == "MAGE" then
+Spell(12579, {
+    duration = function(spellID, isSrcPlayer)
+        if Talent(11180, 28592, 28593, 28594, 28595) > 0 then
+            return 15
+        else
+            return nil
+        end
+    end }) -- Winter's Chill
 end
 
 Spell({ 11113, 13018, 13019, 13020, 13021 }, { duration = 6 }) -- Blast Wave

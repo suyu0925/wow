@@ -99,7 +99,7 @@
   Buff, Debuff监控。
 
   - 游戏版本 1.13.2
-  - 插件版本 1.13.36
+  - 插件版本 1.13.42
 
 * [WeaponSwingTimer](https://www.curseforge.com/wow/addons/weaponswingtimer)
 
