@@ -44,6 +44,13 @@
   - 游戏版本 1.13.2
   - 插件版本 2.3
 
+* [TinyInspect](https://www.curseforge.com/wow/addons/itemlevel-anywhere)
+
+  人物面板属性统计
+
+  - 游戏版本 1.13.2
+  - 插件版本 1.02
+
 * [~~Inventorian~~](https://www.curseforge.com/wow/addons/inventorian)
 
   背包美化
