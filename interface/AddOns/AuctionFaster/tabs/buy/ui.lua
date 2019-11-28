@@ -41,7 +41,8 @@ end
 function Buy:DrawSearchPane()
 	local buyTab = self.buyTab;
 
-	local searchBox = StdUi:SearchEditBox(buyTab, 400, 30, L['Search']);
+	local searchBox = StdUi:Autocomplete(buyTab, 400, 30, '', nil, nil, AuctionFaster.db.buy.recentSearches);
+	StdUi:ApplyPlaceholder(searchBox, L['Search'], [[Interface\Common\UI-Searchbox-Icon]]);
 	searchBox:SetFontSize(16);
 
 	local searchButton = StdUi:Button(buyTab, 80, 30, L['Search']);
@@ -265,6 +266,7 @@ function Buy:DrawSearchResultsTable()
 			events		 = {
 				OnEnter = function(table, cellFrame, rowFrame, rowData, columnData, rowIndex)
 					if AuctionFaster.db.buy.tooltips.enabled then
+						AuctionFaster.hoverRowData = rowData
 						AuctionFaster:ShowTooltip(
 							cellFrame,
 							rowData.itemLink,
@@ -277,6 +279,7 @@ function Buy:DrawSearchResultsTable()
 				end,
 				OnLeave = function(table, cellFrame)
 					if AuctionFaster.db.buy.tooltips.enabled then
+						AuctionFaster.hoverRowData = nil
 						AuctionFaster:ShowTooltip(cellFrame, nil, false);
 					end
 					return false;
