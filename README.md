@@ -226,7 +226,7 @@
   一键驱散
 
   - 游戏版本 1.13.2
-  - 插件版本 2.7.6.5-classic
+  - 插件版本 2.7.6.6-classic
 
 * [WeakAuras 2](https://www.curseforge.com/wow/addons/weakauras-2)
 
