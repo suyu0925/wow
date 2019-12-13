@@ -211,7 +211,7 @@
 
   聊天过滤
 
-  - 游戏版本 1.13.2
+  - 游戏版本 1.13.3
   - 插件版本 1.0
 
 * [Druid Bar Classic](https://www.curseforge.com/wow/addons/druid-bar-classic)
