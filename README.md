@@ -218,7 +218,7 @@
 
   德鲁伊变形状态下蓝条显示
 
-  - 游戏版本 1.13.2
+  - 游戏版本 1.13.3
   - 插件版本 0.7.2
 
 * [Decursive](https://www.curseforge.com/wow/addons/decursive)
