@@ -176,8 +176,8 @@
 
   任务助手
 
-  - 游戏版本 1.13.2
-  - 插件版本 5.2.3
+  - 游戏版本 1.13.3
+  - 插件版本 5.3.1
 
 * [Deadly Boss Mods(DBM)](https://www.curseforge.com/wow/addons/deadly-boss-mods)
 
