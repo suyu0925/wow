@@ -20,14 +20,14 @@
 
   背包美化
 
-  - 游戏版本 1.13.2
+  - 游戏版本 1.13.3
   - 插件版本 8.2.16
 
 * [Fizzle](https://www.curseforge.com/wow/addons/fizzle)
 
   装备品质染色和装备耐久度
 
-  - 游戏版本 1.13.2
+  - 游戏版本 1.13.3
   - 插件版本 80205-1-classic
 
 * [ItemRack Classic](https://www.curseforge.com/wow/addons/itemrack-classic)
