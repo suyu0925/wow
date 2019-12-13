@@ -1,4 +1,4 @@
-## Interface: 11302
+## Interface: 11303
 ## Title: Scrap Spotlight
 ## Notes: Makes your Scrap to glow in the darkness of your bags
 ## Author: Jaliborc (João Cardoso)
