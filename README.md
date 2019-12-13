@@ -190,8 +190,8 @@
 
   敌方施法条
 
-  - 游戏版本 1.13.2
-  - 插件版本 1.1.4-classic
+  - 游戏版本 1.13.3
+  - 插件版本 1.2.0-classic
 
 * [Quartz](https://www.curseforge.com/wow/addons/quartz)
 
