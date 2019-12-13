@@ -70,57 +70,57 @@
 
   自动出售灰色物品
 
-  - 游戏版本 1.13.2
+  - 游戏版本 1.13.3
   - 插件版本 13.19
 
 * [AuctionFaster](https://www.curseforge.com/wow/addons/auctionfaster)
 
   拍卖行助手
 
-  - 游戏版本 1.13.2
+  - 游戏版本 1.13.3
   - 插件版本 1.13.6-classic
 
 * [OmniCC](https://www.curseforge.com/wow/addons/omni-cc)
 
   法术冷却
 
-  - 游戏版本 1.13.2
+  - 游戏版本 1.13.3
   - 插件版本 8.2.5
 
 * [sortBags](https://www.curseforge.com/wow/addons/sortbags)
 
   背包整理
 
-  - 游戏版本 1.13.2
+  - 游戏版本 1.13.3
   - 插件版本 0.1.3
 
 * [tullaRange](https://www.curseforge.com/wow/addons/tullarange)
 
   醒目的突出超出距离的技能
 
-  - 游戏版本 1.13.2
+  - 游戏版本 1.13.3
   - 插件版本 8.2.5-classic
 
 * [ClassicAuraDurations](https://www.curseforge.com/wow/addons/classicauradurations)
 
   Buff, Debuff监控。
 
-  - 游戏版本 1.13.2
+  - 游戏版本 1.13.3
   - 插件版本 1.13.47
 
 * [WeaponSwingTimer](https://www.curseforge.com/wow/addons/weaponswingtimer)
 
   物理攻击计时。
 
-  - 游戏版本 1.13.2
+  - 游戏版本 1.13.3
   - 插件版本 4.1.0
 
 * [Real Mob Health](https://www.curseforge.com/wow/addons/real-mob-health)
 
   怪物血量。
 
-  - 游戏版本 1.13.2
-  - 插件版本 2.13
+  - 游戏版本 1.13.3
+  - 插件版本 2.16
 
 * [Atlas](https://www.curseforge.com/wow/addons/atlas)
 
