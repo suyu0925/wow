@@ -5,8 +5,8 @@
 
   头像增强
 
-  - 游戏版本 1.13.2
-  - 插件版本 1.31.2
+  - 游戏版本 1.13.3
+  - 插件版本 1.32
 
 * [~~ArkInventory~~](https://www.curseforge.com/wow/addons/ark-inventory)
 

@@ -1,9 +1,9 @@
-## Interface: 11302
+## Interface: 11303
 ## Title: UnitFramesPlus Cooldown
 ## Title-zhCN: 系统头像增强 冷却计时
 ## Title-zhTW: 系統頭像增強 冷卻計時
 ## X-Repple: 界面
-## Version: 1.31.2
+## Version: 1.32
 ## Author: Isler
 ## Author-LibClassicDurations: ullosu
 ## RequiredDeps: UnitFramesPlus
