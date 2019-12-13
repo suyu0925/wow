@@ -233,13 +233,13 @@
   Buff, Debuff监控
 
   - 游戏版本 1.13.2
-  - 插件版本 2.15.4-classic
+  - 插件版本 2.15.5-classic
 
 * [SilverDragon](https://www.curseforge.com/wow/addons/silver-dragon)
 
   银龙稀有精英监控
 
-  - 游戏版本 1.13.2
+  - 游戏版本 1.13.3
   - 插件版本 11302.0-classic
 
 * [ShowActionCount](https://bbs.nga.cn/read.php?tid=17568491)
