@@ -34,7 +34,7 @@
 
   一件换装
 
-  - 游戏版本 1.13.2
+  - 游戏版本 1.13.3
   - 插件版本 3.16
 
 * [CharacterStatsClassic](https://www.curseforge.com/wow/addons/characterstatsclassic)
@@ -232,7 +232,7 @@
 
   Buff, Debuff监控
 
-  - 游戏版本 1.13.2
+  - 游戏版本 1.13.3
   - 插件版本 2.15.5-classic
 
 * [SilverDragon](https://www.curseforge.com/wow/addons/silver-dragon)
