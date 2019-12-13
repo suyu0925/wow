@@ -2377,6 +2377,7 @@ data["TheTempleOfAtal'Hakkar"] = {
 			npcID = 8443,
 			DisplayIDs = {{8053}},
 			AtlasMapBossID = 3,
+			Level = 48,
 			[NORMAL_DIFF] = {
 				{ 1,  12462 }, -- Embrace of the Wind Serpent
 				{ 3,  10843 }, -- Featherskin Cape
@@ -2818,9 +2819,9 @@ data["BlackrockDepths"] = {
 		{ -- BRDGuzzler
 			name = AL["Guzzler"],
 			SubAreaID = 26751,
-			npcID = {9537, 9502, 12944, 9543, 9499},
+			npcID = {9537, 12944, 9543, 9499},
 			Level = 55,
-			DisplayIDs = {{8658},{8177},{14666},{8667},{8652}},
+			DisplayIDs = {{8658},{14666},{8667},{8652}},
 			AtlasMapBossID = 15,
 			[NORMAL_DIFF] = {
 				{ 1, "INV_Box_01", nil, AL["Hurley Blackbreath"], nil },
@@ -2828,13 +2829,8 @@ data["BlackrockDepths"] = {
 				{ 3,  18043 }, -- Coal Miner Boots
 				{ 4,  22275 }, -- Firemoss Boots
 				{ 5,  18044 }, -- Hurley's Tankard
-				{ 7, "INV_Box_01", nil, AL["Phalanx"], nil },
-				{ 8,  11746 }, -- Golem Skull Helm
-				{ 9,  22212 }, -- Golem Fitted Pauldrons
-				{ 10,  11745 }, -- Fists of Phalanx
-				{ 11, 11744 }, -- Bloodfist
-				{ 13, "INV_Box_01", nil, AL["Lokhtos Darkbargainer"], nil },
-				{ 14, 18592 }, -- Plans: Sulfuron Hammer
+				{ 7, "INV_Box_01", nil, AL["Lokhtos Darkbargainer"], nil },
+				{ 8, 18592 }, -- Plans: Sulfuron Hammer
 				{ 16, "INV_Box_01", nil, AL["Ribbly Screwspigot"], nil },
 				{ 17, 11612 }, -- Plans: Dark Iron Plate
 				{ 18, 2662 }, -- Ribbly's Quiver
@@ -2848,6 +2844,21 @@ data["BlackrockDepths"] = {
 				{ 27, 15759 }, -- Pattern: Black Dragonscale Breastplate
 				{ 28, 11325 }, -- Dark Iron Ale Mug
 				{ 29, 11602 }, -- Grim Guzzler Key
+			},
+		},
+		{ -- Phalanx
+			name = AL["Phalanx"],
+			npcID = 9502,
+			Level = 55,
+			SubAreaID = 26751,
+			DisplayIDs = {{8177}},
+			AtlasMapBossID = 15,
+			[NORMAL_DIFF] = {
+				{ 1,  11746 }, -- Golem Skull Helm
+				{ 2,  22212 }, -- Golem Fitted Pauldrons
+				{ 3,  11745 }, -- Fists of Phalanx
+				{ 4, 11744 }, -- Bloodfist
+				{ 5, 11743 }, -- Rockfist
 			},
 		},
 		{ -- BRDFlamelash
@@ -2873,6 +2884,7 @@ data["BlackrockDepths"] = {
 			SubAreaID = 26764,
 			DisplayIDs = {{8270}},
 			AtlasMapBossID = 17,
+			specialType = "rare",
 			[NORMAL_DIFF] = {
 				{ 1,  22245 }, -- Soot Encrusted Footwear
 				{ 2,  11787 }, -- Shalehusk Boots
@@ -3005,7 +3017,7 @@ data["BlackrockDepths"] = {
 }
 
 data["LowerBlackrockSpire"] = {
-	name = AL["Lower "] .. C_Map.GetAreaInfo(1583),
+	name = AL["Lower Blackrock Spire"],
 	MapID = 1583,
 	InstanceID = 229,
 	SubAreaIDs = { 26683, 26718, 26711, 26713, 26686, 32528, 26688 },
@@ -3020,7 +3032,8 @@ data["LowerBlackrockSpire"] = {
 			npcID = 10263,
 			Level = {56, 57},
 			DisplayIDs = {{5047}},
-			AtlasMapBossID = "1'",
+			AtlasMapBossID = 1,
+			specialType = "rare",
 			[NORMAL_DIFF] = {
 				{ 1,  13181 }, -- Demonskin Gloves
 				{ 2,  13182 }, -- Phase Blade
@@ -3073,6 +3086,7 @@ data["LowerBlackrockSpire"] = {
 			Level = {57, 58},
 			DisplayIDs = {{11578}},
 			AtlasMapBossID = 6,
+			specialType = "rare",
 			[NORMAL_DIFF] = {
 				{ 1,  13282 }, -- Ogreseer Tower Boots
 				{ 2,  13283 }, -- Magus Ring
@@ -3163,7 +3177,6 @@ data["LowerBlackrockSpire"] = {
 			Level = 60,
 			DisplayIDs = {{11583}},
 			AtlasMapBossID = 15,
-			specialType = "rare",
 			[NORMAL_DIFF] = {
 				{ 1,  16670 }, -- Boots of Elements
 				{ 3,  13258 }, -- Slaghide Gauntlets
@@ -3294,7 +3307,7 @@ data["LowerBlackrockSpire"] = {
 }
 
 data["UpperBlackrockSpire"] = {
-	name = AL["Upper "] .. C_Map.GetAreaInfo(1583),
+	name = AL["Upper Blackrock Spire"],
 	MapID = 1583,
 	InstanceID = 229,
 	SubAreaIDs = { 26670, 26668, 26684, 26662, 26642, 26683, 15492, 26666, 26715 },
@@ -3511,9 +3524,9 @@ data["UpperBlackrockSpire"] = {
 }
 
 data["DireMaulEast"] = {
-	name = C_Map.GetAreaInfo(2557) .." ".. AL["East"],
+	name = AL["Dire Maul East"],
 	MapID = 2557,
-	InstanceID = 429,
+	--InstanceID = 429,
 	SubAreaIDs = { 34776, 33730 },
 	AtlasMapID = "DireMaul",
 	AtlasMapFile = {"DireMaulEast", "DireMaulEnt"},
@@ -3524,6 +3537,7 @@ data["DireMaulEast"] = {
 		{ -- DMEPusillin
 			name = AL["Pusillin"],
 			npcID = 14354,
+			Level = 57,
 			DisplayIDs = {{7552}},
 			AtlasMapBossID = "1-2",
 			[NORMAL_DIFF] = {
@@ -3534,6 +3548,7 @@ data["DireMaulEast"] = {
 		{ -- DMEZevrimThornhoof
 			name = AL["Zevrim Thornhoof"],
 			npcID = 11490,
+			Level = 57,
 			DisplayIDs = {{11335}},
 			AtlasMapBossID = 3,
 			[NORMAL_DIFF] = {
@@ -3547,6 +3562,7 @@ data["DireMaulEast"] = {
 		{ -- DMEHydro
 			name = AL["Hydrospawn"],
 			npcID = 13280,
+			Level = 57,
 			DisplayIDs = {{5489}},
 			AtlasMapBossID = 3,
 			[NORMAL_DIFF] = {
@@ -3561,6 +3577,7 @@ data["DireMaulEast"] = {
 		{ -- DMELethtendris
 			name = AL["Lethtendris"],
 			npcID = 14327,
+			Level = 57,
 			DisplayIDs = {{14378}},
 			AtlasMapBossID = 3,
 			[NORMAL_DIFF] = {
@@ -3573,6 +3590,7 @@ data["DireMaulEast"] = {
 		{ -- DMEAlzzin
 			name = AL["Alzzin the Wildshaper"],
 			npcID = 11492,
+			Level = 58,
 			DisplayIDs = {{14416}},
 			AtlasMapBossID = 5,
 			SubAreaID = 33730,
@@ -3626,10 +3644,10 @@ data["DireMaulEast"] = {
 }
 
 data["DireMaulWest"] = {
-	name = C_Map.GetAreaInfo(2557) .." ".. AL["West"],
+	name = AL["Dire Maul West"],
 	MapID = 2557,
-	InstanceID = 429,
-	SubAreaIDs = { 33748, 33749, 33750 },
+	--InstanceID = 429,
+	SubAreaIDs = { 33748, 33749, 33750, 33710 },
 	AtlasMapID = "DireMaul",
 	AtlasMapFile = {"DireMaulWest", "DireMaulEnt"},
 	ContentType = DUNGEON_CONTENT,
@@ -3639,6 +3657,7 @@ data["DireMaulWest"] = {
 		{ -- DMWTendrisWarpwood
 			name = AL["Tendris Warpwood"],
 			npcID = 11489,
+			Level = 60,
 			DisplayIDs = {{14383}},
 			AtlasMapBossID = 2,
 			SubAreaID = 33748,
@@ -3652,6 +3671,7 @@ data["DireMaulWest"] = {
 		{ -- DMWIllyannaRavenoak
 			name = AL["Illyanna Ravenoak"],
 			npcID = 11488,
+			Level = 60,
 			DisplayIDs = {{11270}},
 			SubAreaID = 33749,
 			AtlasMapBossID = 3,
@@ -3665,6 +3685,7 @@ data["DireMaulWest"] = {
 		{ -- DMWMagisterKalendris
 			name = AL["Magister Kalendris"],
 			npcID = 11487,
+			Level = 60,
 			DisplayIDs = {{14384}},
 			AtlasMapBossID = 4,
 			SubAreaID = 33749,
@@ -3681,6 +3702,7 @@ data["DireMaulWest"] = {
 		{ -- DMWTsuzee
 			name = AL["Tsu'zee"],
 			npcID = 11467,
+			Level = 60,
 			DisplayIDs = {{11250}},
 			specialType = "rare",
 			AtlasMapBossID = 5,
@@ -3694,6 +3716,7 @@ data["DireMaulWest"] = {
 		{ -- DMWImmolthar
 			name = AL["Immol'thar"],
 			npcID = 11496,
+			Level = 61,
 			DisplayIDs = {{14173}},
 			AtlasMapBossID = 6,
 			SubAreaID = 33750,
@@ -3713,6 +3736,7 @@ data["DireMaulWest"] = {
 		{ -- DMWPrinceTortheldrin
 			name = AL["Prince Tortheldrin"],
 			npcID = 11486,
+			Level = 61,
 			DisplayIDs = {{11256}},
 			AtlasMapBossID = 7,
 			[NORMAL_DIFF] = {
@@ -3771,9 +3795,9 @@ data["DireMaulWest"] = {
 }
 
 data["DireMaulNorth"] = {
-	name = C_Map.GetAreaInfo(2557) .." ".. AL["North"],
+	name = AL["Dire Maul North"],
 	MapID = 2557,
-	InstanceID = 429,
+	--InstanceID = 429,
 	SubAreaIDs = { 33774, 33775 },
 	AtlasMapID = "DireMaulNorth",
 	AtlasMapFile = {"DireMaulNorth", "DireMaulEnt"},
@@ -3784,6 +3808,7 @@ data["DireMaulNorth"] = {
 		{ -- DMNGuardMoldar
 			name = AL["Guard Mol'dar"],
 			npcID = 14326,
+			Level = 59,
 			DisplayIDs = {{11561}},
 			AtlasMapBossID = 1,
 			[NORMAL_DIFF] = {
@@ -3807,6 +3832,7 @@ data["DireMaulNorth"] = {
 		{ -- DMNStomperKreeg
 			name = AL["Stomper Kreeg"],
 			npcID = 14322,
+			Level = 59,
 			DisplayIDs = {{11545}},
 			AtlasMapBossID = 2,
 			[NORMAL_DIFF] = {
@@ -3822,6 +3848,7 @@ data["DireMaulNorth"] = {
 		{ -- DMNGuardFengus
 			name = AL["Guard Fengus"],
 			npcID = 14321,
+			Level = 59,
 			DisplayIDs = {{11561}},
 			AtlasMapBossID = 3,
 			[NORMAL_DIFF] = {
@@ -3840,9 +3867,10 @@ data["DireMaulNorth"] = {
 		},
 		{ -- DMNGuardSlipkik
 			name = AL["Guard Slip'kik"],
-			AtlasMapBossID = 4,
 			npcID = 14323,
+			Level = 59,
 			DisplayIDs = {{11561}},
+			AtlasMapBossID = 4,
 			[NORMAL_DIFF] = {
 				{ 1,  18494 }, -- Denwatcher's Shoulders
 				{ 2,  18493 }, -- Bulky Iron Spaulders
@@ -3863,6 +3891,7 @@ data["DireMaulNorth"] = {
 		{ -- DMNThimblejack
 			name = AL["Knot Thimblejack's Cache"],
 			AtlasMapBossID = 4,
+			npcID = 14338,
 			ObjectID = 179501,
 			[NORMAL_DIFF] = {
 				{ 1,  18414 }, -- Pattern: Belt of the Archmage
@@ -3883,6 +3912,7 @@ data["DireMaulNorth"] = {
 		{ -- DMNCaptainKromcrush
 			name = AL["Captain Kromcrush"],
 			npcID = 14325,
+			Level = 61,
 			DisplayIDs = {{11564}},
 			AtlasMapBossID = 5,
 			[NORMAL_DIFF] = {
@@ -3895,6 +3925,7 @@ data["DireMaulNorth"] = {
 		{ -- DMNChoRush
 			name = AL["Cho'Rush the Observer"],
 			npcID = 14324,
+			Level = 60,
 			DisplayIDs = {{11537}},
 			AtlasMapBossID = 6,
 			[NORMAL_DIFF] = {
@@ -3907,6 +3938,7 @@ data["DireMaulNorth"] = {
 		{ -- DMNKingGordok
 			name = AL["King Gordok"],
 			npcID = 11501,
+			Level = 62,
 			DisplayIDs = {{11583}},
 			AtlasMapBossID = 6,
 			[NORMAL_DIFF] = {
@@ -3925,6 +3957,7 @@ data["DireMaulNorth"] = {
 		{ -- DMNTRIBUTERUN
 			name = AL["Tribute"],
 			ExtraList = true,
+			npcID = 14324,
 			ObjectID = 179564,
 			[NORMAL_DIFF] = {
 				{ 1,  18538 }, -- Treant's Bane
@@ -3947,8 +3980,7 @@ data["DireMaulNorth"] = {
 				{ 21, 18476 }, -- Mud Stained Boots
 				{ 22, 18482 }, -- Ogre Toothpick Shooter
 				{ 23, 18481 }, -- Skullcracking Mace
-				{ 24, 18637 }, -- Major Recombobulator
-				{ 26, 18655 }, -- Schematic: Major Recombobulator
+				{ 25, 18655 }, -- Schematic: Major Recombobulator
 			},
 		},
 		{ -- DMNTrash
@@ -4893,6 +4925,13 @@ data["WorldBosses"] = {
 				{ 9,  18202 }, -- Eskhandar's Left Claw
 				{ 10, 18542 }, -- Typhoon
 				{ 16, 18704 }, -- Mature Blue Dragon Sinew
+				{ 18, 11938 }, -- Sack of Gems
+				-- Hidden items
+				{ 0, 17962 }, -- Blue Sack of Gems
+				{ 0, 17963 }, -- Green Sack of Gems
+				{ 0, 17964 }, -- Gray Sack of Gems
+				{ 0, 17965 }, -- Yellow Sack of Gems
+				{ 0, 17969 }, -- Red Sack of Gems
 			},
 		},
 		{ -- KKazzak
@@ -4915,6 +4954,13 @@ data["WorldBosses"] = {
 				{ 9,  17112 }, -- Empyrean Demolisher
 				{ 10, 17113 }, -- Amberseal Keeper
 				{ 16, 18665 }, -- The Eye of Shadow
+				{ 18, 11938 }, -- Sack of Gems
+				-- Hidden items
+				{ 0, 17962 }, -- Blue Sack of Gems
+				{ 0, 17963 }, -- Green Sack of Gems
+				{ 0, 17964 }, -- Gray Sack of Gems
+				{ 0, 17965 }, -- Yellow Sack of Gems
+				{ 0, 17969 }, -- Red Sack of Gems
 			},
 		},
 		{ -- DLethon
@@ -4942,7 +4988,14 @@ data["WorldBosses"] = {
 				{ 17, 20600 }, -- Malfurion's Signet Ring
 				{ 24, 20580 }, -- Hammer of Bestial Fury
 				{ 25, 20581 }, -- Staff of Rampant Growth
-				{ 30, 20381 }, -- Dreamscale
+				{ 29, 20381 }, -- Dreamscale
+				{ 30, 11938 }, -- Sack of Gems
+				-- Hidden items
+				{ 0, 17962 }, -- Blue Sack of Gems
+				{ 0, 17963 }, -- Green Sack of Gems
+				{ 0, 17964 }, -- Gray Sack of Gems
+				{ 0, 17965 }, -- Yellow Sack of Gems
+				{ 0, 17969 }, -- Red Sack of Gems
 			},
 		},
 		{ -- DEmeriss
@@ -4969,7 +5022,13 @@ data["WorldBosses"] = {
 				{ 17, 20600 }, -- Malfurion's Signet Ring
 				{ 24, 20580 }, -- Hammer of Bestial Fury
 				{ 25, 20581 }, -- Staff of Rampant Growth
-				{ 30, 20381 }, -- Dreamscale
+				{ 30, 11938 }, -- Sack of Gems
+				-- Hidden items
+				{ 0, 17962 }, -- Blue Sack of Gems
+				{ 0, 17963 }, -- Green Sack of Gems
+				{ 0, 17964 }, -- Gray Sack of Gems
+				{ 0, 17965 }, -- Yellow Sack of Gems
+				{ 0, 17969 }, -- Red Sack of Gems
 			},
 		},
 		{ -- DTaerar
@@ -4996,7 +5055,13 @@ data["WorldBosses"] = {
 				{ 17, 20600 }, -- Malfurion's Signet Ring
 				{ 24, 20580 }, -- Hammer of Bestial Fury
 				{ 25, 20581 }, -- Staff of Rampant Growth
-				{ 30, 20381 }, -- Dreamscale
+				{ 30, 11938 }, -- Sack of Gems
+				-- Hidden items
+				{ 0, 17962 }, -- Blue Sack of Gems
+				{ 0, 17963 }, -- Green Sack of Gems
+				{ 0, 17964 }, -- Gray Sack of Gems
+				{ 0, 17965 }, -- Yellow Sack of Gems
+				{ 0, 17969 }, -- Red Sack of Gems
 			},
 		},
 		{ -- DYsondre
@@ -5024,7 +5089,13 @@ data["WorldBosses"] = {
 				{ 17, 20600 }, -- Malfurion's Signet Ring
 				{ 24, 20580 }, -- Hammer of Bestial Fury
 				{ 25, 20581 }, -- Staff of Rampant Growth
-				{ 30, 20381 }, -- Dreamscale
+				{ 30, 11938 }, -- Sack of Gems
+				-- Hidden items
+				{ 0, 17962 }, -- Blue Sack of Gems
+				{ 0, 17963 }, -- Green Sack of Gems
+				{ 0, 17964 }, -- Gray Sack of Gems
+				{ 0, 17965 }, -- Yellow Sack of Gems
+				{ 0, 17969 }, -- Red Sack of Gems
 			},
 		},
 	}
@@ -5264,7 +5335,6 @@ data["MoltenCore"] = {
 				{ 24, 17077 }, -- Crimson Shocker
 				{ 25, 18878 }, -- Sorcerous Dagger
 				{ 26, 17074 }, -- Shadowstrike
-				{ 27, 17223 }, -- Thunderstrike
 			},
 		},
 		{ -- MCMajordomo
@@ -5405,7 +5475,13 @@ data["Onyxia"] = {
 				{ 23, 17068 }, -- Deathbringer
 				{ 24, 17075 }, -- Vis'kag the Bloodletter
 				{ 26, 17966 }, -- Onyxia Hide Backpack
-				{ 27, 17962 }, -- Blue Sack of Gems
+				{ 27, 11938 }, -- Sack of Gems
+				-- Hidden items
+				{ 0, 17962 }, -- Blue Sack of Gems
+				{ 0, 17963 }, -- Green Sack of Gems
+				{ 0, 17964 }, -- Gray Sack of Gems
+				{ 0, 17965 }, -- Yellow Sack of Gems
+				{ 0, 17969 }, -- Red Sack of Gems
 			},
 		},
 	},
@@ -6034,7 +6110,13 @@ data["BlackwingLair"] = {
 				{ 26, 19376 }, -- Archimtiros' Ring of Reckoning
 				{ 27, 19382 }, -- Pure Elementium Band
 				{ 28, 19379 }, -- Neltharion's Tear
-				{ 30, 17962 }, -- Blue Sack of Gems
+				{ 30, 11938 }, -- Sack of Gems
+				-- Hidden items
+				{ 0, 17962 }, -- Blue Sack of Gems
+				{ 0, 17963 }, -- Green Sack of Gems
+				{ 0, 17964 }, -- Gray Sack of Gems
+				{ 0, 17965 }, -- Yellow Sack of Gems
+				{ 0, 17969 }, -- Red Sack of Gems
 			},
 		},
 		{ -- BWLTrashMobs

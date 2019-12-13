@@ -39,7 +39,7 @@ local PRICE_EXTRA_ITTYPE = data:AddExtraItemTableType("Price")
 local SET_EXTRA_ITTYPE = data:AddExtraItemTableType("Set")
 
 local FACTIONS_CONTENT = data:AddContentType(AL["Factions"], ATLASLOOT_FACTION_COLOR)
-local FACTIONS2_CONTENT = data:AddContentType(AL["Factions 2"], {0.1, 0.3, 0.1, 1})
+local FACTIONS2_CONTENT = data:AddContentType(AL["Secondary factions"], {0.1, 0.3, 0.1, 1})
 
 --[[
 0 - Unknown
@@ -365,8 +365,8 @@ data["BroodOfNozdormu"] = {
 			[NORMAL_DIFF] = {
 				{ 1, "f910rep6" },
 				{ 2, 21208 }, --Signet Ring of the Bronze Dragonflight / 70
-				{ 2, 21203 }, --Signet Ring of the Bronze Dragonflight / 70
-				{ 3, 21198 }, --Signet Ring of the Bronze Dragonflight / 70
+				{ 3, 21203 }, --Signet Ring of the Bronze Dragonflight / 70
+				{ 4, 21198 }, --Signet Ring of the Bronze Dragonflight / 70
 			},
 		},
 		{ -- Friendly

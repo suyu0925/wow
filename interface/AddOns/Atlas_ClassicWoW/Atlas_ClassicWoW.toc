@@ -1,4 +1,4 @@
-## Interface: 11302
+## Interface: 11303
 #@non-debug@
 ## Title: Atlas |r|cFF0099FF[Classic WoW]|r
 ## Title-deDE: Atlas |r|cFF0099FF[Classic-WoW]|r

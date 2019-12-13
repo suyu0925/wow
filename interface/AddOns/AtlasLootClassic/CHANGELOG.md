@@ -4,8 +4,8 @@ This mod is distributed under Version 2 of the GPL.  A copy of the GPL is includ
 
 [Changelog history](https://github.com/Hoizame/AtlasLootClassic/blob/master/AtlasLootClassic/Documentation/Release_Notes.md)
 
-## v1.3.1 (Oct. 15, 2019)
+## v1.4.2 (Dec. 11, 2019)
 
-- Add Legendarys into Collections
-- Add PvP Insignia
-- Move Zul'Farrak / Dustwraith into Phase 1
+- Set Phase 2.5
+- Add PvP Ranks overview
+- Fix missing random enchants on gear
