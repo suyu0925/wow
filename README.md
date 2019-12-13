@@ -154,7 +154,7 @@
 
   仇恨统计
 
-  - 游戏版本 1.13.2
+  - 游戏版本 1.13.3
   - 插件版本 1.10
 
 * [~~Details!Damage Meter~~](https://www.curseforge.com/wow/addons/details)
