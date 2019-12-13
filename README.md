@@ -197,8 +197,8 @@
 
   施法条增强
 
-  - 游戏版本 1.13.2
-  - 插件版本 3.5.1-classic
+  - 游戏版本 1.13.3
+  - 插件版本 3.5.5-classic
 
 * [~CensusPlusClassic~](https://www.curseforge.com/wow/addons/censusplusclassic/)
 
