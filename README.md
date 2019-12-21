@@ -184,7 +184,7 @@
   副本副手
 
   - 游戏版本 1.13.3
-  - 插件版本 1.13.24-classic
+  - 插件版本 1.13.25-classic
 
 * [ClassicCastbars](https://www.curseforge.com/wow/addons/classiccastbars)
 
