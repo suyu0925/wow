@@ -179,6 +179,15 @@
   - 游戏版本 1.13.3
   - 插件版本 5.4.0
 
+* [~guidelime~](https://www.curseforge.com/wow/addons/guidelime)
+
+  升级伴侣
+
+  - 游戏版本 1.13.3
+  - 插件版本 1.040
+
+  太复杂了，适合新手
+
 * [Deadly Boss Mods(DBM)](https://www.curseforge.com/wow/addons/deadly-boss-mods)
 
   副本副手
