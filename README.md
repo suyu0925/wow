@@ -216,9 +216,9 @@
   - 游戏版本 1.13.2
   - 插件版本 0.8.1
 
-* [CChatNotifier](https://github.com/coolmodi/CChatNotifier)
+* [CChatNotifier](https://gitee.com/kiskadon/CChatNotifier_zhCN
 
-  聊天过滤
+  聊天过滤汉化，原版地址()(https://github.com/coolmodi/CChatNotifier))
 
   - 游戏版本 1.13.3
   - 插件版本 1.0
