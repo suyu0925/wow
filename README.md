@@ -71,7 +71,7 @@
   自动出售灰色物品
 
   - 游戏版本 1.13.3
-  - 插件版本 13.19
+  - 插件版本 8.2.2
 
 * [AuctionFaster](https://www.curseforge.com/wow/addons/auctionfaster)
 
@@ -92,7 +92,7 @@
   背包整理
 
   - 游戏版本 1.13.3
-  - 插件版本 0.1.3
+  - 插件版本 1.0.0
 
 * [tullaRange](https://www.curseforge.com/wow/addons/tullarange)
 
