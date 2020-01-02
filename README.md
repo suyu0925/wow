@@ -120,7 +120,7 @@
   怪物血量。
 
   - 游戏版本 1.13.3
-  - 插件版本 2.16
+  - 插件版本 2.17
 
 * [Atlas](https://www.curseforge.com/wow/addons/atlas)
 
@@ -177,7 +177,7 @@
   任务助手
 
   - 游戏版本 1.13.3
-  - 插件版本 5.4.0
+  - 插件版本 5.4.1
 
 * [~guidelime~](https://www.curseforge.com/wow/addons/guidelime)
 
@@ -193,7 +193,7 @@
   副本副手
 
   - 游戏版本 1.13.3
-  - 插件版本 1.13.25-classic
+  - 插件版本 1.13.26-classic
 
 * [ClassicCastbars](https://www.curseforge.com/wow/addons/classiccastbars)
 
@@ -216,9 +216,9 @@
   - 游戏版本 1.13.2
   - 插件版本 0.8.1
 
-* [CChatNotifier](https://gitee.com/kiskadon/CChatNotifier_zhCN
+* [CChatNotifier](https://gitee.com/kiskadon/CChatNotifier_zhCN)
 
-  聊天过滤汉化，原版地址()(https://github.com/coolmodi/CChatNotifier))
+  聊天过滤汉化，[原版地址](https://github.com/coolmodi/CChatNotifier)
 
   - 游戏版本 1.13.3
   - 插件版本 1.0
