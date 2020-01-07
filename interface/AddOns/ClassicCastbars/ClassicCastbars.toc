@@ -3,11 +3,10 @@
 ## Notes: Adds castbars to various unitframes.
 ## SavedVariables: ClassicCastbarsDB
 ## Author: Wardz
-## Version: v1.2.0-hotfix
+## Version: v1.2.2
 ## X-Curse-Project-ID: 322865
 ## X-WoWI-ID: 24925
 
-core/UIFrameFade.lua
 core/PoolManager.lua
 core/AnchorManager.lua
 core/Data.lua

@@ -193,14 +193,14 @@
   副本副手
 
   - 游戏版本 1.13.3
-  - 插件版本 1.13.26-classic
+  - 插件版本 1.13.28-classic
 
 * [ClassicCastbars](https://www.curseforge.com/wow/addons/classiccastbars)
 
   敌方施法条
 
   - 游戏版本 1.13.3
-  - 插件版本 1.2.0-classic
+  - 插件版本 1.2.2-classic
 
 * [Quartz](https://www.curseforge.com/wow/addons/quartz)
 
@@ -237,9 +237,11 @@
   - 游戏版本 1.13.3
   - 插件版本 2.7.6.6-classic
 
-* [WeakAuras 2](https://www.curseforge.com/wow/addons/weakauras-2)
+* [~WeakAuras 2~](https://www.curseforge.com/wow/addons/weakauras-2)
 
   Buff, Debuff监控
+
+  *这个插件用法比较深，暂时先去除，以后有空了再回头研究*。
 
   - 游戏版本 1.13.3
   - 插件版本 2.15.5-classic
