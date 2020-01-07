@@ -42,7 +42,7 @@
   人物面板属性统计
 
   - 游戏版本 1.13.3
-  - 插件版本 2.8
+  - 插件版本 2.9
 
 * [TinyInspect](https://www.curseforge.com/wow/addons/itemlevel-anywhere)
 
@@ -64,7 +64,7 @@
   售价助手
 
   - 游戏版本 1.13.3
-  - 插件版本 1.2.9-classic
+  - 插件版本 1.3.0-classic
 
 * [Scrap (Junk Seller)](https://www.curseforge.com/wow/addons/scrap)
 
