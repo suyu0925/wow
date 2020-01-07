@@ -127,21 +127,21 @@
   副本地图
 
   - 游戏版本 1.13.3
-  - 插件版本 v1.45.01.11302
+  - 插件版本 v1.45.02.11303.01
 
 * [Atlas Classic Wow](https://www.curseforge.com/wow/addons/atlas-classicwow)
 
   副本地图怀旧服
 
   - 游戏版本 1.13.3
-  - 插件版本 v1.45.00
+  - 插件版本 v1.45.01.11303.05
 
 * [AtlasLootClassic](https://www.curseforge.com/wow/addons/atlaslootclassic)
 
   查看BOSS掉落
 
   - 游戏版本 1.13.3
-  - 插件版本 v1.4.2
+  - 插件版本 v1.4.4
 
 * [Recount](https://www.curseforge.com/wow/addons/recount)
 
