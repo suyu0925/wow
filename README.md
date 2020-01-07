@@ -258,7 +258,7 @@
   施法材料数量
 
   - 游戏版本 1.13.3
-  - 插件版本 1.00
+  - 插件版本 1.01
 
 * [~~RangeDisplay~~](https://www.curseforge.com/wow/addons/range-display)
 
