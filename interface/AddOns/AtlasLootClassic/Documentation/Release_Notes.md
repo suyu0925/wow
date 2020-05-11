@@ -2,6 +2,39 @@
 
 This mod is distributed under Version 2 of the GPL.  A copy of the GPL is included in this zip file with links to non-english translations.
 
+## v1.5.0 (Apr. 16, 2020)
+
+- Content phase 4
+- revert some lvl range changes
+
+## v1.4.8 (Apr. 07, 2020)
+
+- Update .toc version
+- Update lvl ranges
+- Removed double entry ( Death Knight Darkreaver / Scholo )
+- Add Sandarr Dunereaver
+- Fix Horde Honored Items for Warsong ( thanks AndreWaehlisch )
+
+## v1.4.7 (Mar. 07, 2020)
+
+- Update droprates
+- Outrider's Plate Legguards set P6
+- fix rare error with compare tooltips
+
+## v1.4.6 (Feb. 12, 2020)
+
+- Updates for BWL
+
+## v1.4.5 (Jan. 16, 2020)
+
+- Update translations
+
+## v1.4.4 (Dec. 24, 2019)
+
+- Favourites lists are now sorted by name
+- Fix some dungeon levels
+- Update data
+
 ## v1.4.3 (Dec. 15, 2019)
 
 - Update content phases

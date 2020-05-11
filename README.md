@@ -140,8 +140,8 @@
 
   查看BOSS掉落
 
-  - 游戏版本 1.13.3
-  - 插件版本 v1.4.4
+  - 游戏版本 1.13.4
+  - 插件版本 v1.5.1
 
 * [Recount](https://www.curseforge.com/wow/addons/recount)
 
