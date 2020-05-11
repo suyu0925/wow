@@ -98,8 +98,8 @@
 
   醒目的突出超出距离的技能
 
-  - 游戏版本 1.13.3
-  - 插件版本 8.2.5-classic
+  - 游戏版本 1.13.4
+  - 插件版本 8.3.2-classic
 
 * [ClassicAuraDurations](https://www.curseforge.com/wow/addons/classicauradurations)
 
