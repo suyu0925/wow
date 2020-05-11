@@ -21,12 +21,9 @@ L["Allows the data of a window to be reported"] = "Permite reportar los datos de
 L["Appearance"] = "Apariencia"
 L["Arcane"] = "Arcano"
 L["Arenas"] = "Arenas"
---[[Translation missing --]]
---[[ L["Astral Power Abilities"] = "Astral Power Abilities"--]] 
---[[Translation missing --]]
---[[ L["Astral Power Gained"] = "Astral Power Gained"--]] 
---[[Translation missing --]]
---[[ L["Astral Power Sources"] = "Astral Power Sources"--]] 
+L["Astral Power Abilities"] = "Habilidades de poder astrales"
+L["Astral Power Gained"] = "Poder astral ganado"
+L["Astral Power Sources"] = "Recursos de poder astral"
 L["Attack Name"] = "Nombre del ataque"
 L["Attack Summary Incoming (Click for Outgoing)"] = "Resumen de ataque entrante (Clic para saliente)"
 L["Attack Summary Outgoing (Click for Incoming)"] = "Resumen de ataque saliente (Clic para entrante)"
@@ -142,12 +139,9 @@ L["Friendly Fired On"] = "Fuego amigo en"
 L["From"] = "De"
 L["Frost"] = "Escarcha"
 L["Frostfire"] = "Pirofrío"
---[[Translation missing --]]
---[[ L["Fury Abilities"] = "Fury Abilities"--]] 
---[[Translation missing --]]
---[[ L["Fury Gained"] = "Fury Gained"--]] 
---[[Translation missing --]]
---[[ L["Fury Sources"] = "Fury Sources"--]] 
+L["Fury Abilities"] = "Habilidades de furia"
+L["Fury Gained"] = "Furia generada"
+L["Fury Sources"] = "Recursos de furia"
 L["Gained"] = "Ganado"
 L["General Window Options"] = "Opciones de la ventana general"
 L["Glancing"] = "Vistazo"
@@ -173,8 +167,7 @@ L["Heals"] = "Sanaciones"
 L["Health"] = "Vida"
 L["Hide"] = "Ocultar"
 L["Hide When Not Collecting"] = "Oculto cuando no recolecta"
---[[Translation missing --]]
---[[ L["Hide While In Pet Battle"] = "Hide While In Pet Battle"--]] 
+L["Hide While In Pet Battle"] = "Ocultar en batalla de mascota"
 L["Hides the main window"] = "Oculta la ventana principal"
 L["Hit"] = "Golpe"
 L["Holy"] = "Sagrado"
@@ -202,12 +195,9 @@ L["Lines Reported"] = "Líneas reportadas"
 L["Lines reported set to: "] = "Líneas reportadas ajustado a:"
 L["Lock"] = "Bloquear"
 L["Lock Windows"] = "Bloquear ventanas"
---[[Translation missing --]]
---[[ L["Maelstorm Abilities"] = "Maelstorm Abilities"--]] 
---[[Translation missing --]]
---[[ L["Maelstorm Gained"] = "Maelstorm Gained"--]] 
---[[Translation missing --]]
---[[ L["Maelstorm Sources"] = "Maelstorm Sources"--]] 
+L["Maelstorm Abilities"] = "Habilidades de Vorágine"
+L["Maelstorm Gained"] = "Vorágine ganada"
+L["Maelstorm Sources"] = "Fuentes de Vorágine"
 L["Main"] = "Principal"
 L["Main Window"] = "Ventana principal"
 L["Main Window Options"] = "Opciones de la ventana principal"
@@ -254,12 +244,9 @@ L["Overall Data"] = "Datos generales"
 L["Overheal"] = "Sobrecuración"
 L["Overhealing"] = "Sobrecuración"
 L["Overhealing Done"] = "Sobrecuración hecha"
---[[Translation missing --]]
---[[ L["Pain Abilities"] = "Pain Abilities"--]] 
---[[Translation missing --]]
---[[ L["Pain Gained"] = "Pain Gained"--]] 
---[[Translation missing --]]
---[[ L["Pain Sources"] = "Pain Sources"--]] 
+L["Pain Abilities"] = "Habilidades de Dolor"
+L["Pain Gained"] = "Dolor ganado"
+L["Pain Sources"] = "Fuentes de Dolor"
 L["Parry"] = "Parado"
 L["Party"] = "Grupo"
 L["Party Instances"] = "Instancias de grupo"
@@ -288,8 +275,7 @@ L["Rage Sources"] = "Fuentes de ira"
 L["Raid"] = "Banda"
 L["Raid Instances"] = "Instancias de banda"
 L["Rank Number"] = "Número de rango"
---[[Translation missing --]]
---[[ L["RealID"] = "RealID"--]] 
+L["RealID"] = "ID Real"
 L["Realtime"] = "Tiempo real"
 L["Record Buffs/Debuffs"] = "Grabar beneficios/perjuicios"
 L["Record Data"] = "Grabar datos"
@@ -324,16 +310,12 @@ L["Ressers"] = "Resucitadores"
 L["Right-click|r to open the options menu"] = "Clic derecho|r para abrir el menú de opciones"
 L["Row Height"] = "Altura de fila"
 L["Row Spacing"] = "Espaciado de fila"
---[[Translation missing --]]
---[[ L["Runic Power Abilities"] = "Runic Power Abilities"--]] 
+L["Runic Power Abilities"] = "Habilidades de Poder rúnico"
 L["Runic Power Gained"] = "Poder rúnico ganado"
---[[Translation missing --]]
---[[ L["Runic Power Sources"] = "Runic Power Sources"--]] 
+L["Runic Power Sources"] = "Fuentes de Poder rúnico"
 L["'s Absorbs"] = "- Absorbió"
---[[Translation missing --]]
---[[ L["'s Astral Power Gained"] = "'s Astral Power Gained"--]] 
---[[Translation missing --]]
---[[ L["'s Astral Power Gained From"] = "'s Astral Power Gained From"--]] 
+L["'s Astral Power Gained"] = "Poder Astral ganado"
+L["'s Astral Power Gained From"] = "Poder Astral ganado de"
 L["'s Dispels"] = " - Disipaciones"
 L["'s DOT Uptime"] = " - Tiempo activo del DOT"
 L["'s DPS"] = " - DPS"
@@ -342,35 +324,27 @@ L["'s Effective Healing"] = " - Curaciones efectivas"
 L["'s Energy Gained"] = " - Energía ganada"
 L["'s Energy Gained From"] = " - Energía ganada de"
 L["'s Friendly Fire"] = " - Fuego amigo"
---[[Translation missing --]]
---[[ L["'s Fury Gained"] = "'s Fury Gained"--]] 
---[[Translation missing --]]
---[[ L["'s Fury Gained From"] = "'s Fury Gained From"--]] 
+L["'s Fury Gained"] = "Furia ganada"
+L["'s Fury Gained From"] = "Furia ganada de"
 L["'s Hostile Attacks"] = " - Ataques hostiles"
 L["'s HOT Uptime"] = " - Tiempo activo del HOT"
 L["'s HPS"] = " - HPS"
 L["'s HTPS"] = " - HTPS"
 L["'s Interrupts"] = " - Interrupciones"
---[[Translation missing --]]
---[[ L["'s Maelstorm Gained"] = "'s Maelstorm Gained"--]] 
---[[Translation missing --]]
---[[ L["'s Maelstorm Gained From"] = "'s Maelstorm Gained From"--]] 
+L["'s Maelstorm Gained"] = "Vorágine ganada"
+L["'s Maelstorm Gained From"] = "Vorágine ganada de"
 L["'s Mana Gained"] = " - Maná ganado"
 L["'s Mana Gained From"] = " - Maná ganado de"
 L["'s Network Traffic"] = " - Tráfico de Red"
 L["'s Overhealing"] = " - Sobrecuración"
---[[Translation missing --]]
---[[ L["'s Pain Gained"] = "'s Pain Gained"--]] 
---[[Translation missing --]]
---[[ L["'s Pain Gained From"] = "'s Pain Gained From"--]] 
+L["'s Pain Gained"] = "Dolor ganado"
+L["'s Pain Gained From"] = "Dolor ganado de"
 L["'s Partial Resists"] = " - Parcialmente resistidos"
 L["'s Rage Gained"] = " - Ira ganada"
 L["'s Rage Gained From"] = " - Ira ganada de"
 L["'s Resses"] = " - Resurrecciones"
---[[Translation missing --]]
---[[ L["'s Runic Power Gained"] = "'s Runic Power Gained"--]] 
---[[Translation missing --]]
---[[ L["'s Runic Power Gained From"] = "'s Runic Power Gained From"--]] 
+L["'s Runic Power Gained"] = "Poder rúnico ganado"
+L["'s Runic Power Gained From"] = "Poder rúnico ganado de"
 L["'s Time Spent"] = " - Tiempo consumido"
 L["'s Time Spent Attacking"] = " - Tiempo consumido atacando"
 L["'s Time Spent Healing"] = " - Tiempo consumido curando"
@@ -432,8 +406,7 @@ L["Times"] = "Tiempos"
 L["Title"] = "Título"
 L["Title Text"] = "Texto de título"
 L["Toggle"] = "Activar/desactivar"
---[[Translation missing --]]
---[[ L["Toggle merge pets"] = "Toggle merge pets"--]] 
+L["Toggle merge pets"] = "Activa/desactiva unir mascotas"
 L["Toggle pause of global data collection"] = "Activa/desactiva la pausa de recolección de datos global"
 L["Toggles sending synchronization messages"] = "Activa/desactiva el envío de mensajes de sincronización"
 L["Toggles the main window"] = "Muestra/oculta la ventana principal"

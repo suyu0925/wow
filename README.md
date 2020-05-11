@@ -147,8 +147,8 @@
 
   伤害统计
 
-  - 游戏版本 1.13.3
-  - 插件版本 1.13.3a
+  - 游戏版本 1.13.4
+  - 插件版本 1.13.4b
 
 * [ClassicThreatMeter](https://www.curseforge.com/wow/addons/classicthreatmeter)
 
