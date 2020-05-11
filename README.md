@@ -134,7 +134,7 @@
   副本地图怀旧服
 
   - 游戏版本 1.13.3
-  - 插件版本 v1.45.01.11303.05
+  - 插件版本 v1.47.00.11303.00
 
 * [AtlasLootClassic](https://www.curseforge.com/wow/addons/atlaslootclassic)
 
