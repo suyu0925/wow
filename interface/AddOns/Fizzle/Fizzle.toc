@@ -4,12 +4,13 @@
 ## Notes: Show item durability and quality in the character frame.
 ## Notes-zhTW: 在角色視窗顯示耐久度。
 ## Notes-zhCN: 在人物装备栏中显示物品品质与耐久度。
-## Version: 80205-1
+## Version: 80300-1
 ## SavedVariablesPerCharacter: FizzleDB
 ## OptionalDeps: Ace3, Voyeur
 ## X-Category: Inventory
 ## X-Embeds: Ace3
 ## X-Curse-Project-ID: 6079
+## X-WoWI-ID: 5018
 
 embeds.xml
 
