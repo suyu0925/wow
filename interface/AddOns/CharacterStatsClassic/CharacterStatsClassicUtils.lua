@@ -2,13 +2,12 @@
     Util functions that wrap my interface and the Blizzard's WoW Classic lua API code for ease of use
 ]]
 
-local function DebugBreakPrint()
-    print("ERROR");
-end
-
 local CSC_ScanTooltip = CreateFrame("GameTooltip", "CSC_ScanTooltip", nil, "GameTooltipTemplate");
 CSC_ScanTooltip:SetOwner(WorldFrame, "ANCHOR_NONE");
 local CSC_ScanTooltipPrefix = "CSC_ScanTooltip";
+
+local g_lastSeenBaseManaRegen = 0;
+local g_lastSeenCastingManaRegen = 0;
 
 local weaponStringByWeaponId = {
 	[LE_ITEM_WEAPON_AXE1H] 		= CSC_WEAPON_AXE1H_TXT,
@@ -151,39 +150,67 @@ local function CSC_GetSkillRankAndModifier(skillHeader, skillName)
 	return skillRank, skillModifier;
 end
 
-local function CSC_GetBonusHitFromWeaponSkill(unit)
-
-	local bonusHit = 0;
+local function CSC_GetPlayerWeaponSkill(unit)
+	local totalWeaponSkill = nil;
 	local mainHandItemId = 16;
+	-- Druid checks
+	local shapeIndex = -1;
+	if (unitClassLoc == "DRUID") then
+		shapeIndex = CSC_GetShapeshiftForm();
+	end
 
-	local itemId = GetInventoryItemID(unit, mainHandItemId);
-	if (itemId) then
-		local itemSubtypeId = select(7, GetItemInfoInstant(itemId));
-		if itemSubtypeId then
-			local weaponString = weaponStringByWeaponId[itemSubtypeId];
-			if weaponString then
-				local skillRank, skillModifier = CSC_GetSkillRankAndModifier(CSC_WEAPON_SKILLS_HEADER, weaponString);
-				if skillRank and skillModifier then
-					local weaponSkillMin = 300;
-					local weaponSkillBorder = 305;
-					
-					-- Weapon skill from racials should be already in skillRank
-					local totalWeaponSkill = skillRank + skillModifier;
-					
-					if totalWeaponSkill >= weaponSkillMin and totalWeaponSkill <= weaponSkillBorder then
-						local hitMult = 0.44; -- 0.44% per skill point
-						bonusHit = (totalWeaponSkill - weaponSkillMin) * hitMult;
-					elseif totalWeaponSkill > weaponSkillBorder then
-						local hitMult = 0.14; -- 0.14% per skill point
-						local skillDiff = totalWeaponSkill - weaponSkillBorder;
-						bonusHit = skillDiff * hitMult + 2.2; -- 5*0.44
+	if (unitClassLoc == "DRUID") and (shapeIndex > 0) then
+		totalWeaponSkill = UnitLevel(unit) * 5;
+	else
+		local itemId = GetInventoryItemID(unit, mainHandItemId);
+		if (itemId) then
+			local itemSubtypeId = select(7, GetItemInfoInstant(itemId));
+			if itemSubtypeId then
+				local weaponString = weaponStringByWeaponId[itemSubtypeId];
+				if weaponString then
+					local skillRank, skillModifier = CSC_GetSkillRankAndModifier(CSC_WEAPON_SKILLS_HEADER, weaponString);
+					if skillRank and skillModifier then
+						-- Weapon skill from racials should be already in skillRank
+						totalWeaponSkill = skillRank + skillModifier;
 					end
 				end
 			end
 		end
 	end
 
-	return bonusHit;
+	return totalWeaponSkill;
+end
+
+local function CSC_GetPlayerMissChances(unit, playerHit, totalWeaponSkill)
+	local hitChance = playerHit;
+	local missChanceVsNPC = 5; -- Level 60 npcs with 300 def
+	local missChanceVsBoss = 9;
+	local missChanceVsPlayer = 5; -- Level 60 player def is 300 base
+
+	if totalWeaponSkill then
+		local bossDefense = 315; -- level 63
+		local playerBossDeltaSkill = bossDefense - totalWeaponSkill;
+		
+		if (playerBossDeltaSkill > 10) then
+			if (hitChance >= 1) then
+				hitChance = hitChance - 1;
+			end
+
+			missChanceVsBoss = 5 + (playerBossDeltaSkill * 0.2);
+		else
+			missChanceVsBoss = 5 + (playerBossDeltaSkill * 0.1);
+		end
+	end
+
+	local dwMissChanceVsNpc = math.max(0, (missChanceVsNPC*0.8 + 20) - playerHit);
+	local dwMissChanceVsBoss = math.max(0, (missChanceVsBoss*0.8 + 20) - hitChance);
+	local dwMissChanceVsPlayer = math.max(0, (missChanceVsPlayer*0.8 + 20) - playerHit);
+
+	missChanceVsNPC = math.max(0, missChanceVsNPC - playerHit);
+	missChanceVsBoss = math.max(0, missChanceVsBoss - hitChance);
+	missChanceVsPlayer = math.max(0, missChanceVsPlayer - playerHit);
+
+	return missChanceVsNPC, missChanceVsBoss, missChanceVsPlayer, dwMissChanceVsNpc, dwMissChanceVsBoss, dwMissChanceVsPlayer;
 end
 -- GENERAL UTIL FUNCTIONS END --
 
@@ -430,7 +457,13 @@ end
 
 -- SECONDARY STATS --
 function CSC_PaperDollFrame_SetCritChance(statFrame, unit, category)
-    local critChance;
+	
+	statFrame:SetScript("OnEnter", CSC_CharacterMeleeCritFrame_OnEnter)
+	statFrame:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+    end)
+	
+	local critChance;
 
     if category == PLAYERSTAT_MELEE_COMBAT then
         critChance = GetCritChance();
@@ -444,7 +477,7 @@ function CSC_PaperDollFrame_SetCritChance(statFrame, unit, category)
     end
 
     CSC_PaperDollFrame_SetLabelAndText(statFrame, STAT_CRITICAL_STRIKE, critChance, true, critChance);
-	statFrame.tooltip = format(PAPERDOLLFRAME_TOOLTIP_FORMAT, STAT_CRITICAL_STRIKE).." "..format("%.2F%%", critChance);
+	statFrame.criticalStrikeTxt = format(PAPERDOLLFRAME_TOOLTIP_FORMAT, STAT_CRITICAL_STRIKE).." "..format("%.2F%%", critChance);
     statFrame:Show();
 end
 
@@ -472,8 +505,8 @@ function CSC_PaperDollFrame_SetSpellCritChance(statFrame, unit)
 	statFrame.shadowCrit = GetSpellCritChance(6);
 	statFrame.arcaneCrit = GetSpellCritChance(7);
 
-	local unitClassLoc = select(2, UnitClass(unit));
-	if (unitClassLoc == "MAGE") then
+	local unitClassId = select(3, UnitClass(unit));
+	if (unitClassId == CSC_MAGE_CLASS_ID) then
 		local arcaneInstabilityCrit, criticalMassCrit = CSC_GetMageCritStatsFromTalents();
 		if (arcaneInstabilityCrit > 0) then
 			-- increases the crit of all spell schools
@@ -491,19 +524,19 @@ function CSC_PaperDollFrame_SetSpellCritChance(statFrame, unit)
 			-- set the new maximum
 			maxSpellCrit = max(maxSpellCrit, statFrame.fireCrit);
 		end
-	elseif (unitClassLoc == "PRIEST") then
+	elseif (unitClassId == CSC_PRIEST_CLASS_ID) then
 		local priestHolyCrit = CSC_GetPriestCritStatsFromTalents();
 		if (priestHolyCrit > 0) then
 			statFrame.holyCrit = statFrame.holyCrit + priestHolyCrit;
 			-- set the new maximum
 			maxSpellCrit = max(maxSpellCrit, statFrame.holyCrit);
 		end
-	elseif (unitClassLoc == "PALADIN") then
-		local paladinHolyCrit = CSC_GetPaladinCritStatsFromTalents();
-		if (paladinHolyCrit > 0) then
-			statFrame.holyCrit = statFrame.holyCrit + paladinHolyCrit;
+	elseif (unitClassId == CSC_WARLOCK_CLASS_ID) then
+		local destructionCrit = CSC_GetWarlockCritStatsFromTalents();
+		if (destructionCrit > 0) then
+			statFrame.shadowCrit = statFrame.shadowCrit + destructionCrit;
 			-- set the new maximum
-			maxSpellCrit = max(maxSpellCrit, statFrame.holyCrit);
+			maxSpellCrit = max(maxSpellCrit, statFrame.shadowCrit);
 		end
 	end
 
@@ -513,21 +546,21 @@ function CSC_PaperDollFrame_SetSpellCritChance(statFrame, unit)
 end
 
 function CSC_PaperDollFrame_SetHitChance(statFrame, unit)
+	
+	statFrame:SetScript("OnEnter", CSC_CharacterHitChanceFrame_OnEnter)
+	statFrame:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+	end)
+	
 	local hitChance = GetHitModifier();
 	
 	if not hitChance then
 		hitChance = 0;
 	end
 
-	if CharacterStatsClassicDB.shouldAddWeaponSkillToHit then
-		local bonusHit = CSC_GetBonusHitFromWeaponSkill(unit);
-		hitChance = hitChance + bonusHit;
-	end
-
 	local hitChanceText = hitChance;
 	CSC_PaperDollFrame_SetLabelAndText(statFrame, STAT_HIT_CHANCE, hitChanceText, true, hitChance);
-	statFrame.tooltip = STAT_HIT_CHANCE.." "..hitChanceText;
-	statFrame.tooltip2 = format(CR_HIT_MELEE_TOOLTIP, UnitLevel(unit), hitChance);
+	statFrame.hitChance = hitChance;
 	statFrame:Show();
 end
 
@@ -577,16 +610,33 @@ function CSC_PaperDollFrame_SetRangedHitChance(statFrame, unit)
 end
 
 function CSC_PaperDollFrame_SetSpellHitChance(statFrame, unit)
+	
+	statFrame:SetScript("OnEnter", CSC_CharacterSpellHitChanceFrame_OnEnter)
+	statFrame:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+	end)
+
 	local hitChance = GetSpellHitModifier();
 	
 	if not hitChance then
 		hitChance = 0;
 	end
 
+	local unitClassId = select(3, UnitClass(unit));
+
+	if unitClassId == CSC_MAGE_CLASS_ID then
+		local arcaneHit, frostFireHit = CSC_GetMageSpellHitFromTalents();
+		statFrame.arcaneHit = arcaneHit;
+		statFrame.frostHit = frostFireHit;
+		statFrame.fireHit = frostFireHit;
+	elseif unitClassId == CSC_WARLOCK_CLASS_ID then
+		statFrame.afflictionHit = CSC_GetWarlockSpellHitFromTalents();
+	end
+
 	local hitChanceText = hitChance;
 	CSC_PaperDollFrame_SetLabelAndText(statFrame, STAT_HIT_CHANCE, hitChanceText, true, hitChance);
-	statFrame.tooltip = STAT_HIT_CHANCE.." "..hitChanceText;
-	statFrame.tooltip2 = format(CR_HIT_SPELL_TOOLTIP, UnitLevel(unit), hitChance);
+	statFrame.hitChance = hitChance;
+	statFrame.unitClassId = unitClassId;
 	statFrame:Show();
 end
 
@@ -717,23 +767,48 @@ end
 local function CSC_GetBlockValue(unit)
 	CSC_ScanTooltip:ClearLines();
 
-	local blockFromShield = 0;
-	local offHandIndex = 17;
+	local blockValueFromItems = 0;
+	local firstItemslotIndex = 1;
+	local lastItemslotIndex = 18;
 
-	local hasItem = CSC_ScanTooltip:SetInventoryItem(unit, offHandIndex);
-	if hasItem then
-		local maxLines = CSC_ScanTooltip:NumLines();
-		for line=1, maxLines do
-			local leftText = getglobal(CSC_ScanTooltipPrefix.."TextLeft"..line);
-			if leftText:GetText() then
-				local valueTxt = string.match(leftText:GetText(), "%d+ "..ITEM_MOD_BLOCK_RATING_SHORT);
-				if valueTxt then
-					valueTxt = string.match(valueTxt, "%d+");
-					if valueTxt then
-						local numValue = tonumber(valueTxt);
-						if numValue then
-							blockFromShield = numValue;
-							break;
+	local blockValueIDs = { ITEM_MOD_BLOCK_RATING_SHORT, ITEM_MOD_BLOCK_RATING, ITEM_MOD_BLOCK_VALUE };
+
+	local equippedMightSetItems = 0;
+	local battlegearOfMightIDs = { [16861] = 16861, 
+								   [16862] = 16862, 
+								   [16863] = 16863, 
+								   [16864] = 16864, 
+								   [16865] = 16865, 
+								   [16866] = 16866, 
+								   [16867] = 16867, 
+								   [16868] = 16868
+								};
+
+	for itemslot=firstItemslotIndex, lastItemslotIndex do
+		local hasItem = CSC_ScanTooltip:SetInventoryItem(unit, itemslot);
+		if hasItem then
+			local itemId = GetInventoryItemID(unit, itemslot);
+			if (itemId == battlegearOfMightIDs[itemId]) then
+				equippedMightSetItems = equippedMightSetItems + 1;
+			else
+				local maxLines = CSC_ScanTooltip:NumLines();
+				for line=1, maxLines do
+					local leftText = getglobal(CSC_ScanTooltipPrefix.."TextLeft"..line);
+					if leftText:GetText() then
+						for blockValueID=1, 3 do
+							local valueTxt = string.match(leftText:GetText(), "%d+ "..blockValueIDs[blockValueID]);
+							if not valueTxt then
+								valueTxt = string.match(leftText:GetText(), string.sub( blockValueIDs[blockValueID], 1, -5).." %d+");
+							end
+							if valueTxt then
+								valueTxt = string.match(valueTxt, "%d+");
+								if valueTxt then
+									local numValue = tonumber(valueTxt);
+									if numValue then
+										blockValueFromItems = blockValueFromItems + numValue;
+									end
+								end
+							end
 						end
 					end
 				end
@@ -743,7 +818,12 @@ local function CSC_GetBlockValue(unit)
 
 	local strStatIndex = 1;
 	local strength = select(2, UnitStat(unit, strStatIndex));
-	local blockValue = blockFromShield + (strength / 20);
+	local blockValue = blockValueFromItems + (strength / 20);
+	
+	local requiredMightSetItems = 3;
+	if (equippedMightSetItems >= requiredMightSetItems) then
+		blockValue = blockValue + 30; -- Set bonus reached
+	end
 
 	return blockValue;
 end
@@ -759,12 +839,6 @@ function CSC_PaperDollFrame_SetBlock(statFrame, unit)
 	CSC_PaperDollFrame_SetLabelAndText(statFrame, STAT_BLOCK, blockChance, true, blockChance);
 
 	statFrame.blockChance = string.format("%.2F", blockChance).."%";
-	if CharacterStatsClassicDB.useBlizzardBlockValue then
-		statFrame.blockValue = GetShieldBlock();
-	else
-		statFrame.blockValue = CSC_GetBlockValue(unit);
-	end
-
 	statFrame:Show();
 end
 
@@ -787,12 +861,6 @@ function CSC_PaperDollFrame_SetSpellPower(statFrame, unit)
 	end
 
 	CSC_PaperDollFrame_SetLabelAndText(statFrame, STAT_SPELLPOWER, BreakUpLargeNumbers(maxSpellDmg), false, maxSpellDmg);
-	statFrame.holyDmg = GetSpellBonusDamage(2);
-	statFrame.fireDmg = GetSpellBonusDamage(3);
-	statFrame.natureDmg = GetSpellBonusDamage(4);
-	statFrame.frostDmg = GetSpellBonusDamage(5);
-	statFrame.shadowDmg = GetSpellBonusDamage(6);
-	statFrame.arcaneDmg = GetSpellBonusDamage(7);
 	statFrame:Show();
 end
 
@@ -811,19 +879,34 @@ function CSC_PaperDollFrame_SetManaRegen(statFrame, unit)
     end)
 
 	-- There is a bug in GetManaRegen() so I have to manually calculate mp5
-	local base, combat = GetManaRegen();
-	local mp5 = CSC_GetMP5FromGear(unit);
+	-- base == casting always and this is wrong
+	local base, casting = GetManaRegen();
+	
+	-- to avoid the wrongly reported "0" regen after an update
+	if base < 1 then base = g_lastSeenBaseManaRegen end
+	if casting < 1 then casting = g_lastSeenBaseManaRegen end
+	g_lastSeenBaseManaRegen = base;
+	g_lastSeenCastingManaRegen = casting;
+
+	local mp5FromGear = CSC_GetMP5FromGear(unit);
+	local mp5ModifierCasting = CSC_GetMP5ModifierFromTalents(unit);
+	mp5ModifierCasting = mp5ModifierCasting + CSC_GetMP5ModifierFromSetBonus(unit);
 	
 	-- All mana regen stats are displayed as mana/5 sec.
-	base = floor(base * 5.0) + mp5;
-	combat = mp5; --floor(combat * 5.0);
+	local regenWhenNotCasting = floor(base * 5.0) + mp5FromGear;
+	casting = mp5FromGear; -- if GetManaRegen() gets fixed ever, this should be changed
 
-	local baseText = BreakUpLargeNumbers(base);
-	local combatText = BreakUpLargeNumbers(combat);
-	-- Combat mana regen is most important to the player, so we display it as the main value
-	CSC_PaperDollFrame_SetLabelAndText(statFrame, MANA_REGEN, combatText, false, combat);
-	statFrame.mp5Casting = combatText;
-	statFrame.mp5NotCasting = baseText;
+	if mp5ModifierCasting > 0 then
+		casting = casting + base * mp5ModifierCasting * 5.0;
+	end
+
+	local regenWhenNotCastingText = BreakUpLargeNumbers(regenWhenNotCasting);
+	local castingText = BreakUpLargeNumbers(casting);
+	-- While Casting mana regen is most important to the player, so we display it as the main value
+	CSC_PaperDollFrame_SetLabelAndText(statFrame, MANA_REGEN, castingText, false, casting);
+	statFrame.mp5FromGear = BreakUpLargeNumbers(mp5FromGear);
+	statFrame.mp5Casting = castingText;
+	statFrame.mp5NotCasting = regenWhenNotCastingText;
 	statFrame:Show();
 end
 
@@ -857,6 +940,14 @@ function CSC_CharacterDamageFrame_OnEnter(self)
 end
 
 function CSC_CharacterSpellDamageFrame_OnEnter(self)
+	
+	self.holyDmg = GetSpellBonusDamage(2);
+	self.fireDmg = GetSpellBonusDamage(3);
+	self.natureDmg = GetSpellBonusDamage(4);
+	self.frostDmg = GetSpellBonusDamage(5);
+	self.shadowDmg = GetSpellBonusDamage(6);
+	self.arcaneDmg = GetSpellBonusDamage(7);
+
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 	GameTooltip:SetText(STAT_SPELLPOWER, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
 	GameTooltip:AddDoubleLine(STAT_SPELLPOWER_TOOLTIP);
@@ -886,18 +977,105 @@ end
 function CSC_CharacterManaRegenFrame_OnEnter(self)
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 	GameTooltip:SetText(MANA_REGEN_TOOLTIP, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
-	GameTooltip:AddDoubleLine("!!! Currently detects MP5 from gear only !!!", "", 1, 0, 0);
-	GameTooltip:AddLine(" "); -- Blank line.
+	GameTooltip:AddDoubleLine(MANA_REGEN.." (From Gear):", self.mp5FromGear);
 	GameTooltip:AddDoubleLine(MANA_REGEN.." (While Casting):", self.mp5Casting);
 	GameTooltip:AddDoubleLine(MANA_REGEN.." (While Not Casting):", self.mp5NotCasting);
 	GameTooltip:Show();
 end
 
 function CSC_CharacterBlock_OnEnter(self)
+	
+	if CharacterStatsClassicDB.useBlizzardBlockValue then
+		self.blockValue = GetShieldBlock();
+	else
+		self.blockValue = CSC_GetBlockValue("player");
+	end
+	
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 	GameTooltip:SetText(" ", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
 	GameTooltip:AddDoubleLine(BLOCK_CHANCE..": ", self.blockChance);
 	GameTooltip:AddDoubleLine(ITEM_MOD_BLOCK_VALUE_SHORT..": ", self.blockValue);
+	GameTooltip:Show();
+end
+
+function CSC_CharacterHitChanceFrame_OnEnter(self)
+	local hitChance = self.hitChance;
+
+	local totalWeaponSkill = CSC_GetPlayerWeaponSkill("player");
+	local missChanceVsNPC, missChanceVsBoss, missChanceVsPlayer, dwMissChanceVsNpc, dwMissChanceVsBoss, dwMissChanceVsPlayer = CSC_GetPlayerMissChances("player", hitChance, totalWeaponSkill);
+
+	GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+	GameTooltip:SetText(STAT_HIT_CHANCE, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+	GameTooltip:AddLine("Reduces your chance to miss.");
+
+	GameTooltip:AddLine(" "); -- Blank line.
+	GameTooltip:AddLine("Miss Chance vs.");
+	GameTooltip:AddDoubleLine(format("    Level 60 NPC: %.2F%%", missChanceVsNPC), format("(Dual wield: %.2F%%)", dwMissChanceVsNpc));
+	GameTooltip:AddDoubleLine(format("    Level 60 Player: %.2F%%", missChanceVsPlayer), format("(Dual wield: %.2F%%)", dwMissChanceVsPlayer));
+	GameTooltip:AddDoubleLine(format("    Level 63 NPC/Boss: %.2F%%", missChanceVsBoss), format("(Dual wield: %.2F%%)", dwMissChanceVsBoss));
+	GameTooltip:Show();
+end
+
+function CSC_CharacterSpellHitChanceFrame_OnEnter(self)
+	GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+	GameTooltip:SetText(format(CSC_SPELL_HIT_TOOLTIP_TXT, self.hitChance), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+	local tabSymbol = "    "; -- for some reason "\t" doesn't work
+
+	if self.unitClassId == CSC_MAGE_CLASS_ID then
+		GameTooltip:AddLine(" "); -- Blank line.
+		GameTooltip:AddLine(CSC_SPELL_HIT_SUBTOOLTIP_TXT);
+		GameTooltip:AddDoubleLine(tabSymbol..CSC_ARCANE_SPELL_HIT_TXT, (self.arcaneHit + self.hitChance).."%");
+		GameTooltip:AddDoubleLine(tabSymbol..CSC_FIRE_SPELL_HIT_TXT, (self.fireHit + self.hitChance).."%");
+		GameTooltip:AddDoubleLine(tabSymbol..CSC_FROST_SPELL_HIT_TXT, (self.frostHit + self.hitChance).."%");
+	elseif self.unitClassId == CSC_WARLOCK_CLASS_ID then
+		GameTooltip:AddLine(" "); -- Blank line.
+		GameTooltip:AddLine(CSC_SPELL_HIT_SUBTOOLTIP_TXT);
+		GameTooltip:AddDoubleLine(tabSymbol..CSC_DESTRUCTION_SPELL_HIT_TXT, self.hitChance.."%");
+		GameTooltip:AddDoubleLine(tabSymbol..CSC_AFFLICTION_SPELL_HIT_TXT, (self.afflictionHit + self.hitChance).."%");
+	end
+	GameTooltip:Show();
+end
+
+function CSC_CharacterMeleeCritFrame_OnEnter(self)
+	local hitChance = GetHitModifier();
+	local totalWeaponSkill = CSC_GetPlayerWeaponSkill("player");
+	local missChanceVsNPC, missChanceVsBoss, missChanceVsPlayer, dwMissChanceVsNpc, dwMissChanceVsBoss, dwMissChanceVsPlayer = CSC_GetPlayerMissChances("player", hitChance, totalWeaponSkill);
+
+	-- no weapon equipped, not supported localization or something else went wrong
+	if not totalWeaponSkill then totalWeaponSkill = 300 end
+
+	local critSuppression = 4.8;
+	local glancingChance = 40;
+
+	local extraWeaponSkill = totalWeaponSkill - 300;
+	local bossDefense = 315; -- level 63
+	local skillBossDelta = bossDefense - totalWeaponSkill;
+	local dodgeChance = 5 + (skillBossDelta * 0.1);	
+	local critCap = 100 - missChanceVsBoss - dodgeChance - glancingChance + critSuppression + (extraWeaponSkill * 0.04);
+
+	GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+	GameTooltip:SetText(self.criticalStrikeTxt, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+	GameTooltip:AddLine(" "); -- Blank line.
+	GameTooltip:AddLine("Crit cap vs.");
+	
+	local critChance = GetCritChance();
+	local CRITCAP_COLOR_CODE = GREEN_FONT_COLOR_CODE;
+	if critChance > critCap then CRITCAP_COLOR_CODE = ORANGE_FONT_COLOR_CODE end
+	local critCapTxt = CRITCAP_COLOR_CODE..format("%.2F%%", critCap)..FONT_COLOR_CODE_CLOSE;
+
+	local offhandItemId = GetInventoryItemID("player", INVSLOT_OFFHAND);
+	if offhandItemId then
+		local critCapDw = 100 - dwMissChanceVsBoss - dodgeChance - glancingChance + critSuppression + (extraWeaponSkill * 0.04);
+		
+		local DWCRITCAP_COLOR_CODE = GREEN_FONT_COLOR_CODE;
+		if critChance > critCapDw then DWCRITCAP_COLOR_CODE = ORANGE_FONT_COLOR_CODE end
+
+		local critCapDwTxt = DWCRITCAP_COLOR_CODE..format("%.2F%%", critCapDw)..FONT_COLOR_CODE_CLOSE;
+		GameTooltip:AddDoubleLine("    Level 63 NPC/Boss: "..critCapTxt, "(Dual wield: "..critCapDwTxt..")");
+	else
+		GameTooltip:AddDoubleLine("    Level 63 NPC/Boss: "..critCapTxt);
+	end
+
 	GameTooltip:Show();
 end
 -- OnEnter Tooltip functions END

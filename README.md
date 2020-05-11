@@ -41,8 +41,8 @@
 
   人物面板属性统计
 
-  - 游戏版本 1.13.3
-  - 插件版本 2.9
+  - 游戏版本 1.13.4
+  - 插件版本 3.5.2
 
 * [TinyInspect](https://www.curseforge.com/wow/addons/itemlevel-anywhere)
 
