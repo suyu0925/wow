@@ -63,8 +63,8 @@
 
   售价助手
 
-  - 游戏版本 1.13.3
-  - 插件版本 1.3.0-classic
+  - 游戏版本 1.13.4
+  - 插件版本 1.3.5-classic
 
 * [Scrap (Junk Seller)](https://www.curseforge.com/wow/addons/scrap)
 
