@@ -1,10 +1,10 @@
--- $Id: Atlas-esES.lua 329 2019-09-04 08:14:03Z arith $
+-- $Id: Atlas-esES.lua 337 2020-01-01 14:49:58Z arith $
 --[[
 
 	Atlas, a World of Warcraft instance map browser
 	Copyright 2005 ~ 2010 - Dan Gilbert <dan.b.gilbert at gmail dot com>
 	Copyright 2010 - Lothaer <lothayer at gmail dot com>, Atlas Team
-	Copyright 2011 ~ 2019 - Arith Hsu, Atlas Team <atlas.addon at gmail dot com>
+	Copyright 2011 ~ 2020 - Arith Hsu, Atlas Team <atlas.addon at gmail dot com>
 
 	This file is part of Atlas.
 
@@ -84,6 +84,10 @@ L["ATLAS_DDL_LEVEL"] = "Nivel"
 L["ATLAS_DDL_LEVEL_100PLUS"] = "Mazmorras de nivel 100+"
 L["ATLAS_DDL_LEVEL_100TO110"] = "Mazmorras de nivel 100-110"
 L["ATLAS_DDL_LEVEL_110PLUS"] = "Mazmorras de nivel 110+"
+L["ATLAS_DDL_LEVEL_110TO120"] = "Mazmorras de nivel 110-120"
+L["ATLAS_DDL_LEVEL_120PLUS"] = "Mazmorras de nivel 120+"
+L["ATLAS_DDL_LEVEL_120TO130"] = "Mazmorras de nivel 120-130"
+L["ATLAS_DDL_LEVEL_130PLUS"] = "Mazmorras de nivel 130+"
 L["ATLAS_DDL_LEVEL_45TO60"] = "Mazmorras de nivel 45-60"
 L["ATLAS_DDL_LEVEL_60TO70"] = "Mazmorras de nivel 60-70"
 L["ATLAS_DDL_LEVEL_70TO80"] = "Mazmorras de nivel 70-80"

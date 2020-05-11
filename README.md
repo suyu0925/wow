@@ -127,7 +127,7 @@
   副本地图
 
   - 游戏版本 1.13.3
-  - 插件版本 v1.45.02.11303.01
+  - 插件版本 v1.47.00.11303.00
 
 * [Atlas Classic Wow](https://www.curseforge.com/wow/addons/atlas-classicwow)
 
