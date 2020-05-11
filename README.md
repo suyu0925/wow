@@ -176,8 +176,8 @@
 
   任务助手
 
-  - 游戏版本 1.13.3
-  - 插件版本 5.4.1
+  - 游戏版本 1.13.4
+  - 插件版本 5.10.2
 
 * [~guidelime~](https://www.curseforge.com/wow/addons/guidelime)
 

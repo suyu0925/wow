@@ -13,31 +13,39 @@ local QuestieLib = QuestieLoader:ImportModule("QuestieLib")
 local QuestieProfessions = QuestieLoader:ImportModule("QuestieProfessions")
 ---@type QuestieReputation
 local QuestieReputation = QuestieLoader:ImportModule("QuestieReputation")
+---@type QuestieCorrections
+local QuestieCorrections = QuestieLoader:ImportModule("QuestieCorrections")
 
 local AceGUI = LibStub("AceGUI-3.0")
 local zoneTreeFrame = nil
 
--- Manage the zone tree itself and the contents of the per-quest window
-function _QuestieJourney.questsByZone:ManageTree(container, zt)
+---Manage the zone tree itself and the contents of the per-quest window
+---@param container AceSimpleGroup @The container for the zone tree
+---@param zoneTree table @The zone tree table
+function _QuestieJourney.questsByZone:ManageTree(container, zoneTree)
     if zoneTreeFrame then
         container:ReleaseChildren()
         zoneTreeFrame = nil
-        _QuestieJourney.questsByZone:ManageTree(container, zt)
+        _QuestieJourney.questsByZone:ManageTree(container, zoneTree)
         return
     end
 
     zoneTreeFrame = AceGUI:Create("TreeGroup")
     zoneTreeFrame:SetFullWidth(true)
     zoneTreeFrame:SetFullHeight(true)
-    zoneTreeFrame:SetTree(zt)
+    zoneTreeFrame:SetTree(zoneTree)
 
     zoneTreeFrame.treeframe:SetWidth(220)
+    zoneTreeFrame:SetCallback("OnClick", function(group, ...)
+        local treePath = {...}
 
-    zoneTreeFrame:SetCallback("OnGroupSelected", function(group)
-
+        if not treePath[2] then
+            Questie:Debug(DEBUG_CRITICAL, "[zoneTreeFrame:OnClick]", "No tree path given in Journey.")
+            return
+        end
         -- if they clicked on a header, don't do anything
-        local sel = group.localstatus.selected
-        if sel == "a" or sel == "p" or sel == "c" or sel == "r" or sel == "u" then
+        local sel, questId = strsplit("\001", treePath[2]) -- treePath[2] looks like "a?1234" for an available quest with ID 1234
+        if (sel == nil or sel == "a" or sel == "p" or sel == "c" or sel == "r" or sel == "u") and (not questId) then
             return
         end
 
@@ -54,21 +62,22 @@ function _QuestieJourney.questsByZone:ManageTree(container, zt)
         scrollFrame:SetFullHeight(true)
         master:AddChild(scrollFrame)
 
-        local _, qid = strsplit("\001", sel)
-        qid = tonumber(qid)
+        ---@type QuestId
+        questId = tonumber(questId)
+        local quest = QuestieDB:GetQuest(questId)
 
-        -- TODO replace with fillQuestDetailsFrame and remove the questFrame function
-        local quest = QuestieDB:GetQuest(qid)
-        if quest then
-            _QuestieJourney:DrawQuestDetailsFrame(scrollFrame, quest)
+        -- Add the quest to the open chat window if it was a shift click
+        if IsShiftKeyDown() and ChatFrame1EditBox then
+            ChatFrame1EditBox:SetText(ChatFrame1EditBox:GetText() .. QuestieLib:GetQuestString(quest.Id, quest.name, quest.level, true))
         end
+
+        _QuestieJourney:DrawQuestDetailsFrame(scrollFrame, quest)
     end)
 
     container:AddChild(zoneTreeFrame)
 end
 
--- Get all the available/completed/repeatable/unavailable quests
-
+---Get all the available/completed/repeatable/unavailable quests
 ---@param zoneId integer @The zone ID (Check `LangZoneLookup`)
 ---@return table<integer,any> @The zoneTree table which represents the list of all the different quests
 function _QuestieJourney.questsByZone:CollectZoneQuests(zoneId)
@@ -111,6 +120,8 @@ function _QuestieJourney.questsByZone:CollectZoneQuests(zoneId)
     local unobtainableCounter = 0
     local repeatableCounter = 0
 
+    local unobtainableQuestIds = {}
+
     for _, levelAndQuest in pairs(sortedQuestByLevel) do
         ---@type Quest
         local quest = levelAndQuest[2]
@@ -131,29 +142,56 @@ function _QuestieJourney.questsByZone:CollectZoneQuests(zoneId)
                 -- Marking them as complete should be the most satisfying solution for user
                 if quest.exclusiveTo then
                     for _, exId in pairs(quest.exclusiveTo) do
-                        if Questie.db.char.complete[exId] and zoneTree[4].children[qId] == nil then
+                        if Questie.db.char.complete[exId] then
                             tinsert(zoneTree[3].children, temp)
                             completedCounter = completedCounter + 1
+                            break
                         end
                     end
-                -- A single pre Quest is missing
-                elseif not quest:IsPreQuestSingleFulfilled() then
-                    tinsert(zoneTree[2].children, temp)
-                    prequestMissingCounter = prequestMissingCounter + 1
-                    -- A single pre Quest is missing
-                elseif not quest:IsPreQuestGroupFulfilled() then
-                    tinsert(zoneTree[2].children, temp)
-                    prequestMissingCounter = prequestMissingCounter + 1
+                -- The parent quest has been completed
+                elseif quest.parentQuest and Questie.db.char.complete[quest.parentQuest] then
+                    tinsert(zoneTree[3].children, temp)
+                    completedCounter = completedCounter + 1
                 -- Unoptainable profession quests
-                elseif not QuestieProfessions:HasProfessionAndSkill(quest.requiredSkill) then
+                elseif not QuestieProfessions:HasProfessionAndSkillLevel(quest.requiredSkill) then
                     tinsert(zoneTree[5].children, temp)
+                    unobtainableQuestIds[qId] = true
                     unobtainableCounter = unobtainableCounter + 1
                 -- Unoptainable reputation quests
                 elseif not QuestieReputation:HasReputation(quest.requiredMinRep, quest.requiredMaxRep) then
                     tinsert(zoneTree[5].children, temp)
+                    unobtainableQuestIds[qId] = true
                     unobtainableCounter = unobtainableCounter + 1
+                -- A single pre Quest is missing
+                elseif not quest:IsPreQuestSingleFulfilled() then
+                    -- The pre Quest is unobtainable therefore this quest is it as well
+                    if unobtainableQuestIds[quest.preQuestSingle] ~= nil then
+                        tinsert(zoneTree[5].children, temp)
+                        unobtainableQuestIds[qId] = true
+                        unobtainableCounter = unobtainableCounter + 1
+                    else
+                        tinsert(zoneTree[2].children, temp)
+                        prequestMissingCounter = prequestMissingCounter + 1
+                    end
+                -- Multiple pre Quests are missing
+                elseif not quest:IsPreQuestGroupFulfilled() then
+                    local hasUnobtainablePreQuest = false
+                    for _, preQuestId in pairs(quest.preQuestGroup) do
+                        if unobtainableQuestIds[preQuestId] ~= nil then
+                            tinsert(zoneTree[5].children, temp)
+                            unobtainableQuestIds[qId] = true
+                            unobtainableCounter = unobtainableCounter + 1
+                            hasUnobtainablePreQuest = true
+                            break
+                        end
+                    end
+
+                    if not hasUnobtainablePreQuest then
+                        tinsert(zoneTree[2].children, temp)
+                        prequestMissingCounter = prequestMissingCounter + 1
+                    end
                 -- Repeatable quests
-                elseif quest.Repeatable then
+                elseif quest.IsRepeatable then
                     tinsert(zoneTree[4].children, temp)
                     repeatableCounter = repeatableCounter + 1
                 -- Available quests
