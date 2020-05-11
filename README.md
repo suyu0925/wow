@@ -85,7 +85,7 @@
   法术冷却
 
   - 游戏版本 1.13.3
-  - 插件版本 8.2.5
+  - 插件版本 8.3.5-classic
 
 * [sortBags](https://www.curseforge.com/wow/addons/sortbags)
 

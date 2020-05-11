@@ -5,7 +5,4 @@
 ## Author: Tuller
 ## Dependencies: OmniCC
 ## LoadOnDemand: 1
-localization\localization.xml
-widgets\widgets.xml
-mainPanel.lua
-panels\panels.xml
+..\OmniCC\config\config.xml
