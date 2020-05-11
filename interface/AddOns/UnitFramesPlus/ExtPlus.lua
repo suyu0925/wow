@@ -1,6 +1,13 @@
 ﻿--变量
 local id = 1;
 local _G = _G;
+local pairs = pairs;
+local select = select;
+local UnitClass = UnitClass;
+local UnitIsVisible = UnitIsVisible;
+local IsInInstance = IsInInstance;
+local GetSpellInfo = GetSpellInfo;
+local IsSpellInRange = IsSpellInRange;
 
 -- --BOSS生命值百分比
 -- for id = 1, MAX_BOSS_FRAMES, 1 do
@@ -30,8 +37,7 @@ local _G = _G;
 --         for id = 1, MAX_BOSS_FRAMES, 1 do
 --             _G["UFP_Boss"..id.."HPPct"].Text:SetText("");
 --             if _G["UFP_Boss"..id.."HPPct"]:IsEventRegistered("INSTANCE_ENCOUNTER_ENGAGE_UNIT") then
---                 _G["UFP_Boss"..id.."HPPct"]:UnregisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT");
---                 _G["UFP_Boss"..id.."HPPct"]:UnregisterEvent("UNIT_HEALTH_FREQUENT");
+--                 _G["UFP_Boss"..id.."HPPct"]:UnregisterAllEvents();
 --                 _G["UFP_Boss"..id.."HPPct"]:SetScript("OnEvent", nil);
 --             end
 --         end
@@ -306,7 +312,7 @@ end
 --         for id = 1, MAX_ARENA_ENEMIES, 1 do
 --             if UnitFramesPlusDB["extra"]["pvphppct"] == 0 then
 --                 if _G["UFP_ArenaEnemyHPPct"..id]:IsEventRegistered("UNIT_HEALTH_FREQUENT") then
---                     _G["UFP_ArenaEnemyHPPct"..id]:UnregisterEvent("UNIT_HEALTH_FREQUENT");
+--                     _G["UFP_ArenaEnemyHPPct"..id]:UnregisterAllEvents();
 --                     _G["UFP_ArenaEnemyHPPct"..id]:SetScript("OnEvent", nil);
 --                     _G["UFP_ArenaEnemyHPPct"..id]:Hide();
 --                 end

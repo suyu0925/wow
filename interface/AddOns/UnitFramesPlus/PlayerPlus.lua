@@ -1,3 +1,24 @@
+--变量
+local select = select;
+local floor = math.floor;
+local UnitExists = UnitExists;
+local UnitClass = UnitClass;
+local UnitIsGhost = UnitIsGhost;
+local UnitIsDead = UnitIsDead;
+local UnitHealth = UnitHealth;
+local UnitHealthMax = UnitHealthMax;
+local UnitPower = UnitPower;
+local UnitPowerMax = UnitPowerMax;
+local UnitPowerType = UnitPowerType;
+local IsInInstance = IsInInstance;
+local IsShiftKeyDown = IsShiftKeyDown;
+local InCombatLockdown = InCombatLockdown;
+local PlayerFrame_SetLocked = PlayerFrame_SetLocked;
+local GetBestMapForUnit = C_Map.GetBestMapForUnit;
+local GetPlayerMapPosition = C_Map.GetPlayerMapPosition;
+local GameTooltip_AddNewbieTip = GameTooltip_AddNewbieTip;
+local hooksecurefunc = hooksecurefunc;
+
 --非战斗状态中允许shift+左键拖动玩家头像
 local function UnitFramesPlus_PlayerShiftDrag()
     PlayerFrame:SetScript("OnMouseDown", function(self, elapsed)
@@ -21,8 +42,10 @@ local function UnitFramesPlus_PlayerShiftDrag()
         end
     end)
 
-    PlayerFrame:SetMovable(1);
-    PlayerFrame:SetClampedToScreen(1);
+    PlayerFrame_SetLocked(true);
+    PlayerFrame:SetMovable(true);
+    PlayerFrame:SetUserPlaced(false);
+    PlayerFrame:SetClampedToScreen(true);
 
     hooksecurefunc("PlayerFrame_ResetUserPlacedPosition", function()
         UnitFramesPlusVar["player"]["moved"] = 0;
@@ -88,6 +111,7 @@ function UnitFramesPlus_PlayerDragon()
         UFP_PlayerTexture = "Interface\\TargetingFrame\\UI-TargetingFrame";
     end
     PlayerFrameTexture:SetTexture(UFP_PlayerTexture);
+    PlayerFrameTexture:SetAllPoints();
 
     --设置扩展框素材与头像素材一致
     if UnitFramesPlusDB["player"]["extrabar"] == 1 then
@@ -157,8 +181,7 @@ function UnitFramesPlus_PlayerExtrabar()
         PlayerExtraBar:Hide();
         PlayerExtraBarBG:Hide();
         -- if fixforvehicle:IsEventRegistered("UNIT_ENTERED_VEHICLE") then
-        --     fixforvehicle:UnregisterEvent("UNIT_ENTERED_VEHICLE");
-        --     fixforvehicle:UnregisterEvent("UNIT_EXITED_VEHICLE");
+        --     fixforvehicle:UnregisterAllEvents();
         --     fixforvehicle:SetScript("OnEvent", nil);
         -- end
         UnitFramesPlus_PlayerHPMPPct();
@@ -197,8 +220,7 @@ function UnitFramesPlus_PlayerHealth()
     --if UnitFramesPlusDB["player"]["extrabar"] == 0 and UnitFramesPlusDB["player"]["hpmp"] == 0 and UnitFramesPlusDB["player"]["pctonbar"] == 0 then
     if UnitFramesPlusDB["player"]["extrabar"] == 0 and UnitFramesPlusDB["player"]["hpmp"] == 0 then
         if PlayerHealth:IsEventRegistered("PLAYER_ENTERING_WORLD") then
-            PlayerHealth:UnregisterEvent("PLAYER_ENTERING_WORLD");
-            PlayerHealth:UnregisterEvent("UNIT_HEALTH_FREQUENT");
+            PlayerHealth:UnregisterAllEvents();
             PlayerHealth:SetScript("OnEvent", nil);
         end
     else
@@ -219,7 +241,7 @@ function UnitFramesPlus_PlayerHPValueDisplayUpdate()
     local PlayerExtHPText = "";
 
     if MaxHP > 0 then
-        PctText = math.floor(100*CurHP/MaxHP).."%";
+        PctText = floor(100*CurHP/MaxHP).."%";
     end
 
     if UnitFramesPlusDB["player"]["extrabar"] == 1 or UnitFramesPlusDB["player"]["hpmp"] == 1 then
@@ -280,9 +302,7 @@ function UnitFramesPlus_PlayerCoordinate()
         end)
     else
         if coord:IsEventRegistered("ZONE_CHANGED") then
-            coord:UnregisterEvent("ZONE_CHANGED");
-            coord:UnregisterEvent("ZONE_CHANGED_INDOORS");
-            coord:UnregisterEvent("ZONE_CHANGED_NEW_AREA");
+            coord:UnregisterAllEvents();
             coord:SetScript("OnEvent", nil);
             coord:SetScript("OnUpdate", nil);
         end
@@ -295,9 +315,9 @@ function UnitFramesPlus_PlayerCoordinateDisplayUpdate()
         return;
     end
     local x, y = 0, 0
-    local MapID = C_Map.GetBestMapForUnit("player");
+    local MapID = GetBestMapForUnit("player");
     if MapID then
-        local MapPosObject = C_Map.GetPlayerMapPosition(MapID, "player");
+        local MapPosObject = GetPlayerMapPosition(MapID, "player");
         if MapPosObject then
             x, y = MapPosObject:GetXY()
         end
@@ -306,10 +326,10 @@ function UnitFramesPlus_PlayerCoordinateDisplayUpdate()
         PlayerHPMPPct.Pct:SetText(format("(%.0f, %.0f)", x*100, y*100));
     else
         if WorldMapFrame:IsShown() == false then
-            MapID = C_Map.GetBestMapForUnit("player");
+            MapID = GetBestMapForUnit("player");
             if MapID then
                 WorldMapFrame:SetMapID(MapID)
-                MapPosObject = C_Map.GetPlayerMapPosition(MapID, "player");
+                MapPosObject = GetPlayerMapPosition(MapID, "player");
                 if MapPosObject then 
                     x, y = MapPosObject:GetXY()
                 end
@@ -327,8 +347,7 @@ local PlayerPower = CreateFrame("Frame");
 function UnitFramesPlus_PlayerPower()
     if UnitFramesPlusDB["player"]["extrabar"] == 0 and UnitFramesPlusDB["player"]["hpmp"] == 0 then
         if PlayerPower:IsEventRegistered("UNIT_POWER_UPDATE") then
-            PlayerPower:UnregisterEvent("PLAYER_ENTERING_WORLD");
-            PlayerPower:UnregisterEvent("UNIT_POWER_UPDATE");
+            PlayerPower:UnregisterAllEvents();
             PlayerPower:SetScript("OnEvent", nil);
         end
     else
@@ -350,7 +369,7 @@ function UnitFramesPlus_PlayerMPValueDisplayUpdate()
 
     if powerType == 0 then
         if MaxMP > 0 then
-            PctText = math.floor(100*CurMP/MaxMP).."%";
+            PctText = floor(100*CurMP/MaxMP).."%";
         end
     else
         PctText = CurMP;
@@ -397,10 +416,7 @@ end
 --             end)
 --         elseif UnitFramesPlusDB["player"]["colortype"] == 2 then
 --             if chb:IsEventRegistered("PLAYER_ENTERING_WORLD") then
---                 chb:UnregisterEvent("PLAYER_ENTERING_WORLD");
---                 chb:UnregisterEvent("PLAYER_REGEN_ENABLED");
---                 -- chb:UnregisterEvent("UNIT_ENTERED_VEHICLE");
---                 -- chb:UnregisterEvent("UNIT_EXITED_VEHICLE");
+--                 chb:UnregisterAllEvents();
 --                 chb:SetScript("OnEvent", nil);
 --             end
 --             PlayerFrameHealthBar:SetScript("OnValueChanged", function(self, value)
@@ -411,10 +427,7 @@ end
 --     else
 --         PlayerFrameHealthBar:SetScript("OnValueChanged", nil);
 --         if chb:IsEventRegistered("PLAYER_ENTERING_WORLD") then
---             chb:UnregisterEvent("PLAYER_ENTERING_WORLD");
---             chb:UnregisterEvent("PLAYER_REGEN_ENABLED");
---             -- chb:UnregisterEvent("UNIT_ENTERED_VEHICLE");
---             -- chb:UnregisterEvent("UNIT_EXITED_VEHICLE");
+--             chb:UnregisterAllEvents();
 --             chb:SetScript("OnEvent", nil);
 --         end
 --         PlayerFrameHealthBar:SetStatusBarColor(0, 1, 0);
@@ -533,13 +546,7 @@ function UnitFramesPlus_PlayerPortrait()
             Player3DPortrait:Hide();
             PlayerClassPortrait:Show();
             if ppt:IsEventRegistered("PLAYER_ENTERING_WORLD") then
-                ppt:UnregisterEvent("PLAYER_ENTERING_WORLD");
-                ppt:UnregisterEvent("PLAYER_DEAD");
-                ppt:UnregisterEvent("PLAYER_ALIVE");
-                ppt:UnregisterEvent("PLAYER_UNGHOST");
-                ppt:UnregisterEvent("UNIT_MODEL_CHANGED");
-                -- ppt:UnregisterEvent("UNIT_ENTERED_VEHICLE");
-                -- ppt:UnregisterEvent("UNIT_EXITED_VEHICLE");
+                ppt:UnregisterAllEvents();
                 ppt:SetScript("OnEvent", nil);
             end
         end
@@ -550,13 +557,7 @@ function UnitFramesPlus_PlayerPortrait()
         Player3DPortrait:Hide();
         PlayerClassPortrait:Hide();
         if ppt:IsEventRegistered("PLAYER_ENTERING_WORLD") then
-            ppt:UnregisterEvent("PLAYER_ENTERING_WORLD");
-            ppt:UnregisterEvent("PLAYER_DEAD");
-            ppt:UnregisterEvent("PLAYER_ALIVE");
-            ppt:UnregisterEvent("PLAYER_UNGHOST");
-            ppt:UnregisterEvent("UNIT_MODEL_CHANGED");
-            -- ppt:UnregisterEvent("UNIT_ENTERED_VEHICLE");
-            -- ppt:UnregisterEvent("UNIT_EXITED_VEHICLE");
+            ppt:UnregisterAllEvents();
             ppt:SetScript("OnEvent", nil);
         end
     end
@@ -579,7 +580,7 @@ function UnitFramesPlus_PlayerPortraitDisplayUpdate()
             Player3DPortrait:SetLight(true, false, 0, 0, 0, 1.0, 1, 1, 1);
         end
     elseif UnitFramesPlusDB["player"]["portraittype"] == 2 then
-        local IconCoord = CLASS_ICON_TCOORDS[select(2,UnitClass("player"))];
+        local IconCoord = CLASS_ICON_TCOORDS[select(2, UnitClass("player"))];
         if IconCoord then
             PlayerClassPortrait:SetTexture("Interface\\TargetingFrame\\UI-Classes-Circles");
             PlayerClassPortrait:SetTexCoord(unpack(IconCoord));
@@ -626,16 +627,7 @@ function UnitFramesPlus_PlayerFrameAutohide()
         end)
     else
         if fah:IsEventRegistered("PLAYER_ENTERING_WORLD") then
-            fah:UnregisterEvent("PLAYER_ENTERING_WORLD");
-            fah:UnregisterEvent("PLAYER_TARGET_CHANGED");
-            fah:UnregisterEvent("PLAYER_REGEN_ENABLED");
-            fah:UnregisterEvent("PLAYER_REGEN_DISABLED");
-            fah:UnregisterEvent("UNIT_POWER_UPDATE");
-            fah:UnregisterEvent("UNIT_MAXPOWER");
-            fah:UnregisterEvent("UNIT_HEALTH");
-            fah:UnregisterEvent("UNIT_MAXHEALTH");
-            -- fah:UnregisterEvent("UNIT_ENTERED_VEHICLE");
-            -- fah:UnregisterEvent("UNIT_EXITED_VEHICLE");
+            fah:UnregisterAllEvents();
             fah:SetScript("OnEvent", nil);
             UnitFramesPlus_PlayerFrameAutohideDisplayUpdate();
         end

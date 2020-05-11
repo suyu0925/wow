@@ -1,4 +1,12 @@
-﻿local function GetGroupThreatLeader(unit)
+﻿local UnitExists = UnitExists;
+local UnitInRaid = UnitInRaid;
+local UnitInParty = UnitInParty;
+local GetNumGroupMembers = GetNumGroupMembers;
+local IsAddOnLoaded = IsAddOnLoaded;
+local HasPetUI = HasPetUI;
+local tonumber = tonumber;
+
+local function GetGroupThreatLeader(unit)
     -- tempUnitid, tempThreat
     local friendlyUnitid, friendlyThreatval = nil, 0;
     local tempUnitid, tempThreat;
@@ -68,7 +76,7 @@ ufpt:SetScript("OnEvent", function(self, event, ...)
         local name = ...;
         if name == ADDONNAME then
             if IsAddOnLoaded("UnitFramesPlus") then
-                UFPThreatLib = LibStub:GetLibrary("ThreatClassic-1.0");
+                UFPThreatLib = LibStub:GetLibrary("LibThreatClassic2");
             end
             ufpt:UnregisterEvent("ADDON_LOADED");
         end

@@ -1,9 +1,27 @@
 ﻿--Based on LibClassicMobHealth-1.0
 --TODO: realm name support
+local match = string.match;
+local floor = math.floor;
+local tonumber = tonumber;
+local tostring = tostring;
+local strsplit = strsplit;
+local ipairs = ipairs;
+local pairs = pairs;
+local next = next;
+local UnitGUID = UnitGUID;
+local UnitName = UnitName;
+local UnitLevel = UnitLevel;
+local UnitHealth = UnitHealth;
+local UnitHealthMax = UnitHealthMax;
+local UnitCanAttack = UnitCanAttack;
+local UnitIsFriend = UnitIsFriend;
+local UnitIsPlayer = UnitIsPlayer;
+local UnitIsDead = UnitIsDead;
+local UnitPlayerControlled = UnitPlayerControlled;
 
 local ADDONNAME = ...;
 local MAJOR_VERSION = 1;
-local MINOR_VERSION = 1;
+local MINOR_VERSION = 3;
 
 local levelmax = 63;--in classic, maxlevel=63, like Kel'Thuzad, C'Thun, Nefarian, Ragnaros, Onyxia
 
@@ -27,7 +45,7 @@ local MobUnitTypes = {
 --Extracts CreatureID from GUID (Mobs only)
 local function GetCreatureIDFromGUID(guid)
     if not guid then return end
-    local utype, creatureid = string.match(guid, "^(.-)%-0%-%d+%-%d+%-%d+%-(%d+)%-%x+$");
+    local utype, creatureid = match(guid, "^(.-)%-0%-%d+%-%d+%-%d+%-(%d+)%-%x+$");
     --Return CreatureID if mob
     return (utype and MobUnitTypes[utype]) and (creatureid and tonumber(creatureid));
 end
@@ -60,7 +78,7 @@ function UnitFramesPlus_PruneData()
     end
     for _, kind in ipairs({ "pet", "pc" }) do
         for guidlevel in pairs(UnitFramesPlusMobHealthDB[kind]) do
-            local guid, level = strsplit("-", guidlevel);
+            local guid, level = strsplit(",", guidlevel);
             if level then
                 if tonumber(level) < maxLevel then
                     UnitFramesPlusMobHealthDB[kind][guidlevel] = nil;
@@ -80,11 +98,11 @@ function UnitFramesPlus_PruneData()
     for _, kind in ipairs({ "npc", "pc", "pet" }) do
         if next(UnitFramesPlusMobHealthDB[kind]) then
             for guidlevel, health in pairs(UnitFramesPlusMobHealthDB[kind]) do
-                local guid, level = strsplit("-", guidlevel);
+                local guid, level = strsplit(",", guidlevel);
                 if level then
                     if mobs[guid] then
                         if tonumber(level) > tonumber(mobs[guid]) then
-                            UnitFramesPlusMobHealthDB[kind][guid.."-"..mobs[guid]] = nil;
+                            UnitFramesPlusMobHealthDB[kind][guid..","..mobs[guid]] = nil;
                             mobs[guid] = level;
                         else
                             UnitFramesPlusMobHealthDB[kind][guidlevel] = nil;
@@ -107,7 +125,7 @@ function UnitFramesPlus_PruneData()
     end
     for _, kind in ipairs({ "npc" }) do
         for guidlevel in pairs(UnitFramesPlusMobHealthDB[kind]) do
-            local guid, level = strsplit("-", guidlevel);
+            local guid, level = strsplit(",", guidlevel);
             if level then
                 if tonumber(level) < maxLevel then
                     UnitFramesPlusMobHealthDB[kind][guidlevel] = nil;
@@ -144,7 +162,7 @@ local function UnitFramesPlus_PLAYER_UNIT_CHANGED(unit)
     lastPercent = UnitHealth(unit);
 
     if not isPlayer and not isPet then
-        local tag = GetUnitCreatureKey(unit).."-"..tostring(level);
+        local tag = GetUnitCreatureKey(unit)..","..tostring(level);
 
         currentAccumulatedHP = accumulatedHP[tag];
         currentAccumulatedPercent = accumulatedPercent[tag];
@@ -174,10 +192,10 @@ local function UnitFramesPlus_PLAYER_UNIT_CHANGED(unit)
         --in classic, server always return nil
         -- local name, server = UnitName(unit);
         -- if server and server ~= "" then
-        --     name = name .. "-" .. server;
+        --     name = name .. "," .. server;
         -- end
         local name = UnitName(unit);
-        local tag = name.."-"..tostring(level);
+        local tag = name..","..tostring(level);
 
         currentAccumulatedHP = accumulatedHP[tag];
         currentAccumulatedPercent = accumulatedPercent[tag];
@@ -216,7 +234,7 @@ local function UnitFramesPlus_UNIT_HEALTH(unit)
     --in classic, server always return nil
     -- local name, server = UnitName(unit);
     -- if server and server ~= "" then
-    --     name = name .. "-" .. server;
+    --     name = name .. "," .. server;
     -- end
     local name = UnitName(unit);
     local guid = name;
@@ -227,13 +245,13 @@ local function UnitFramesPlus_UNIT_HEALTH(unit)
     local tag;
     if UnitIsPlayer(unit) then
         kind = "pc";
-        tag = name.."-"..level;
+        tag = name..","..level;
     elseif UnitPlayerControlled(unit) then
         kind = "pet";
-        tag = name.."-"..level;
+        tag = name..","..level;
     else
         kind = "npc";
-        tag = GetUnitCreatureKey(unit).."-"..level;
+        tag = GetUnitCreatureKey(unit)..","..level;
     end
 
     if calculationUnneeded[tag] then
@@ -281,7 +299,7 @@ local function guessAtMaxHealth(guid, level, kind, known)
     if kind == "npc" and level == -1 then
         local lvl = levelmax;
         while lvl > 0 do
-            if UnitFramesPlusMobHealthDB["npc"][guid.."-"..lvl] then
+            if UnitFramesPlusMobHealthDB["npc"][guid..","..lvl] then
                 level = lvl;
                 break;
             end
@@ -290,43 +308,43 @@ local function guessAtMaxHealth(guid, level, kind, known)
     end
 
     if kind == "npc" then
-        local value = UnitFramesPlusMobHealthDB[kind][guid.."-"..level];
+        local value = UnitFramesPlusMobHealthDB[kind][guid..","..level];
         if value then
             return value;
         end
         if level > 1 then
-            value = UnitFramesPlusMobHealthDB[kind][guid.."-"..level-1];
+            value = UnitFramesPlusMobHealthDB[kind][guid..","..level-1];
             if value then
                 return value * level/(level - 1);
             end
         end
-        value = UnitFramesPlusMobHealthDB[kind][guid.."-"..level+1];
+        value = UnitFramesPlusMobHealthDB[kind][guid..","..level+1];
         if value then
             return value * level/(level + 1);
         end
         if level > 2 then
-            value = UnitFramesPlusMobHealthDB[kind][guid.."-"..level-2];
+            value = UnitFramesPlusMobHealthDB[kind][guid..","..level-2];
             if value then
                 return value * level/(level - 2);
             end
         end
-        value = UnitFramesPlusMobHealthDB[kind][guid.."-"..level+2];
+        value = UnitFramesPlusMobHealthDB[kind][guid..","..level+2];
         if value then
             return value * level/(level + 2);
         end
     else
-        local value = UnitFramesPlusMobHealthDB[kind][guid.."-"..level];
+        local value = UnitFramesPlusMobHealthDB[kind][guid..","..level];
         if value then
             return value;
         end
         if level > 1 then
-            value = UnitFramesPlusMobHealthDB[kind][guid.."-"..level-1];
+            value = UnitFramesPlusMobHealthDB[kind][guid..","..level-1];
             if value then
                 return value * level/(level - 1);
             end
         end
         if level > 2 then
-            value = UnitFramesPlusMobHealthDB[kind][guid.."-"..level-2];
+            value = UnitFramesPlusMobHealthDB[kind][guid..","..level-2];
             if value then
                 return value * level/(level - 2);
             end
@@ -343,7 +361,7 @@ function UnitFramesPlus_GetUnitMaxHP(unit)
     --in classic, server always return nil
     -- local name, server = UnitName(unit);
     -- if server and server ~= "" then
-    --     name = name .. "-" .. server;
+    --     name = name .. "," .. server;
     -- end
     local name = UnitName(unit);
     local level = UnitLevel(unit);
@@ -363,7 +381,7 @@ function UnitFramesPlus_GetUnitMaxHP(unit)
     if guid then
         local value = guessAtMaxHealth(guid, level, kind);
         if value then
-            return math.floor(value + 0.5), true;
+            return floor(value + 0.5), true;
         else
             return max, false;
         end
@@ -381,7 +399,7 @@ function UnitFramesPlus_GetUnitCurrentHP(unit)
     --in classic, server always return nil
     -- local name, server = UnitName(unit);
     -- if server and server ~= "" then
-    --     name = name .. "-" .. server;
+    --     name = name .. "," .. server;
     -- end
     local name = UnitName(unit);
     local level = UnitLevel(unit);
@@ -401,7 +419,7 @@ function UnitFramesPlus_GetUnitCurrentHP(unit)
     if guid then
         local value = guessAtMaxHealth(guid, level, kind);
         if value then
-            return math.floor(current/max * value + 0.5), true;
+            return floor(current/max * value + 0.5), true;
         else
             return current, false;
         end
@@ -419,7 +437,7 @@ function UnitFramesPlus_GetUnitHealth(unit)
     --in classic, server always return nil
     -- local name, server = UnitName(unit);
     -- if server and server ~= "" then
-    --     name = name .. "-" .. server;
+    --     name = name .. "," .. server;
     -- end
     local name = UnitName(unit);
     local level = UnitLevel(unit);
@@ -439,7 +457,7 @@ function UnitFramesPlus_GetUnitHealth(unit)
     if guid then
         local value = guessAtMaxHealth(guid, level, kind);
         if value then
-            return math.floor(current/max * value + 0.5), math.floor(value + 0.5), true;
+            return floor(current/max * value + 0.5), floor(value + 0.5), true;
         else
             return current, max, false;
         end
@@ -451,7 +469,7 @@ end
 local function UnitFramesPlus_MobHealth_Init()
     if not UnitFramesPlusMobHealthDB or UnitFramesPlusMobHealthDB["ver"] ~= MAJOR_VERSION.."."..MINOR_VERSION then
         UnitFramesPlusMobHealthDB = {
-            ["npc"] = UnitFramesPlus_CreatureHealthCache or {},
+            ["npc"] = {},
             ["pc"]  = {},
             ["pet"] = {},
             ["ver"] = MAJOR_VERSION.."."..MINOR_VERSION,
