@@ -1,9 +1,11 @@
-## Interface: 11303
+## Interface: 11304
 ## Title: ClassicAuraDurations
 ## Author: d87
 ## SavedVariables: ClassicAuraDurationsDB
+## Version: 1.13.55
 
 ## X-WoWI-ID: 25006
+## X-Curse-Project-ID: 323806
 
 Libs\LibStub\LibStub.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
