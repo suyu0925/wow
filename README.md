@@ -71,7 +71,7 @@
   自动出售灰色物品
 
   - 游戏版本 1.13.3
-  - 插件版本 8.2.2
+  - 插件版本 8.3.2
 
 * [AuctionFaster](https://www.curseforge.com/wow/addons/auctionfaster)
 
