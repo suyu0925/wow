@@ -1,5 +1,6 @@
 if not _G.THREATLIB_LOAD_MODULES then return end -- only load if LibThreatClassic2.lua allows it
-local ThreatLib = LibStub and LibStub("LibThreatClassic2", true)
+if not LibStub then return end
+local ThreatLib, MINOR = LibStub("LibThreatClassic2", true)
 if not ThreatLib then return end
 
 if select(2, _G.UnitClass("player")) ~= "MAGE" then return end
@@ -9,7 +10,7 @@ local select = _G.select
 local max = _G.max
 local GetTalentInfo = _G.GetTalentInfo
 
-local Mage = ThreatLib:GetOrCreateModule("Player")
+local Mage = ThreatLib:GetOrCreateModule("Player-r"..MINOR)
 
 local SCHOOL_MASK_FIRE = _G.SCHOOL_MASK_FIRE or 0x04;
 local SCHOOL_MASK_FROST = _G.SCHOOL_MASK_FROST or 0x10;
@@ -47,7 +48,8 @@ function Mage:ClassInit()
 	-- I tested Counterspell with a level 32 mage. I would like mages of other levels
 	-- to test its threat value as well.
 	-- Counterspell
-	self.CastLandedHandlers[2139] = function(self, spellID, target) self:AddTargetThreat(target, 300 * self:threatMods()) end
+	self.CastSuccessHandlers[2139] = function(self, spellID, target) self:AddTargetThreat(target, 300 * self:threatMods()) end
+	self.CastMissHandlers[2139] = function(self, spellID, target) self:AddTargetThreat(target, -300 * self:threatMods()) end
 
 	-- Remove Lesser Curse
 	self.CastHandlers[475] = function(self, spellID, target) self:AddThreat(14 * self:threatMods()) end

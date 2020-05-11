@@ -1,5 +1,6 @@
 if not _G.THREATLIB_LOAD_MODULES then return end -- only load if LibThreatClassic2.lua allows it
-local ThreatLib = LibStub and LibStub("LibThreatClassic2", true)
+if not LibStub then return end
+local ThreatLib, MINOR = LibStub("LibThreatClassic2", true)
 if not ThreatLib then return end
 
 local pairs = _G.pairs
@@ -9,7 +10,7 @@ local ERR_FEIGN_DEATH_RESISTED = _G.ERR_FEIGN_DEATH_RESISTED
 if select(2, _G.UnitClass("player")) ~= "HUNTER" then return end
 
 local _G = _G
-local Hunter = ThreatLib:GetOrCreateModule("Player")
+local Hunter = ThreatLib:GetOrCreateModule("Player-r"..MINOR)
 
 local distractingShotFactor = 600 / 60
 
@@ -31,10 +32,12 @@ local threatTable = {
 
 function Hunter:ClassInit()
 	for k, v in pairs(threatTable["DistractingShot"]) do
-		self.CastLandedHandlers[k] = self.DistractingShot
+		self.CastSuccessHandlers[k] = self.DistractingShot
+		self.CastMissHandlers[k] = self.DistractingShotMiss
 	end
 	for k, v in pairs(threatTable["Disengage"]) do
-		self.CastLandedHandlers[k] = self.Disengage
+		self.CastSuccessHandlers[k] = self.Disengage
+		self.CastMissHandlers[k] = self.DisengageMiss
 	end
 
 	self.CastHandlers[5384] = self.FeignDeath
@@ -57,15 +60,29 @@ function Hunter:DistractingShot(spellID, target)
 	self:AddTargetThreat(target, amt * self:threatMods())
 end
 
+function Hunter:DistractingShotMiss(spellID, target)
+	local amt = threatTable["DistractingShot"][spellID]
+	self:AddTargetThreat(target, -(amt * self:threatMods()))
+end
+
 function Hunter:Disengage(spellID, target)
 	ThreatLib:Debug("Disengage caught, %s", spellID)
 	local amt = threatTable["Disengage"][spellID]
 	self:AddTargetThreat(target, amt * self:threatMods())
 end
 
--- Feign is a rather unique case. It's cast on all targets, but may be resisted by any one target. There is no combat log message - only an error event with ERR_FEIGN_DEATH_RESISTED from GlobalStrings
--- ERR_FEIGN_DEATH_RESISTED always happens before SPELLCAST_SUCCESSFUL, so we "prime" FD when we get SENT, then invalidate it if we get a resist, let it through otherwise.
--- The net effect is that a resist on any one target invalidates the threat reset on all targets, but we can't help that since we don't have target data on who resisted
+function Hunter:DisengageMiss(spellID, target)
+	ThreatLib:Debug("Disengage fail caught, %s", spellID)
+	local amt = threatTable["Disengage"][spellID]
+	self:AddTargetThreat(target, -(amt * self:threatMods()))
+end
+
+-- Feign is a rather unique case. It's cast on all targets, but may be resisted by any one target. 
+-- There is no combat log message - only an error event with ERR_FEIGN_DEATH_RESISTED from GlobalStrings
+-- ERR_FEIGN_DEATH_RESISTED always happens before UNIT_SPELLCAST_SENT, so we "prime" FD when we get SENT, 
+-- then invalidate it if we get a resist, let it through otherwise.
+-- The net effect is that a resist on any one target invalidates the threat reset on all targets, 
+-- but we can't help that since we don't have target data on who resisted
 local FeignDeathPrimed = 0
 function Hunter:FeignDeath()
 	if GetTime() - FeignDeathPrimed < 5 then
@@ -83,7 +100,8 @@ function Hunter:UNIT_SPELLCAST_SENT(event, unit, target, castGUID, spellID)
 	end
 end
 
-function Hunter:UI_ERROR_MESSAGE(event, msg)
+function Hunter:UI_ERROR_MESSAGE(event, errorType, msg)
+	-- ThreatLib:Debug("ui error %s %s %s", event, errorType, msg)
 	if msg == ERR_FEIGN_DEATH_RESISTED then
 		ThreatLib:Debug("Canceling FD!")
 		FeignDeathPrimed = 0

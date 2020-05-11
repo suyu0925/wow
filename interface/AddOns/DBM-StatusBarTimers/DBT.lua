@@ -112,9 +112,9 @@ options = {
 		type = "boolean",
 		default = false,
 	},
-	Flash = {
+	FlashBar = {
 		type = "boolean",
-		default = true,
+		default = false,
 	},
 	Spark = {
 		type = "boolean",
@@ -127,6 +127,10 @@ options = {
 	ColorByType = {
 		type = "boolean",
 		default = true,
+	},
+	NoBarFade = {
+		type = "boolean",
+		default = false,
 	},
 	InlineIcons = {
 		type = "boolean",
@@ -435,10 +439,6 @@ options = {
 		type = "number",
 		default = 11,
 	},
-	EnlargeBarsPercent = {
-		type = "number",
-		default = 0.125,
-	},
 	FillUpBars = {
 		type = "boolean",
 		default = true,
@@ -480,6 +480,10 @@ options = {
 		default = true,
 	},
 	FadeBars = {
+		type = "boolean",
+		default = true,
+	},
+	StripCDText = {
 		type = "boolean",
 		default = true,
 	},
@@ -813,7 +817,7 @@ do
 			end
 			newFrame.obj = newBar
 			self.numBars = (self.numBars or 0) + 1
-			local enlargeTime = self.options.BarStyle ~= "NoAnim" and self.options.EnlargeBarTime or 11
+			local enlargeTime = self.options.EnlargeBarTime or 11
 			local importantBar = colorType and colorType == 7 and self:GetOption("Bar7ForceLarge")
 			if (importantBar or (timer <= enlargeTime or huge)) and self:GetOption("HugeBarsEnabled") then -- start enlarged
 				newBar.enlarged = true
@@ -849,10 +853,10 @@ do
 		self.flashing = nil
 		_G[self.frame:GetName().."BarSpark"]:SetAlpha(1)
 	end
-	function DBT:CreateDummyBar(colorType, inlineIcon)
+	function DBT:CreateDummyBar(colorType, inlineIcon, text)
 		dummyBars = dummyBars + 1
 		local dummy = self:CreateBar(25, "dummy"..dummyBars, 136116, nil, true, nil, true, colorType, inlineIcon)--"Interface\\Icons\\Spell_Nature_WispSplode"
-		dummy:SetText("Dummy", inlineIcon)
+		dummy:SetText(text or "Dummy", inlineIcon)
 		dummy:Cancel()
 		self.bars[dummy] = true
 		unusedBars[#unusedBars] = nil
@@ -950,9 +954,8 @@ end
 
 function barPrototype:SetElapsed(elapsed)
 	self.timer = self.totalTime - elapsed
-	local enlargeTime = self.owner.options.BarStyle ~= "NoAnim" and self.owner.options.EnlargeBarTime or 11
-	local enlargePer = self.owner.options.BarStyle ~= "NoAnim" and self.owner.options.EnlargeBarsPercent or 0
-	if (self.enlarged or self.moving == "enlarge") and not (self.timer <= enlargeTime or (self.timer/self.totalTime) <= enlargePer) then
+	local enlargeTime = self.owner.options.EnlargeBarTime or 11
+	if (self.enlarged or self.moving == "enlarge") and not (self.timer <= enlargeTime) then
 		self:ResetAnimations()
 		DBM:Debug("ResetAnimations firing for a a bar :Update() call", 2)
 	elseif self.owner.options.Sort and self.moving ~= "enlarge" then
@@ -1007,7 +1010,7 @@ function barPrototype:Update(elapsed)
 	local obj = self.owner
 	local barOptions = obj.options
 	local currentStyle = barOptions.BarStyle
-	local sparkEnabled = currentStyle ~= "NoAnim" and barOptions.Spark
+	local sparkEnabled = barOptions.Spark
 	local isMoving = self.moving
 	local isFadingIn = self.fadingIn
 	local isEnlarged = self.enlarged
@@ -1022,41 +1025,89 @@ function barPrototype:Update(elapsed)
 		local r, g, b
 		if colorCount and colorCount >= 1 then
 			if colorCount == 1 then--Add
-				r = barOptions.StartColorAR  + (barOptions.EndColorAR - barOptions.StartColorAR) * (1 - timerValue/totaltimeValue)
-				g = barOptions.StartColorAG  + (barOptions.EndColorAG - barOptions.StartColorAG) * (1 - timerValue/totaltimeValue)
-				b = barOptions.StartColorAB  + (barOptions.EndColorAB - barOptions.StartColorAB) * (1 - timerValue/totaltimeValue)
+				if barOptions.NoBarFade then
+					r = isEnlarged and barOptions.EndColorAR or barOptions.StartColorAR
+					g = isEnlarged and barOptions.EndColorAG or barOptions.StartColorAG
+					b = isEnlarged and barOptions.EndColorAB or barOptions.StartColorAB
+				else
+					r = barOptions.StartColorAR  + (barOptions.EndColorAR - barOptions.StartColorAR) * (1 - timerValue/totaltimeValue)
+					g = barOptions.StartColorAG  + (barOptions.EndColorAG - barOptions.StartColorAG) * (1 - timerValue/totaltimeValue)
+					b = barOptions.StartColorAB  + (barOptions.EndColorAB - barOptions.StartColorAB) * (1 - timerValue/totaltimeValue)
+				end
 			elseif colorCount == 2 then--AOE
-				r = barOptions.StartColorAER  + (barOptions.EndColorAER - barOptions.StartColorAER) * (1 - timerValue/totaltimeValue)
-				g = barOptions.StartColorAEG  + (barOptions.EndColorAEG - barOptions.StartColorAEG) * (1 - timerValue/totaltimeValue)
-				b = barOptions.StartColorAEB  + (barOptions.EndColorAEB - barOptions.StartColorAEB) * (1 - timerValue/totaltimeValue)
+				if barOptions.NoBarFade then
+					r = isEnlarged and barOptions.EndColorAER or barOptions.StartColorAER
+					g = isEnlarged and barOptions.EndColorAEG or barOptions.StartColorAEG
+					b = isEnlarged and barOptions.EndColorAEB or barOptions.StartColorAEB
+				else
+					r = barOptions.StartColorAER  + (barOptions.EndColorAER - barOptions.StartColorAER) * (1 - timerValue/totaltimeValue)
+					g = barOptions.StartColorAEG  + (barOptions.EndColorAEG - barOptions.StartColorAEG) * (1 - timerValue/totaltimeValue)
+					b = barOptions.StartColorAEB  + (barOptions.EndColorAEB - barOptions.StartColorAEB) * (1 - timerValue/totaltimeValue)
+				end
 			elseif colorCount == 3 then--Debuff
-				r = barOptions.StartColorDR  + (barOptions.EndColorDR - barOptions.StartColorDR) * (1 - timerValue/totaltimeValue)
-				g = barOptions.StartColorDG  + (barOptions.EndColorDG - barOptions.StartColorDG) * (1 - timerValue/totaltimeValue)
-				b = barOptions.StartColorDB  + (barOptions.EndColorDB - barOptions.StartColorDB) * (1 - timerValue/totaltimeValue)
+				if barOptions.NoBarFade then
+					r = isEnlarged and barOptions.EndColorDR or barOptions.StartColorDR
+					g = isEnlarged and barOptions.EndColorDG or barOptions.StartColorDG
+					b = isEnlarged and barOptions.EndColorDB or barOptions.StartColorDB
+				else
+					r = barOptions.StartColorDR  + (barOptions.EndColorDR - barOptions.StartColorDR) * (1 - timerValue/totaltimeValue)
+					g = barOptions.StartColorDG  + (barOptions.EndColorDG - barOptions.StartColorDG) * (1 - timerValue/totaltimeValue)
+					b = barOptions.StartColorDB  + (barOptions.EndColorDB - barOptions.StartColorDB) * (1 - timerValue/totaltimeValue)
+				end
 			elseif colorCount == 4 then--Interrupt
-				r = barOptions.StartColorIR  + (barOptions.EndColorIR - barOptions.StartColorIR) * (1 - timerValue/totaltimeValue)
-				g = barOptions.StartColorIG  + (barOptions.EndColorIG - barOptions.StartColorIG) * (1 - timerValue/totaltimeValue)
-				b = barOptions.StartColorIB  + (barOptions.EndColorIB - barOptions.StartColorIB) * (1 - timerValue/totaltimeValue)
+				if barOptions.NoBarFade then
+					r = isEnlarged and barOptions.EndColorIR or barOptions.StartColorIR
+					g = isEnlarged and barOptions.EndColorIG or barOptions.StartColorIG
+					b = isEnlarged and barOptions.EndColorIB or barOptions.StartColorIB
+				else
+					r = barOptions.StartColorIR  + (barOptions.EndColorIR - barOptions.StartColorIR) * (1 - timerValue/totaltimeValue)
+					g = barOptions.StartColorIG  + (barOptions.EndColorIG - barOptions.StartColorIG) * (1 - timerValue/totaltimeValue)
+					b = barOptions.StartColorIB  + (barOptions.EndColorIB - barOptions.StartColorIB) * (1 - timerValue/totaltimeValue)
+				end
 			elseif colorCount == 5 then--Role
-				r = barOptions.StartColorRR  + (barOptions.EndColorRR - barOptions.StartColorRR) * (1 - timerValue/totaltimeValue)
-				g = barOptions.StartColorRG  + (barOptions.EndColorRG - barOptions.StartColorRG) * (1 - timerValue/totaltimeValue)
-				b = barOptions.StartColorRB  + (barOptions.EndColorRB - barOptions.StartColorRB) * (1 - timerValue/totaltimeValue)
+				if barOptions.NoBarFade then
+					r = isEnlarged and barOptions.EndColorRR or barOptions.StartColorRR
+					g = isEnlarged and barOptions.EndColorRG or barOptions.StartColorRG
+					b = isEnlarged and barOptions.EndColorRB or barOptions.StartColorRB
+				else
+					r = barOptions.StartColorRR  + (barOptions.EndColorRR - barOptions.StartColorRR) * (1 - timerValue/totaltimeValue)
+					g = barOptions.StartColorRG  + (barOptions.EndColorRG - barOptions.StartColorRG) * (1 - timerValue/totaltimeValue)
+					b = barOptions.StartColorRB  + (barOptions.EndColorRB - barOptions.StartColorRB) * (1 - timerValue/totaltimeValue)
+				end
 			elseif colorCount == 6 then--Phase
-				r = barOptions.StartColorPR  + (barOptions.EndColorPR - barOptions.StartColorPR) * (1 - timerValue/totaltimeValue)
-				g = barOptions.StartColorPG  + (barOptions.EndColorPG - barOptions.StartColorPG) * (1 - timerValue/totaltimeValue)
-				b = barOptions.StartColorPB  + (barOptions.EndColorPB - barOptions.StartColorPB) * (1 - timerValue/totaltimeValue)
+				if barOptions.NoBarFade then
+					r = isEnlarged and barOptions.EndColorPR or barOptions.StartColorPR
+					g = isEnlarged and barOptions.EndColorPG or barOptions.StartColorPG
+					b = isEnlarged and barOptions.EndColorPB or barOptions.StartColorPB
+				else
+					r = barOptions.StartColorPR  + (barOptions.EndColorPR - barOptions.StartColorPR) * (1 - timerValue/totaltimeValue)
+					g = barOptions.StartColorPG  + (barOptions.EndColorPG - barOptions.StartColorPG) * (1 - timerValue/totaltimeValue)
+					b = barOptions.StartColorPB  + (barOptions.EndColorPB - barOptions.StartColorPB) * (1 - timerValue/totaltimeValue)
+				end
 			elseif colorCount == 7 then--Important
 				if barOptions.Bar7ForceLarge then
 					enlargeHack = true
 				end
-				r = barOptions.StartColorUIR  + (barOptions.EndColorUIR - barOptions.StartColorUIR) * (1 - timerValue/totaltimeValue)
-				g = barOptions.StartColorUIG  + (barOptions.EndColorUIG - barOptions.StartColorUIG) * (1 - timerValue/totaltimeValue)
-				b = barOptions.StartColorUIB  + (barOptions.EndColorUIB - barOptions.StartColorUIB) * (1 - timerValue/totaltimeValue)
+				if barOptions.NoBarFade then
+					r = isEnlarged and barOptions.EndColorUIR or barOptions.StartColorUIR
+					g = isEnlarged and barOptions.EndColorUIG or barOptions.StartColorUIG
+					b = isEnlarged and barOptions.EndColorUIB or barOptions.StartColorUIB
+				else
+					r = barOptions.StartColorUIR  + (barOptions.EndColorUIR - barOptions.StartColorUIR) * (1 - timerValue/totaltimeValue)
+					g = barOptions.StartColorUIG  + (barOptions.EndColorUIG - barOptions.StartColorUIG) * (1 - timerValue/totaltimeValue)
+					b = barOptions.StartColorUIB  + (barOptions.EndColorUIB - barOptions.StartColorUIB) * (1 - timerValue/totaltimeValue)
+				end
 			end
 		else
-			r = barOptions.StartColorR  + (barOptions.EndColorR - barOptions.StartColorR) * (1 - timerValue/totaltimeValue)
-			g = barOptions.StartColorG  + (barOptions.EndColorG - barOptions.StartColorG) * (1 - timerValue/totaltimeValue)
-			b = barOptions.StartColorB  + (barOptions.EndColorB - barOptions.StartColorB) * (1 - timerValue/totaltimeValue)
+			if barOptions.NoBarFade then
+				r = isEnlarged and barOptions.EndColorR or barOptions.StartColorR
+				g = isEnlarged and barOptions.EndColorG or barOptions.StartColorG
+				b = isEnlarged and barOptions.EndColorB or barOptions.StartColorB
+			else
+				r = barOptions.StartColorR  + (barOptions.EndColorR - barOptions.StartColorR) * (1 - timerValue/totaltimeValue)
+				g = barOptions.StartColorG  + (barOptions.EndColorG - barOptions.StartColorG) * (1 - timerValue/totaltimeValue)
+				b = barOptions.StartColorB  + (barOptions.EndColorB - barOptions.StartColorB) * (1 - timerValue/totaltimeValue)
+			end
 		end
 		bar:SetStatusBarColor(r, g, b)
 		if sparkEnabled then
@@ -1067,14 +1118,18 @@ function barPrototype:Update(elapsed)
 		return self:Cancel()
 	else
 		if fillUpBars then
+			local enlargeTime = barOptions.EnlargeBarTime or 11
 			if currentStyle == "NoAnim" and isEnlarged and not enlargeHack then
-				bar:SetValue(1 - timerValue/(totaltimeValue < 11 and totaltimeValue or 11))
+				--Simple/NoAnim Bar mimics BW in creating a new bar on large bar anchor instead of just moving the small bar
+				bar:SetValue(1 - timerValue/(totaltimeValue < enlargeTime and totaltimeValue or enlargeTime))
 			else
 				bar:SetValue(1 - timerValue/totaltimeValue)
 			end
 		else
+			local enlargeTime = barOptions.EnlargeBarTime or 11
 			if currentStyle == "NoAnim" and isEnlarged and not enlargeHack then
-				bar:SetValue(timerValue/(totaltimeValue < 11 and totaltimeValue or 11))
+				--Simple/NoAnim Bar mimics BW in creating a new bar on large bar anchor instead of just moving the small bar
+				bar:SetValue(timerValue/(totaltimeValue < enlargeTime and totaltimeValue or enlargeTime))
 			else
 				bar:SetValue(timerValue/totaltimeValue)
 			end
@@ -1089,7 +1144,7 @@ function barPrototype:Update(elapsed)
 	elseif isFadingIn then
 		self.fadingIn = nil
 	end
-	if timerValue <= 7.75 and not self.flashing and barOptions.Flash and currentStyle ~= "NoAnim" then
+	if timerValue <= 7.75 and not self.flashing and barOptions.FlashBar then
 		self.flashing = true
 		self.ftimer = 0
 	elseif self.flashing and timerValue > 7.75 then
@@ -1161,9 +1216,8 @@ function barPrototype:Update(elapsed)
 		obj.hugeBars:Append(self)
 		self:ApplyStyle()
 	end
-	local enlargeTime = currentStyle ~= "NoAnim" and barOptions.EnlargeBarTime or 11
-	local enlargePer = currentStyle ~= "NoAnim" and barOptions.EnlargeBarsPercent or 0
-	if (timerValue <= enlargeTime or (timerValue/totaltimeValue) <= enlargePer) and not self.small and not isEnlarged and isMoving ~= "enlarge" and obj:GetOption("HugeBarsEnabled") then
+	local enlargeTime = barOptions.EnlargeBarTime or 11
+	if (timerValue <= enlargeTime) and not self.small and not isEnlarged and isMoving ~= "enlarge" and obj:GetOption("HugeBarsEnabled") then
 		self:RemoveFromList()
 		self:Enlarge()
 	end
@@ -1256,7 +1310,7 @@ function barPrototype:ApplyStyle()
 	local name = _G[frame_name.."BarName"]
 	local timer = _G[frame_name.."BarTimer"]
 	local barOptions = self.owner.options
-	local sparkEnabled = barOptions.BarStyle ~= "NoAnim" and barOptions.Spark
+	local sparkEnabled = barOptions.Spark
 	local enlarged = self.enlarged
 	texture:SetTexture(barOptions.Texture)
 	if self.color then
@@ -1443,8 +1497,8 @@ do
 			if #skinTextures ~= #skinTextureNames then
 				geterrorhandler()(id .. ": toc file defines " .. #skinTextures .. " textures but " .. #skinTextureNames .. " names for textures")
 			else
-				for i = 1, #skinTextures do
-					textures[skinTextureNames[i]:trim()] = skinTextures[i]:trim()
+				for j = 1, #skinTextures do
+					textures[skinTextureNames[j]:trim()] = skinTextures[j]:trim()
 				end
 			end
 			local skinFonts = { strsplit(",", GetAddOnMetadata(i, "X-DBM-Timer-Skin-Fonts") or "") }
@@ -1452,8 +1506,8 @@ do
 			if #skinFonts ~= #skinFontNames then
 				geterrorhandler()(id .. ": toc file defines " .. #skinFonts .. " fonts but " .. #skinFontNames .. " names for fonts")
 			else
-				for i = 1, #skinFonts do
-					fonts[skinFontNames[i]:trim()] = skinFonts[i]:trim()
+				for j = 1, #skinFonts do
+					fonts[skinFontNames[j]:trim()] = skinFonts[j]:trim()
 				end
 			end
 
@@ -1605,7 +1659,7 @@ do
 		if self.obj then
 			self.obj.curTime = GetTime()
 			self.obj.delta = self.obj.curTime - self.obj.lastUpdate
-			if barIsAnimating and self.obj.delta >= 0.02 or self.obj.delta >= 0.04 then
+			if barIsAnimating and self.obj.delta >= 0.01 or self.obj.delta >= 0.04 then
 				self.obj.lastUpdate = self.obj.curTime
 				self.obj:Update(self.obj.delta)
 			end

@@ -1,5 +1,6 @@
 if not _G.THREATLIB_LOAD_MODULES then return end -- only load if LibThreatClassic2.lua allows it
-local ThreatLib = LibStub and LibStub("LibThreatClassic2", true)
+if not LibStub then return end
+local ThreatLib, MINOR = LibStub("LibThreatClassic2", true)
 if not ThreatLib then return end
 
 if select(2, _G.UnitClass("player")) ~= "DRUID" then return end
@@ -11,7 +12,7 @@ local GetTalentInfo = _G.GetTalentInfo
 local GetShapeshiftForm = _G.GetShapeshiftForm
 local UnitGUID = _G.UnitGUID
 
-local Druid = ThreatLib:GetOrCreateModule("Player")
+local Druid = ThreatLib:GetOrCreateModule("Player-r"..MINOR)
 
 local faerieFireFactor = 108 / 54	-- NEED MORE INFO
 
@@ -52,20 +53,20 @@ local tranquilityIDs = {740, 8918, 9862, 9863}
 
 function Druid:ClassInit()
 
-	-- Growl
-	self.CastLandedHandlers[6795] = self.Growl
+	-- Growl. Assumption that all successful taunts apply a debuff to the mob
+	self.MobDebuffHandlers[6795] = self.Growl
 
 	for k, v in pairs(threatValues.faerieFire) do
-		self.CastLandedHandlers[k] = self.FaerieFire
+		self.CastSuccessHandlers[k] = self.FaerieFire
+		self.CastMissHandlers[k] = self.FaerieFireMiss
 	end
 	for k, v in pairs(threatValues.cower) do
-		self.CastLandedHandlers[k] = self.Cower
+		self.CastSuccessHandlers[k] = self.Cower
+		self.CastMissHandlers[k] = self.CowerMiss
 	end
+
 	for k, v in pairs(threatValues.demoralizingRoar) do
-		self.CastHandlers[k] = self.DemoralizingRoar
-	end
-	for k, v in pairs(threatValues.demoralizingRoar) do
-		self.CastMissHandlers[k] = self.DemoralizingRoarMiss
+		self.MobDebuffHandlers[k] = self.DemoralizingRoar
 	end
 
 	-- Subtlety for all Arcane or Nature Damage, as well as heals.
@@ -101,7 +102,7 @@ end
 
 function Druid:ScanTalents()
 	if ThreatLib.Classic then
-		self.feralinstinctMod = 1 + 0.03 * select(5, GetTalentInfo(2, 3))
+		self.feralinstinctMod = 0.03 * select(5, GetTalentInfo(2, 3))
 		self.subtletyMod = 1 - 0.04 * select(5, GetTalentInfo(3, 8))
 		self.tranqMod = 1 - 0.5 * select(5, GetTalentInfo(3, 13))
 	else
@@ -116,7 +117,7 @@ function Druid:GetStanceThreatMod()
 	local form = GetShapeshiftForm()
 	self.isTanking = false
 	if form == 1 then
-		self.passiveThreatModifiers = 1.3 * self.feralinstinctMod
+		self.passiveThreatModifiers = 1.3 + self.feralinstinctMod
 		self.isTanking = true
 	elseif form == 2 or form == 3 then
 		-- if aquatic form is not learnt, druid cat form is 2 and travel form 3
@@ -129,33 +130,25 @@ function Druid:GetStanceThreatMod()
 	self.totalThreatMods = nil -- Needed to recalc total mods
 end
 
-local pendingTauntTarget = nil
-local pendingTauntOffset = nil
 function Druid:Growl(spellID, target)
 	local targetThreat = ThreatLib:GetThreat(UnitGUID("targettarget"), target)
 	local myThreat = ThreatLib:GetThreat(UnitGUID("player"), target)
 	if targetThreat > 0 and targetThreat > myThreat then
-		pendingTauntTarget = target
-		pendingTauntOffset = targetThreat-myThreat
+		self:AddTargetThreat(target, targetThreat-myThreat)
+		ThreatLib:PublishThreat()
 	elseif targetThreat == 0 then
 		local maxThreat = ThreatLib:GetMaxThreatOnTarget(target)
-		pendingTauntTarget = target
-		pendingTauntOffset = maxThreat-myThreat
-	end
-	self.nextEventHook = self.GrowlNextHook
-end
-
-function Druid:GrowlNextHook(timestamp, subEvent, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellID)
-	if pendingTauntTarget and (subEvent ~= "SPELL_MISSED" or spellID ~= 6795) then
-		self:AddTargetThreat(pendingTauntTarget, pendingTauntOffset)
+		self:AddTargetThreat(target, maxThreat-myThreat)
 		ThreatLib:PublishThreat()
 	end
-	pendingTauntTarget = nil
-	pendingTauntOffset = nil
 end
 
 function Druid:FaerieFire(spellID, target)
 	self:AddTargetThreat(target, threatValues.faerieFire[spellID] * self:threatMods())
+end
+
+function Druid:FaerieFireMiss(spellID, target)
+	self:AddTargetThreat(target, -(threatValues.faerieFire[spellID] * self:threatMods()))
 end
 
 function Druid:Maul(amount)
@@ -170,12 +163,12 @@ function Druid:Cower(spellID, target)
 	self:AddTargetThreat(target, threatValues.cower[spellID] * self:threatMods() * -1)
 end
 
-function Druid:DemoralizingRoar(spellID, target)
-	self:AddThreat(threatValues.demoralizingRoar[spellID] * self:threatMods())
+function Druid:CowerMiss(spellID, target)
+	self:AddTargetThreat(target, threatValues.cower[spellID] * self:threatMods())
 end
 
-function Druid:DemoralizingRoarMiss(spellID, target)
-	self:rollbackTransaction(target, spellID)
+function Druid:DemoralizingRoar(spellID, target)
+	self:AddTargetThreat(target, threatValues.demoralizingRoar[spellID] * self:threatMods())
 end
 
 function Druid:Subtlety(amount)
