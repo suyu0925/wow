@@ -77,3 +77,12 @@
 
   - 游戏版本 3.4.3
   - 插件版本 v3.2.0
+
+## 任务
+
+* [questie](https://www.curseforge.com/wow/addons/questie)
+
+  任务助手
+
+  - 游戏版本 3.4.4
+  - 插件版本 v10.21.4
